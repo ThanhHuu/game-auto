@@ -117,6 +117,23 @@ Func FindComboboxContainOptions($hwnd, $options, $waitingTime)
 EndFunc
 
 #cs
+Select option for combobox
+$hwnd: container
+$cbControlId: comboboxId
+$option: expected option
+return True if sucess and otherwise
+#ce
+Func SelectOption($hwnd, $cbControlId, $option)
+   ControlCommand($hwnd, "", $cbControlId, "SelectString", $option)
+   Local $currentSelection = ControlCommand($hwnd, "", $cbControlId, "GetCurrentSelection")
+   If $currentSelection == $option Then
+	  Return True
+   EndIf
+   Return False
+EndFunc
+
+
+#cs
 Function get list view has header at $headerPosition equal $headerText
 $hwnd: container
 $headerPosition: header position
