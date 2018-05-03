@@ -41,6 +41,27 @@ Func FindButtonWithText($hwnd, $text, $waitingTime)
 EndFunc
 
 #cs
+Function try click button in 10 second
+$hwnd: container
+$btControlId: button
+return True: success
+return False: failure
+#ce
+Func ClickButton($hwnd, $btControlId)
+   Local $count = 0;
+   While $count < 10
+	  $count += 1
+	  If ControlClick($hwnd, "", $btControlId) = 1 Then
+		 Return True
+	  EndIf
+	  Sleep(1000)
+   WEnd
+   footLog("ERROR", StringFormat("Failure clicj %s", $btControlId))
+   Return False
+EndFunc
+
+
+#cs
 This function help to find button with provided text
 $hwnd: Window (container) contain button
 $order: instance number
@@ -117,18 +138,24 @@ Func FindComboboxContainOptions($hwnd, $options, $waitingTime)
 EndFunc
 
 #cs
-Select option for combobox
+Try select option for combobox in 10 seconds
 $hwnd: container
 $cbControlId: comboboxId
 $option: expected option
 return True if sucess and otherwise
 #ce
 Func SelectOption($hwnd, $cbControlId, $option)
-   ControlCommand($hwnd, "", $cbControlId, "SelectString", $option)
-   Local $currentSelection = ControlCommand($hwnd, "", $cbControlId, "GetCurrentSelection")
-   If $currentSelection == $option Then
-	  Return True
-   EndIf
+   Local $count = 0;
+   While $count < 10
+	  $count += 1
+	  ControlCommand($hwnd, "", $cbControlId, "SelectString", $option)
+	  Local $currentSelection = ControlCommand($hwnd, "", $cbControlId, "GetCurrentSelection")
+	  If $currentSelection == $option Then
+		 Return True
+	  EndIf
+	  Sleep(1000)
+   WEnd
+   footLog("ERROR", StringFormat("Failure select %s for %s", $option,$cbControlId))
    Return False
 EndFunc
 
@@ -173,7 +200,7 @@ Func CheckItemInList($lvWnd, $index)
    If $index >= $total Then
 	  return -1
    EndIf
-   _GUICtrlListView_ClickItem($lvWnd, $index, "left", 1)
+   _GUICtrlListView_ClickItem($lvWnd, $index, "left")
    return 1
 EndFunc
 
