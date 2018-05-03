@@ -13,7 +13,7 @@ Opt("WinTitleMatchMode", 4)
 
 ; Script Start - Add your code below here
 
-Local $LOGON_OPTIONS[4] = ["Ẩn tất cả","Thoát tất cả", "Đăng nhập tất cả", "Ẩn auto xuống khay"]
+Dim $LOGON_OPTIONS[4] = ["Ẩn tất cả","Thoát tất cả", "Đăng nhập tất cả", "Ẩn auto xuống khay"]
 
 #cs
 Start Step
@@ -53,7 +53,7 @@ Func UpdateStep($hwndId, $waiting)
 		 Return -1
 	  ElseIf $hbtBegin = -2 Then
 		 Local $hbtRetry = FindButtonWithText($hwnd, "Thử lại", 1)
-		 ControlClick($hwnd, "", $hbtRetry)
+		 ClickButton($hwnd, $hbtRetry)
 		 ContinueLoop
 	  Else
 		 Return $hbtBegin
@@ -104,7 +104,7 @@ Func LogOnGameStep($hwndId, $waiting)
    If $btLogOn = -1 Or $btLogOn = -2 Then
 	  Return 0
    Else
-	  ControlClick($hwnd, "", $btLogOn)
+	  ClickButton($hwnd, $btLogOn)
 	  Return 1
    EndIf
 EndFunc
@@ -130,12 +130,44 @@ Func LogOutGameStep($hwndId, $waiting)
    If $btLogOut = -1 Or $btLogOut = -2 Then
 	  Return 0
    Else
-	  ControlClick($hwnd, "", $btLogOut)
+	  ClickButton($hwnd, $btLogOut)
 	  Return 1
    EndIf
 EndFunc
 
-$next = LogOutGameStep("[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]", 30)
+Dim $CHARACTER_HEADER_POSITION = 1
+Dim $CHARACTER_HEADER_TEXT = "Tên nhân vật"
+Dim $CHARACTER_STATUS_POSITION = 2
+
+#cs
+Check apply for character base on order
+$hwndId: container
+$chaOrder: order of character
+return 0: Not found container
+return -1: Not found character
+return -2: Character is offline
+return 1: checked
+#ce
+Func ApplyToCharacter($hwndId, $chaOrder)
+   Local $hwnd = WinWait($hwndId, "", 30)
+   If $hwnd = 0 Then
+	  Return 0
+   EndIf
+   Local $lsCha = FindListView($hwnd, $CHARACTER_HEADER_POSITION, $CHARACTER_HEADER_TEXT, 30)
+   If $lsCha = -1 Or $lsCha = -2 Then
+	  Return -1
+   EndIf
+   Local $chaStatus = _GUICtrlListView_GetItemText($lsCha, $chaOrder, $CHARACTER_STATUS_POSITION)
+   If StringStripWS ($chaStatus, 8) == "OFFLINE" Then
+	  Return -2
+   EndIf
+   WinActivate($hwnd)
+   CheckItemInList($lsCha, $chaOrder)
+   Return 1
+EndFunc
+
+
+$next = ApplyToCharacter("[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]", 3)
 MsgBox (0, "", $next)
 
 
