@@ -18,12 +18,12 @@ Dim $LOGON_OPTIONS[4] = ["Ẩn tất cả","Thoát tất cả", "Đăng nhập t
 #cs
 Start Step
 $appPath: absolute path to executing file
-return 0: Deny next step
+return -1: Deny next step
 return hwndId: Ready for next step
 #ce
 Func StartStep($appPath)
    If Run($appPath) = 0 Then
-	  Return 0;
+	  Return -1;
    Else
 	  Local $hwndId = "[TITLE:VIEAUTO.COM - Auto Update]"
 	  footLog("DEBUG", StringFormat("Start %s success. Next to %s", $appPath, $hwndId))
@@ -35,51 +35,54 @@ EndFunc
 Step Update
 $hwndId: window update
 $waiting: wait for button next in seconds
-return 0: Can not active window
-return -1: Deny next step
-return -2: Can not load update
-return controlIdGoNext: Ready for next step
+return -1: Can not update
+return hwndLogin: Ready for next step
 #ce
 Func UpdateStep($hwndId, $waiting)
    Local $hwnd = WinWait($hwndId, "", 30)
    If $hwnd = 0 Then
-	  Return 0
+	  ; cannot active window
+	  Return -1
    EndIf
    Local $count = 0
    While $count <= 3
 	  $count += 1
 	  Local $hbtBegin = FindButtonWithText($hwnd, "Bắt đầu", $waiting)
 	  If $hbtBegin = -1 Then
+		 ; not found button bat dau
 		 Return -1
 	  ElseIf $hbtBegin = -2 Then
 		 Local $hbtRetry = FindButtonWithText($hwnd, "Thử lại", 1)
 		 ClickButton($hwnd, $hbtRetry)
 		 ContinueLoop
 	  Else
-		 Return $hbtBegin
+		 ClickButton($hwnd, $hbtBegin)
+		 Return "[TITLE:Tài khoản VIEAUTO.COM]"
 	  EndIf
    WEnd
-   Return -2
+   ; try 3 times still failure
+   Return -1
 EndFunc
 
 #cs
 Step Login
 $hwndId: window login
 $waiting: wait for button login in seconds
-return 0: Can not active window
-return -1: Deny next step
-return controlIdGoNext: Ready for next step
+return -1: Can not active window
+return hwndAuto: Ready for next step
 #ce
 Func LoginStep($hwndId, $waiting)
    Local $hwnd = WinWait($hwndId, "", 30)
    If $hwnd = 0 Then
-	  Return 0
+	  Return -1
    EndIf
    Local $hbtLogin = FindButtonWithInstance($hwnd, 1, $waiting)
    If $hbtLogin = -1 Or $hbtLogin = -2 Then
+	  ; not found button login
 	  Return -1
    Else
-	  Return $hbtLogin
+	  ClickButton($hwnd, $hbtLogin)
+	  Return "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
    EndIf
 EndFunc
 
@@ -165,10 +168,6 @@ Func ApplyToCharacter($hwndId, $chaOrder)
    CheckItemInList($lsCha, $chaOrder)
    Return 1
 EndFunc
-
-
-$next = ApplyToCharacter("[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]", 3)
-MsgBox (0, "", $next)
 
 
 
