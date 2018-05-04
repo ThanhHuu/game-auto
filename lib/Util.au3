@@ -15,6 +15,8 @@
 #include <Array.au3>
 #include <File.au3>
 #include <Date.au3>
+#include <AutoItConstants.au3>
+Opt("MouseCoordMode", 1)
 
 Dim $LOG_LEVEL = "INFO"
 Dim $LOG_FILE = "log"
@@ -227,7 +229,6 @@ Func footLog($level, $msg)
 		 $allowLog = True
 	  EndIf
    EndSwitch
-   MsgBox(0, "", $allowLog)
    If $allowLog Then
 	  _FileWriteLog($LOG_FILE, @TAB & @TAB & $level & @TAB & @TAB & $msg)
    EndIf
