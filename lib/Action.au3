@@ -220,12 +220,5 @@ Func BuildCauPhucSteps($gamePos)
    return $steps
 EndFunc
 
-Local $steps = BuildMuaMau("300,70")
-;For $step In $steps
- ;  MsgBox(0, "", $step.Item("x") & "-" & $step.item("y"))
-;Next
-
-Implement($steps)
-
 
 

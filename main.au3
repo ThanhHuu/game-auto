@@ -1,38 +1,86 @@
 #RequireAdmin
-#include "C:\Users\htra\Documents\nkvs2-script\lib\Interaction.au3"
+#include-once
+#include "lib\Scenarios.au3"
 
-Dim $appPath = "C:\Users\htra\Downloads\Auto Ngao Kiem Vo Song 2\AutoUpdate.exe"
-Local $hwnUpdate = StartStep($appPath)
-If $hwnUpdate = -1 Then
-   ; Error start auto
-   MsgBox(0,"","error start auto")
+FileInstall("conf\Action.tm", "Action.tm")
+FileInstall("conf\DieuDoi.tm", "DieuDoi.tm")
+FileInstall("conf\NhanMonQuan.tm", "NhanMonQuan.tm")
+FileInstall("conf\Features.fea", "Features.fea")
+FileInstall("conf\Variables.cons", "Variables.cons")
+
+Global $startDate
+Global $features
+Local $variables = ReadVariable("Variables.cons")
+Global $APP_PATH = $variables.Item("$APP_PATH")
+If $APP_PATH = "{}" Then
+   MsgBox(16, "Error Load Variable", "Confiure variables in Variables.cons before")
    Exit
 EndIf
-Sleep(1000)
-Local $hwndLogin = UpdateStep($hwnUpdate, 300)
-If $hwndLogin = -1 Then
-   ; error can not update
-   MsgBox(0,"","error can not update")
-   Exit
-EndIf
-Local $hwndAuto = LoginStep($hwndLogin, 5)
-If $hwndAuto = -1 Then
-   ; error login account
-   MsgBox(0,"","error login account")
-   Exit
-EndIf
-Sleep(10000)
-Local $loggedOn = LogOnGameStep($hwndAuto, 5)
-If $loggedOn = -1 Or $loggedOn = 0 Then
-   ; error dang nhap tat ca
-   MsgBox(0,"","error dang nhap tat ca")
-Else
-   ; bat dau chay hoat dong
-   Sleep(60000)
-   For $i = 0 To 4 Step 1
-	  ApplyToCharacter($hwndAuto, $i)
+
+#cs
+return -1: reset all
+return 1: next feature
+#ce
+Func RunFeature($feature)
+   Local $featureName = $feature.Item("feature")
+   Local $time = $feature.Item("time")
+   Local $template = $featureName & ".tm"
+   Local $files = _FileListToArrayRec(@WorkingDir, "*.acc", 1 + 4, 1, 1)
+   If $files <> "" Then
+	  Local $ignoreAccounts = ReadIgnoreAccount($featureName)
+	  For $i = 1 To $files[0]
+		 Local $accFile = $files[$i]
+		 If $ignoreAccounts.Exists($accFile) Then
+			; Ingore this account
+			ContinueLoop
+		 EndIf
+
+		 MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
+
+		 Local $next = FirstScenario($template, $accFile)
+		 If $next = 0 Then
+			; Error step move file Accounts.xml
+			ContinueLoop
+		 EndIf
+		 Local $hwndAuto = SecondScenario(5)
+		 If $hwndAuto = -1 Then
+			; Error login to window auto
+			Exit
+		 EndIf
+		 ThirdScenario($hwndAuto, $time*60)
+		 FinalScenario($hwndAuto)
+
+		 If _NowCalcDate() > $startDate Then
+			Return -1
+		 EndIf
+	  Next
+	  MarkFeatureDone($featureName)
+   EndIf
+   Return 1
+EndFunc
+
+While True
+   $startDate = _NowCalcDate()
+   $features = InitFeatures("Features.fea")
+   Local $reset = False
+   For $feature In $features
+	  Local $enable = $feature.Item("enable")
+	  Local $featureName = $feature.Item("feature")
+	  If $enable = 0 Or CheckFeatureDone($featureName) Then
+		 ; Skip feature
+		 ContinueLoop
+	  EndIf
+	  If RunFeature($feature) = -1 Then
+		 $reset = True
+		 ExitLoop
+	  EndIf
    Next
+   If $reset Then
+	  ResetBeforeInitialization()
+	  ExitLoop
+   EndIf
+WEnd
 
-EndIf
+
 
 

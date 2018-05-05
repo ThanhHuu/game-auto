@@ -1,19 +1,30 @@
-#cs ----------------------------------------------------------------------------
-
- AutoIt Version: 3.3.14.2
- Author:         myName
-
- Script Function:
-	Template AutoIt script.
-
-#ce ----------------------------------------------------------------------------
 #RequireAdmin
-#include "C:\Users\htra\Documents\nkvs2-script\lib\Util.au3"
+#include-once
+#include "Util.au3"
 Opt("WinTitleMatchMode", 4)
 
-; Script Start - Add your code below here
-
 Dim $LOGON_OPTIONS[4] = ["Ẩn tất cả","Thoát tất cả", "Đăng nhập tất cả", "Ẩn auto xuống khay"]
+
+#cs
+Copy file account to auto before Run
+return -1: file not exists
+return 0: move file fail
+return 1: success
+#ce
+Func PrepareAccountStep($appPath, $accFile)
+   If FileExists($appPath) = 0 Then
+	  ; not found app
+	  Return -1
+   EndIf
+   If FileExists($accFile) = 0 Then
+	  ; not found Accounts.xml
+	  Return -1
+   EndIf
+   Local $parentDir = StringLeft($appPath, StringInStr($appPath, "\", 0, -1))
+   Local $settingDir = $parentDir & "Settings"
+   Return FileMove($accFile, $settingDir, 1)
+EndFunc
+
 
 #cs
 Start Step
@@ -169,5 +180,105 @@ Func ApplyToCharacter($hwndId, $chaOrder)
    Return 1
 EndFunc
 
+#cs
+get number of character in list
+#ce
+Func GetNoCharacter($hwndId)
+   Local $hwnd = WinWait($hwndId, "", 30)
+   If $hwnd = 0 Then
+	  Return 0
+   EndIf
+   Local $lsCha = FindListView($hwnd, $CHARACTER_HEADER_POSITION, $CHARACTER_HEADER_TEXT, 30)
+   If $lsCha = -1 Or $lsCha = -2 Then
+	  Return -1
+   EndIf
+   Local $noCharacter = _GUICtrlListView_GetItemCount($lsCha)
+   Return $noCharacter
+EndFunc
+
+
+#cs
+Function generate file
+return -1: error
+return generated file
+#ce
+Func CreateAccountsFile($template, $accountInfos)
+   If _FileCreate("Accounts.xml") = 0 Then
+	  ;Error create file
+	  Return -1
+   EndIf
+   Local $accFile = _PathFull("Accounts.xml")
+   If FileCopy($template, $accFile, 1) = 0 Then
+	  ; error clone file template
+	  Return -1
+   EndIf
+   Local $count = 1
+   For $item In $accountInfos
+	  Local $accPattern = "{account" & $count & "}"
+	  Local $charPattern = "{character" & $count & "}"
+	  _ReplaceStringInFile($accFile, $accPattern, $item.Item("account"))
+	  _ReplaceStringInFile($accFile, $charPattern, $item.Item("character"))
+	  $count += 1
+   Next
+   Return $accFile
+EndFunc
+
+Dim $PROCESS_OF_GAME = "ClientX86.exe"
+Dim $PROCESS_OF_DUMP = "DumpReportX86.exe"
+
+#cs
+Close auto
+return -1: auto is not running
+return -2: can not confirm yes
+return -3: error kill process
+return 1: success
+#ce
+Func StopAutoStep($hwndId, $waiting)
+   If WinExists($hwndId) = 0 Then
+	  Return -1
+   EndIf
+   Local $hwnd = WinActivate($hwndId)
+   WinClose($hwnd)
+   Local $hwndConfirm = "[TITLE:Thông báo!]"
+   If WinExists($hwndConfirm) = 1 Then
+	  ; Confirm close
+	  Local $btYes = FindButtonWithInstance($hwndConfirm, 1, $waiting)
+	  If $btYes = -1 Or $btYes = -2 Then
+		 ; not found button yes
+		 Return -2
+	  EndIf
+	  ClickButton($hwndConfirm, $btYes)
+   EndIf
+   Sleep(1000)
+   If ProcessExists($PROCESS_OF_GAME) <> 0 Then
+	  ; call kill process
+	  Local $count = 0;
+	  While $count < 100
+		 $count += 1
+		 If ProcessClose($PROCESS_OF_GAME) = 1 Then
+			; kill success
+			ExitLoop
+		 EndIf
+		 Sleep(500)
+	  WEnd
+	  If $count = 100 Then
+		 ; error kill process after try
+		 Return -3
+	  EndIf
+   EndIf
+   If ProcessExists($PROCESS_OF_DUMP) <> 0 Then
+	  ; call kill process
+	  While $count < 100
+		 $count += 1
+		 If ProcessClose($PROCESS_OF_DUMP) = 1 Then
+			; kill success
+			ExitLoop
+		 EndIf
+		 Sleep(500)
+	  WEnd
+   EndIf
+
+   Return 1
+EndFunc
 
 

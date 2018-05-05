@@ -1,15 +1,5 @@
-#cs ----------------------------------------------------------------------------
-
- AutoIt Version: 3.3.14.2
- Author:         myName
-
- Script Function:
-	Template AutoIt script.
-
-#ce ----------------------------------------------------------------------------
-
-; Script Start - Add your code below here
 #RequireAdmin
+#include-once
 #include <MsgBoxConstants.au3>
 #include <GuiListView.au3>
 #include <Array.au3>
