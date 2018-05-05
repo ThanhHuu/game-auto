@@ -69,7 +69,7 @@ Func ThirdScenario($hwndAuto, $pause)
 	  Return -1
    Else
 	  ; bat dau chay hoat dong
-	  Sleep($noCharacter*15000)
+	  Sleep($noCharacter*30000)
 	  For $i = 0 To $noCharacter - 1
 		 ApplyToCharacter($hwndAuto, $i)
 	  Next
