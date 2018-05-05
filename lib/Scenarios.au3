@@ -62,17 +62,13 @@ Logon game and check all character
 $pause: wait logon all character
 #ce
 Func ThirdScenario($hwndAuto, $pause)
-   Local $noCharacter = GetNoCharacter($hwndAuto)
    Local $loggedOn = LogOnGameStep($hwndAuto, 5)
    If $loggedOn = -1 Or $loggedOn = 0 Then
 	  ; error dang nhap tat ca
 	  Return -1
    Else
 	  ; bat dau chay hoat dong
-	  Sleep($noCharacter*30000)
-	  For $i = 0 To $noCharacter - 1
-		 ApplyToCharacter($hwndAuto, $i)
-	  Next
+	  ApplyToAllCharacter($hwndAuto)
 	  Sleep($pause*1000)
 	  Return 1
    EndIf

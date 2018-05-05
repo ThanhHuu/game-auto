@@ -4,6 +4,10 @@
 Opt("WinTitleMatchMode", 4)
 
 Dim $LOGON_OPTIONS[4] = ["Ẩn tất cả","Thoát tất cả", "Đăng nhập tất cả", "Ẩn auto xuống khay"]
+Dim $CHARACTER_STATUS_POSITION = 2
+Dim $CHARACTER_LIST_VIEW = "[CLASS:SysListView32;INSTANCE:1]"
+Dim $PROCESS_OF_GAME = "ClientX86.exe"
+Dim $PROCESS_OF_DUMP = "DumpReportX86.exe"
 
 #cs
 Copy file account to auto before Run
@@ -37,7 +41,7 @@ Func StartStep($appPath)
 	  Return -1;
    Else
 	  Local $hwndId = "[TITLE:VIEAUTO.COM - Auto Update]"
-	  footLog("DEBUG", StringFormat("Start %s success. Next to %s", $appPath, $hwndId))
+	  footLog("DEBUG", StringFormat("%s success return %s", "StartStep", $hwndId))
 	  Return $hwndId
    EndIf
 EndFunc
@@ -119,6 +123,10 @@ Func LogOnGameStep($hwndId, $waiting)
 	  Return 0
    Else
 	  ClickButton($hwnd, $btLogOn)
+	  Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
+	  Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
+	  footLog("DEBUG", StringFormat("%s - num of character %s", "LogOnGameStep", $noCharacter))
+	  Sleep($noCharacter*20000)
 	  Return 1
    EndIf
 EndFunc
@@ -149,10 +157,6 @@ Func LogOutGameStep($hwndId, $waiting)
    EndIf
 EndFunc
 
-Dim $CHARACTER_HEADER_POSITION = 1
-Dim $CHARACTER_HEADER_TEXT = "Tên nhân vật"
-Dim $CHARACTER_STATUS_POSITION = 2
-
 #cs
 Check apply for character base on order
 $hwndId: container
@@ -162,40 +166,19 @@ return -1: Not found character
 return -2: Character is offline
 return 1: checked
 #ce
-Func ApplyToCharacter($hwndId, $chaOrder)
-   Local $hwnd = WinWait($hwndId, "", 30)
-   If $hwnd = 0 Then
-	  Return 0
-   EndIf
-   Local $lsCha = FindListView($hwnd, $CHARACTER_HEADER_POSITION, $CHARACTER_HEADER_TEXT, 30)
-   If $lsCha = -1 Or $lsCha = -2 Then
-	  Return -1
-   EndIf
-   Local $chaStatus = _GUICtrlListView_GetItemText($lsCha, $chaOrder, $CHARACTER_STATUS_POSITION)
-   If StringStripWS ($chaStatus, 8) == "OFFLINE" Then
-	  Return -2
-   EndIf
-   WinActivate($hwnd)
-   CheckItemInList($lsCha, $chaOrder)
+Func ApplyToAllCharacter($hwnd)
+   Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
+   Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
+   For $i = 0 To $noCharacter - 1
+	  Local $chaStatus = _GUICtrlListView_GetItemText($listView, $i, $CHARACTER_STATUS_POSITION)
+	  If StringStripWS ($chaStatus, 8) == "OFFLINE" Then
+		 Return -2
+	  EndIf
+	  CheckItemInList($listView, $i)
+	  Sleep(300)
+   Next
    Return 1
 EndFunc
-
-#cs
-get number of character in list
-#ce
-Func GetNoCharacter($hwndId)
-   Local $hwnd = WinWait($hwndId, "", 30)
-   If $hwnd = 0 Then
-	  Return 0
-   EndIf
-   Local $lsCha = FindListView($hwnd, $CHARACTER_HEADER_POSITION, $CHARACTER_HEADER_TEXT, 30)
-   If $lsCha = -1 Or $lsCha = -2 Then
-	  Return -1
-   EndIf
-   Local $noCharacter = _GUICtrlListView_GetItemCount($lsCha)
-   Return $noCharacter
-EndFunc
-
 
 #cs
 Function generate file
@@ -222,9 +205,6 @@ Func CreateAccountsFile($template, $accountInfos)
    Next
    Return $accFile
 EndFunc
-
-Dim $PROCESS_OF_GAME = "ClientX86.exe"
-Dim $PROCESS_OF_DUMP = "DumpReportX86.exe"
 
 #cs
 Close auto

@@ -153,34 +153,6 @@ EndFunc
 
 
 #cs
-Function get list view has header at $headerPosition equal $headerText
-$hwnd: container
-$headerPosition: header position
-$headerText: header text
-$waitingTime: wait in seconds
-return -1: not found
-return -2: disable list view
-return handler
-#ce
-Func FindListView($hwnd, $headerPosition, $headerText, $waitingTime)
-   Local $count = 0;
-   While $count < 50
-	  Local $lvWnd = ControlGetHandle($hwnd, "", "[CLASS:SysListView32;INSTANCE:" & $count & "]")
-	  If $lvWnd <> 0 And ControlCommand($lvWnd, "", _GUICtrlListView_GetHeader($lvWnd), "IsVisible", "") <> 0 Then
-		 If _GUICtrlListView_GetColumn ($lvWnd, $headerPosition)[5] == $headerText Then
-			If IsDisableControl($hwnd, $lvWnd, $waitingTime) Then
-			   Return -2
-			Else
-			   Return $lvWnd
-			EndIf
-		 EndIf
-	  EndIf
-	  $count += 1
-   WEnd
-   Return -1
-EndFunc
-
-#cs
 Function help to left mouse click item in list view
 $lvWnd: list view
 $index: index need to left click
@@ -190,6 +162,7 @@ return 1: clicked
 Func CheckItemInList($lvWnd, $index)
    Local $total = _GUICtrlListView_GetItemCount ($lvWnd)
    If $index >= $total Then
+	  footLog("DEBUG", StringFormat("%s - Num of character = %s", "CheckItemInList", $total))
 	  return -1
    EndIf
    _GUICtrlListView_ClickItem($lvWnd, $index, "left")
@@ -220,7 +193,7 @@ Func footLog($level, $msg)
 	  EndIf
    EndSwitch
    If $allowLog Then
-	  _FileWriteLog($LOG_FILE, @TAB & @TAB & $level & @TAB & @TAB & $msg)
+	  _FileWriteLog($LOG_FILE, @TAB & $level & @TAB & $msg)
    EndIf
 EndFunc
 

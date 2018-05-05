@@ -12,6 +12,7 @@ Global $startDate
 Global $features
 Local $variables = ReadVariable("Variables.cons")
 Global $APP_PATH = $variables.Item("$APP_PATH")
+Global $LOG_LEVEL = $variables.Item("$LOG_LEVEL")
 If $APP_PATH = "{}" Then
    MsgBox(16, "Error Load Variable", "Confiure variables in Variables.cons before")
    Exit
