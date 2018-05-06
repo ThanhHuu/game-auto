@@ -107,6 +107,15 @@ While True
 	  footLog("INFO", StringFormat("%s - Reset for date %s", "Main", _NowCalcDate()))
 	  ResetBeforeInitialization()
 	  ExitLoop
+   Else
+	  While True
+		 Sleep(120000)
+		 If _NowCalcDate() > $startDate Then
+			footLog("INFO", StringFormat("%s - Reset for date %s", "Main", _NowCalcDate()))
+			ResetBeforeInitialization()
+			ExitLoop
+		 EndIf
+	  WEnd
    EndIf
 WEnd
 
