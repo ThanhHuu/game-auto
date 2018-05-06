@@ -187,7 +187,21 @@ Func MarkFeatureDone($featureName)
    FileMove($ignoreAcc, $done)
 EndFunc
 
-Func CheckFeatureDone($featureName)
+Func CheckFeatureIsIgnore($feature)
+   Local $enable = $feature.Item("enable")
+   If $enable = 0 Then
+	  Return True
+   EndIf
+
+   If $feature.Exists("scheduler") Then
+	  Local $toDay = _DateDayOfWeek(@WDAY, $DMW_SHORTNAME)
+	  Local $scheduler = $feature.Item("scheduler")
+	  If StringInStr($scheduler, $toDay) = 0 Then
+		 Return True
+	  EndIf
+   EndIf
+
+   Local $featureName = $feature.Item("feature")
    Local $done = $featureName & ".done"
    Return FileExists($done)
 EndFunc

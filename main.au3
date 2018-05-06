@@ -92,9 +92,8 @@ While True
    $features = InitFeatures("Features.fea")
    Local $reset = False
    For $feature In $features
-	  Local $enable = $feature.Item("enable")
 	  Local $featureName = $feature.Item("feature")
-	  If $enable = 0 Or CheckFeatureDone($featureName) Then
+	  If CheckFeatureIsIgnore($feature) Then
 		 footLog("INFO", StringFormat("%s - Ignore feature %s", "Main", $featureName))
 		 ContinueLoop
 	  EndIf
