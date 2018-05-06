@@ -3,5 +3,5 @@ feature=NguTrucDam1;enable=1;time=2
 feature=NguTrucDam2;enable=1;time=2
 feature=BiCanh1;enable=1;time=2
 feature=BiCanh2;enable=1;time=2
-feature=NhanMonQuan;enable=1;time=15
-feature=Action;enable=1;time=0;scenarios=LatThe|CauPhuc|NhanSoiNoi|BuyItems
+feature=NhanMonQuan;enable=1;time=15;scenarios=BuyItems
+feature=Action;enable=1;time=0;scenarios=LatThe|CauPhuc|NhanSoiNoi
