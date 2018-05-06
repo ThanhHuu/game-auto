@@ -1,2 +1,2 @@
 # game-auto
-My autoit script for game
+Release-1.0
