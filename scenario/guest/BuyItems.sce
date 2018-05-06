@@ -1,4 +1,6 @@
 action=click;x=331;y=11;pause=300
+action=press;key={TAB};pause=300
+action=press;key={ESC};pause=300
 action=press;key=0;pause=300
 action=click;x=441;y=333;pause=500
 action=click;x=441;y=333;pause=10000
