@@ -13,7 +13,7 @@ Dim $SHOW_HIDE_SCENARIO_PATTERN = "ShowHide{}.sce"
 Dim $WINDOW_UPDATE = "[TITLE:VIEAUTO.COM - Auto Update]"
 Dim $WINDOW_LOGIN = "[TITLE:Tài khoản VIEAUTO.COM]"
 Dim $WINDOW_AUTO = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
-Dim $WINDOW_ERROR[1] = ["[TITLE:nkvsAuto]"]
+Dim $WINDOW_ERROR[2] = ["[TITLE:nkvsAuto]", "[TITLE:ClienX86.exe]"]
 
 Func CleanUpError()
    For $hwndError In $WINDOW_ERROR

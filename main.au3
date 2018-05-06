@@ -2,20 +2,25 @@
 #include-once
 #include "lib\Scenarios.au3"
 
-FileInstall("conf\Action.tm", "Action.tm")
-FileInstall("conf\DieuDoi.tm", "DieuDoi.tm")
-FileInstall("conf\NhanMonQuan.tm", "NhanMonQuan.tm")
-FileInstall("conf\Features.fea", "Features.fea")
+
 FileInstall("conf\Variables.cons", "Variables.cons")
-FileInstall("scenario\BuyItems.sce", "BuyItems.sce")
-FileInstall("scenario\CauPhuc.sce", "CauPhuc.sce")
-FileInstall("scenario\LatThe.sce", "LatThe.sce")
-FileInstall("scenario\NhanSoiNoi.sce", "NhanSoiNoi.sce")
-FileInstall("scenario\ShowHide0.sce", "ShowHide0.sce")
-FileInstall("scenario\ShowHide1.sce", "ShowHide1.sce")
-FileInstall("scenario\ShowHide2.sce", "ShowHide2.sce")
-FileInstall("scenario\ShowHide3.sce", "ShowHide3.sce")
-FileInstall("scenario\ShowHide4.sce", "ShowHide4.sce")
+FileInstall("conf\Features.fea", "Features.fea")
+FileInstall("scenario\host\BuyItems.sce", "scenario\BuyItems.sce", 1)
+FileInstall("scenario\host\CauPhuc.sce", "scenario\CauPhuc.sce", 1)
+FileInstall("scenario\host\LatThe.sce", "scenario\LatThe.sce", 1)
+FileInstall("scenario\host\NhanSoiNoi.sce", "scenario\NhanSoiNoi.sce", 1)
+FileInstall("scenario\host\ShowHide0.sce", "scenario\ShowHide0.sce", 1)
+FileInstall("scenario\host\ShowHide1.sce", "scenario\ShowHide1.sce", 1)
+FileInstall("scenario\host\ShowHide2.sce", "scenario\ShowHide2.sce", 1)
+FileInstall("scenario\host\ShowHide3.sce", "scenario\ShowHide3.sce", 1)
+FileInstall("scenario\host\ShowHide4.sce", "scenario\ShowHide4.sce", 1)
+FileInstall("tm\Action.tm", "tm\Action.tm", 1)
+FileInstall("tm\BiCanh1.tm", "tm\BiCanh1.tm", 1)
+FileInstall("tm\BiCanh2.tm", "tm\BiCanh2.tm", 1)
+FileInstall("tm\NguTrucDam1.tm", "tm\NguTrucDam1.tm", 1)
+FileInstall("tm\NguTrucDam2.tm", "tm\NguTrucDam2.tm", 1)
+FileInstall("tm\NhanMonQuan.tm", "tm\NhanMonQuan.tm", 1)
+FileInstall("tm\ThuVePhai.tm", "tm\ThuVePhai.tm", 1)
 
 Global $startDate
 Global $features
@@ -34,7 +39,7 @@ return 1: next feature
 Func RunFeature($feature)
    Local $featureName = $feature.Item("feature")
    Local $time = $feature.Item("time")
-   Local $template = $featureName & ".tm"
+   Local $template = "tm\" & $featureName & ".tm"
    footLog("INFO", StringFormat("%s - Run feature %s", "Main", $featureName))
    Local $files = _FileListToArrayRec(@WorkingDir, "*.acc", 1 + 4, 1, 1)
    If $files <> "" Then
@@ -65,7 +70,7 @@ Func RunFeature($feature)
 			footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))
 			Local $scenarios = StringSplit($feature.Item("scenarios"), "|")
 			For $i = 1 To $scenarios[0]
-			   Local $sceFile = $scenarios[$i] & ".sce"
+			   Local $sceFile = "scenario\" & $scenarios[$i] & ".sce"
 
 			   ApplyActionSteps($hwndAuto, $sceFile)
 			Next

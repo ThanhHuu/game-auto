@@ -44,7 +44,7 @@
             <Invite list="{character2};{character3};{character4};{character5};"/>
         </TeamTab>
         <TaskTab lichluyenteam="0" vantieuteam="1" partner="0" mapttc="0">
-            <Partner all="0" done="0" skill0="1;0;0" skill1="1;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
+            <Partner all="0" done="0" skill0="0;0;0" skill1="0;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
             <Award list="Tử Thủy Tinh;Lam Thủy;Vàng khóa;Cống Hiến Sư Môn;Truyện Ký;Bạc khóa"/>
             <LichLuyen members="0" recipe="0">
                 <Reward check="1" reward="13" threshold="0"/>
@@ -134,7 +134,7 @@
         </SkillTab>
         <TeamTab value="0" invitelist="0" accept="0" kick="0" onlyleader="1" nameleader="{character1}" leaveifleader="0" autojoin="0"/>
         <TaskTab lichluyenteam="0" vantieuteam="1" partner="0" mapttc="0">
-            <Partner all="0" done="0" skill0="1;0;0" skill1="1;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
+            <Partner all="0" done="0" skill0="0;0;0" skill1="0;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
             <Award list="Tử Thủy Tinh;Lam Thủy;Vàng khóa;Cống Hiến Sư Môn;Truyện Ký;Bạc khóa"/>
             <LichLuyen members="0" recipe="0">
                 <Reward check="1" reward="13" threshold="0"/>
@@ -224,7 +224,7 @@
         </SkillTab>
         <TeamTab value="0" invitelist="0" accept="0" kick="0" onlyleader="1" nameleader="{character1}" leaveifleader="0" autojoin="0"/>
         <TaskTab lichluyenteam="0" vantieuteam="1" partner="0" mapttc="0">
-            <Partner all="0" done="0" skill0="1;0;0" skill1="1;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
+            <Partner all="0" done="0" skill0="0;0;0" skill1="0;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
             <Award list="Tử Thủy Tinh;Lam Thủy;Vàng khóa;Cống Hiến Sư Môn;Truyện Ký;Bạc khóa"/>
             <LichLuyen members="0" recipe="0">
                 <Reward check="1" reward="13" threshold="0"/>
@@ -314,7 +314,7 @@
         </SkillTab>
         <TeamTab value="0" invitelist="0" accept="0" kick="0" onlyleader="1" nameleader="{character1}" leaveifleader="0" autojoin="0"/>
         <TaskTab lichluyenteam="0" vantieuteam="1" partner="0" mapttc="0">
-            <Partner all="0" done="0" skill0="1;0;0" skill1="1;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
+            <Partner all="0" done="0" skill0="0;0;0" skill1="0;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
             <Award list="Tử Thủy Tinh;Lam Thủy;Vàng khóa;Cống Hiến Sư Môn;Truyện Ký;Bạc khóa"/>
             <LichLuyen members="0" recipe="0">
                 <Reward check="1" reward="13" threshold="0"/>
@@ -404,7 +404,7 @@
         </SkillTab>
         <TeamTab value="0" invitelist="0" accept="0" kick="0" onlyleader="1" nameleader="{character1}" leaveifleader="0" autojoin="0"/>
         <TaskTab lichluyenteam="0" vantieuteam="1" partner="0" mapttc="0">
-            <Partner all="0" done="0" skill0="1;0;0" skill1="1;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
+            <Partner all="0" done="0" skill0="0;0;0" skill1="0;8;0" skill2="0;0;0" skill3="0;0;0" skill4="1;0;0"/>
             <Award list="Tử Thủy Tinh;Lam Thủy;Vàng khóa;Cống Hiến Sư Môn;Truyện Ký;Bạc khóa"/>
             <LichLuyen members="0" recipe="0">
                 <Reward check="1" reward="13" threshold="0"/>
