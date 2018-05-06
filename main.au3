@@ -19,9 +19,9 @@ FileInstall("scenario\ShowHide4.sce", "ShowHide4.sce")
 
 Global $startDate
 Global $features
+Local $variables = ReadVariable("Variables.cons")
 Global $APP_PATH = $variables.Item("$APP_PATH")
 Global $LOG_LEVEL = $variables.Item("$LOG_LEVEL")
-Local $variables = ReadVariable("Variables.cons")
 If $APP_PATH = "{}" Then
    MsgBox(16, "Error Load Variable", "Confiure variables in Variables.cons before")
    Exit
