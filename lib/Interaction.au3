@@ -1,6 +1,7 @@
 #RequireAdmin
 #include-once
 #include "Util.au3"
+#include "Action.au3"
 Opt("WinTitleMatchMode", 4)
 
 Dim $LOGON_OPTIONS[4] = ["Ẩn tất cả","Thoát tất cả", "Đăng nhập tất cả", "Ẩn auto xuống khay"]
@@ -8,6 +9,10 @@ Dim $CHARACTER_STATUS_POSITION = 2
 Dim $CHARACTER_LIST_VIEW = "[CLASS:SysListView32;INSTANCE:1]"
 Dim $PROCESS_OF_GAME = "ClientX86.exe"
 Dim $PROCESS_OF_DUMP = "DumpReportX86.exe"
+Dim $SHOW_HIDE_SCENARIO_PATTERN = "ShowHide{}.sce"
+Dim $WINDOW_UPDATE = "[TITLE:VIEAUTO.COM - Auto Update]"
+Dim $WINDOW_LOGIN = "[TITLE:Tài khoản VIEAUTO.COM]"
+Dim $WINDOW_AUTO = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 
 #cs
 Copy file account to auto before Run
@@ -24,6 +29,7 @@ Func PrepareAccountStep($appPath, $accFile)
 	  ; not found Accounts.xml
 	  Return -1
    EndIf
+   footLog("DEBUG", StringFormat("%s - Prepare for acc %s", "PrepareAccountStep", $accFile))
    Local $parentDir = StringLeft($appPath, StringInStr($appPath, "\", 0, -1))
    Local $settingDir = $parentDir & "Settings"
    Return FileMove($accFile, $settingDir, 1)
@@ -40,9 +46,8 @@ Func StartStep($appPath)
    If Run($appPath) = 0 Then
 	  Return -1;
    Else
-	  Local $hwndId = "[TITLE:VIEAUTO.COM - Auto Update]"
-	  footLog("DEBUG", StringFormat("%s success return %s", "StartStep", $hwndId))
-	  Return $hwndId
+	  footLog("DEBUG", StringFormat("%s success return %s", "StartStep", $WINDOW_UPDATE))
+	  Return $WINDOW_UPDATE
    EndIf
 EndFunc
 
@@ -72,7 +77,8 @@ Func UpdateStep($hwndId, $waiting)
 		 ContinueLoop
 	  Else
 		 ClickButton($hwnd, $hbtBegin)
-		 Return "[TITLE:Tài khoản VIEAUTO.COM]"
+		 footLog("DEBUG", StringFormat("%s - Update success return %s", "UpdateStep", $WINDOW_LOGIN))
+		 Return $WINDOW_LOGIN
 	  EndIf
    WEnd
    ; try 3 times still failure
@@ -97,7 +103,8 @@ Func LoginStep($hwndId, $waiting)
 	  Return -1
    Else
 	  ClickButton($hwnd, $hbtLogin)
-	  Return "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
+	  footLog("DEBUG", StringFormat("%s - Update success return %s", "LoginStep", $WINDOW_AUTO))
+	  Return $WINDOW_AUTO
    EndIf
 EndFunc
 
@@ -125,7 +132,7 @@ Func LogOnGameStep($hwndId, $waiting)
 	  ClickButton($hwnd, $btLogOn)
 	  Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
 	  Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
-	  footLog("DEBUG", StringFormat("%s - num of character %s", "LogOnGameStep", $noCharacter))
+	  footLog("DEBUG", StringFormat("%s - For %s characters", "LogOnGameStep", $noCharacter))
 	  Sleep($noCharacter*20000)
 	  Return 1
    EndIf
@@ -153,6 +160,7 @@ Func LogOutGameStep($hwndId, $waiting)
 	  Return 0
    Else
 	  ClickButton($hwnd, $btLogOut)
+	  footLog("DEBUG", StringFormat("%s - Logout before close", "LogOutGameStep"))
 	  Return 1
    EndIf
 EndFunc
@@ -169,10 +177,12 @@ return 1: checked
 Func ApplyToAllCharacter($hwnd)
    Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
    Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
+   WinActivate($hwnd)
    For $i = 0 To $noCharacter - 1
 	  Local $chaStatus = _GUICtrlListView_GetItemText($listView, $i, $CHARACTER_STATUS_POSITION)
 	  If StringStripWS ($chaStatus, 8) == "OFFLINE" Then
-		 Return -2
+		 footLog("DEBUG", StringFormat("%s - Character %i still OFFLINE", "ApplyToAllCharacter", $i))
+		 ContinueLoop
 	  EndIf
 	  CheckItemInList($listView, $i)
 	  Sleep(300)
@@ -231,7 +241,7 @@ Func StopAutoStep($hwndId, $waiting)
    EndIf
    Sleep(1000)
    If ProcessExists($PROCESS_OF_GAME) <> 0 Then
-	  ; call kill process
+	  footLog("DEBUG", StringFormat("%s - Still exists process %s", "StopAutoStep", $PROCESS_OF_GAME))
 	  Local $count = 0;
 	  While $count < 100
 		 $count += 1
@@ -247,7 +257,7 @@ Func StopAutoStep($hwndId, $waiting)
 	  EndIf
    EndIf
    If ProcessExists($PROCESS_OF_DUMP) <> 0 Then
-	  ; call kill process
+	  footLog("DEBUG", StringFormat("%s - Still exists process %s", "StopAutoStep", $PROCESS_OF_DUMP))
 	  While $count < 100
 		 $count += 1
 		 If ProcessClose($PROCESS_OF_DUMP) = 1 Then
@@ -259,6 +269,24 @@ Func StopAutoStep($hwndId, $waiting)
    EndIf
 
    Return 1
+EndFunc
+
+Func ApplyActionSteps($hwnd, $scenario)
+   Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
+   Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
+
+   For $i = 0 To $noCharacter
+	  Local $showHideSce = StringReplace($SHOW_HIDE_SCENARIO_PATTERN, "{}", $i)
+	  Local $showHideSteps = BuildActionSteps($showHideSce)
+
+	  ; Show game
+	  ImplementAction($showHideSteps)
+	  footLog("DEBUG", StringFormat("%s - Run scenario %s", "ApplyActionSteps", $scenario))
+	  Local $actionSteps = BuildActionSteps($scenario)
+	  ImplementAction($actionSteps)
+	  ; Hide game
+	  ImplementAction($showHideSteps)
+   Next
 EndFunc
 
 

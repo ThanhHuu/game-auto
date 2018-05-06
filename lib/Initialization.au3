@@ -53,12 +53,12 @@ return object with key:	feature - value
 Func ParseFeature($strConfig)
    Local $obj = ObjCreate("Scripting.Dictionary")
    Local $arInfo = StringSplit($strConfig, ";")
-   If $arInfo[0] <> 3 Then
+   If $arInfo[0] < 3 Then
 	  Return 0
    EndIf
    For $i = 1 to $arInfo[0]
 	  Local $arItem = StringSplit($arInfo[$i], "=")
-	  If $arItem[0] <> 2 Then
+	  If $arItem[0] < 2 Then
 		 Return 0
 	  EndIf
 	  $obj.ADD($arItem[1], $arItem[2])

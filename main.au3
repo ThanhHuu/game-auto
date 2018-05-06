@@ -7,6 +7,14 @@ FileInstall("conf\DieuDoi.tm", "DieuDoi.tm")
 FileInstall("conf\NhanMonQuan.tm", "NhanMonQuan.tm")
 FileInstall("conf\Features.fea", "Features.fea")
 FileInstall("conf\Variables.cons", "Variables.cons")
+FileInstall("scenario\BuyItems.sce", "BuyItems.sce")
+FileInstall("scenario\CauPhuc.sce", "CauPhuc.sce")
+FileInstall("scenario\LatThe.sce", "LatThe.sce")
+FileInstall("scenario\ShowHide0.sce", "ShowHide0.sce")
+FileInstall("scenario\ShowHide1.sce", "ShowHide1.sce")
+FileInstall("scenario\ShowHide2.sce", "ShowHide2.sce")
+FileInstall("scenario\ShowHide3.sce", "ShowHide3.sce")
+FileInstall("scenario\ShowHide4.sce", "ShowHide4.sce")
 
 Global $startDate
 Global $features
@@ -26,10 +34,13 @@ Func RunFeature($feature)
    Local $featureName = $feature.Item("feature")
    Local $time = $feature.Item("time")
    Local $template = $featureName & ".tm"
+   footLog("INFO", StringFormat("%s - Run feature %s", "Main", $featureName))
    Local $files = _FileListToArrayRec(@WorkingDir, "*.acc", 1 + 4, 1, 1)
    If $files <> "" Then
+	  footLog("INFO", StringFormat("%s - Num of file %i", "Main", $files[0]))
 	  Local $ignoreAccounts = ReadIgnoreAccount($featureName)
 	  For $i = 1 To $files[0]
+
 		 Local $accFile = $files[$i]
 		 If $ignoreAccounts.Exists($accFile) Then
 			; Ingore this account
@@ -49,12 +60,23 @@ Func RunFeature($feature)
 			Exit
 		 EndIf
 		 ThirdScenario($hwndAuto, $time*60)
+
+		 If $feature.Exists("scenarios") Then
+			footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))
+			Local $scenarios = StringSplit($feature.Item("scenarios"), "|")
+			For $i = 1 To $scenarios[0]
+			   Local $sceFile = $scenarios[$i] & ".sce"
+
+			   ApplyActionSteps($hwndAuto, $sceFile)
+			Next
+		 EndIf
 		 FinalScenario($hwndAuto)
 
 		 If _NowCalcDate() > $startDate Then
 			Return -1
 		 EndIf
 	  Next
+	  footLog("INFO", StringFormat("%s - Done feature %s", "RunFeature", $featureName))
 	  MarkFeatureDone($featureName)
    EndIf
    Return 1
@@ -68,15 +90,17 @@ While True
 	  Local $enable = $feature.Item("enable")
 	  Local $featureName = $feature.Item("feature")
 	  If $enable = 0 Or CheckFeatureDone($featureName) Then
-		 ; Skip feature
+		 footLog("INFO", StringFormat("%s - Ignore feature %s", "Main", $featureName))
 		 ContinueLoop
 	  EndIf
+
 	  If RunFeature($feature) = -1 Then
 		 $reset = True
 		 ExitLoop
 	  EndIf
    Next
    If $reset Then
+	  footLog("INFO", StringFormat("%s - Reset for date %s", "Main", _NowCalcDate()))
 	  ResetBeforeInitialization()
 	  ExitLoop
    EndIf

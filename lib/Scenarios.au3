@@ -3,6 +3,7 @@
 #include "Util.au3"
 #include "Interaction.au3"
 #include "Initialization.au3"
+#include "Action.au3"
 
 Dim $APP_PATH = "C:\Users\htra\Downloads\Auto Ngao Kiem Vo Song 2\AutoUpdate.exe"
 

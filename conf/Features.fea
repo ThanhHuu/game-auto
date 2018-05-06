@@ -1,3 +1,3 @@
 feature=DieuDoi;enable=1;time=3
-feature=NhanMonQuan;enable=0;time=15
-feature=Action;enable=0;time=10
+feature=NhanMonQuan;enable=1;time=15
+feature=Action;enable=1;time=1;scenarios=LatThe|CauPhuc|BuyItems
