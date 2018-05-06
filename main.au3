@@ -21,7 +21,6 @@ FileInstall("tm\NguTrucDam1.tm", "NguTrucDam1.tm", 1)
 FileInstall("tm\NguTrucDam2.tm", "NguTrucDam2.tm", 1)
 FileInstall("tm\NhanMonQuan.tm", "NhanMonQuan.tm", 1)
 FileInstall("tm\ThuVePhai.tm", "ThuVePhai.tm", 1)
->>>>>>> develop
 
 Global $startDate
 Global $features
