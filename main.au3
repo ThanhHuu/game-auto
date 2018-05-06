@@ -39,7 +39,7 @@ return 1: next feature
 Func RunFeature($feature)
    Local $featureName = $feature.Item("feature")
    Local $time = $feature.Item("time")
-   Local $template = "tm\" & $featureName & ".tm"
+   Local $template = $featureName & ".tm"
    footLog("INFO", StringFormat("%s - Run feature %s", "Main", $featureName))
    Local $files = _FileListToArrayRec(@WorkingDir, "*.acc", 1 + 4, 1, 1)
    If $files <> "" Then
@@ -70,7 +70,7 @@ Func RunFeature($feature)
 			footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))
 			Local $scenarios = StringSplit($feature.Item("scenarios"), "|")
 			For $i = 1 To $scenarios[0]
-			   Local $sceFile = "scenario\" & $scenarios[$i] & ".sce"
+			   Local $sceFile = $scenarios[$i] & ".sce"
 
 			   ApplyActionSteps($hwndAuto, $sceFile)
 			Next
