@@ -10,6 +10,7 @@ FileInstall("conf\Variables.cons", "Variables.cons")
 FileInstall("scenario\BuyItems.sce", "BuyItems.sce")
 FileInstall("scenario\CauPhuc.sce", "CauPhuc.sce")
 FileInstall("scenario\LatThe.sce", "LatThe.sce")
+FileInstall("scenario\NhanSoiNoi.sce", "NhanSoiNoi.sce")
 FileInstall("scenario\ShowHide0.sce", "ShowHide0.sce")
 FileInstall("scenario\ShowHide1.sce", "ShowHide1.sce")
 FileInstall("scenario\ShowHide2.sce", "ShowHide2.sce")
@@ -18,9 +19,9 @@ FileInstall("scenario\ShowHide4.sce", "ShowHide4.sce")
 
 Global $startDate
 Global $features
-Local $variables = ReadVariable("Variables.cons")
 Global $APP_PATH = $variables.Item("$APP_PATH")
 Global $LOG_LEVEL = $variables.Item("$LOG_LEVEL")
+Local $variables = ReadVariable("Variables.cons")
 If $APP_PATH = "{}" Then
    MsgBox(16, "Error Load Variable", "Confiure variables in Variables.cons before")
    Exit
@@ -47,8 +48,6 @@ Func RunFeature($feature)
 			ContinueLoop
 		 EndIf
 
-		 MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
-
 		 Local $next = FirstScenario($template, $accFile)
 		 If $next = 0 Then
 			; Error step move file Accounts.xml
@@ -60,6 +59,7 @@ Func RunFeature($feature)
 			Exit
 		 EndIf
 		 ThirdScenario($hwndAuto, $time*60)
+		 MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
 
 		 If $feature.Exists("scenarios") Then
 			footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))

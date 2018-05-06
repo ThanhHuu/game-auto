@@ -13,6 +13,17 @@ Dim $SHOW_HIDE_SCENARIO_PATTERN = "ShowHide{}.sce"
 Dim $WINDOW_UPDATE = "[TITLE:VIEAUTO.COM - Auto Update]"
 Dim $WINDOW_LOGIN = "[TITLE:Tài khoản VIEAUTO.COM]"
 Dim $WINDOW_AUTO = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
+Dim $WINDOW_ERROR[1] = ["[TITLE:nkvsAuto]"]
+
+Func CleanUpError()
+   For $hwndError In $WINDOW_ERROR
+	  If WinExists($hwndError) Then
+		 footLog("DEBUG", StringFormat("$s - Exists error %s", "CleanUpError", $hwndError))
+		 WinClose($hwndError)
+	  EndIf
+   Next
+EndFunc
+
 
 #cs
 Copy file account to auto before Run
@@ -275,7 +286,7 @@ Func ApplyActionSteps($hwnd, $scenario)
    Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
    Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
 
-   For $i = 0 To $noCharacter
+   For $i = 0 To $noCharacter - 1
 	  Local $showHideSce = StringReplace($SHOW_HIDE_SCENARIO_PATTERN, "{}", $i)
 	  Local $showHideSteps = BuildActionSteps($showHideSce)
 

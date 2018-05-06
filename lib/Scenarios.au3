@@ -13,6 +13,7 @@ return 1: success
 Prepare account and start auto
 #ce
 Func FirstScenario($template, $accFile)
+   CleanUpError()
    If FileExists($template) = 0 Or FileExists($template) = 0 Then
 	  ; Missing param
 	  Return 0
