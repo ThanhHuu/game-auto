@@ -1,2 +1,2 @@
 # game-auto
-This is release using for computer host (my computer)
+This is release using for guest host (virtual machine)
