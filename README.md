@@ -1,2 +1,2 @@
 # game-auto
-My autoit script for game
+This is release using for computer host (my computer)
