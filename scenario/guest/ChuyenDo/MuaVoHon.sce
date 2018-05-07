@@ -1,0 +1,10 @@
+action=click;x=328;y=12;pause=200
+action=press;key={TAB};pause=200
+action=press;key={ESC};pause=200
+action=press;key=b;pause=200
+action=click;x=1335;y=736;pause=200
+action=click;x=421;y=516;pause=200
+action=click;x=427;y=442;pause=200
+action=click;x=552;y=359;pause=200
+action=click;x=974;y=540;pause=200
+action=press;key={ESC};pause=200
