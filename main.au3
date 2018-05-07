@@ -76,6 +76,7 @@ Func RunFeature($feature)
 			   FinalScenario($hwndAuto)
 			EndIf
 		 Next
+		 MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
 
 		 If _NowCalcDate() > $startDate Then
 			Return -1
