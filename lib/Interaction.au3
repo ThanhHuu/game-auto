@@ -19,7 +19,7 @@ Func CleanUpError()
    For $hwndError In $WINDOW_ERROR
 	  If WinExists($hwndError) Then
 		 footLog("DEBUG", StringFormat("$s - Exists error %s", "CleanUpError", $hwndError))
-		 If WinClose($hwndError) Then
+		 If WinKill($hwndError) Then
 			footLog("DEBUG", StringFormat("$s - Closed error %s", "CleanUpError", $hwndError))
 		 Else
 			footLog("ERROR", StringFormat("$s - Can not close error %s", "CleanUpError", $hwndError))
