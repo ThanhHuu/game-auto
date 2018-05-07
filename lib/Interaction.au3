@@ -271,11 +271,11 @@ Func KillProcess($processName)
 		 Local $count = 0;
 		 While $count < 100
 			$count += 1
-			If ProcessClose($PROCESS_OF_GAME) = 1 Then
+			If ProcessClose($processName) = 1 Then
 			   footLog("DEBUG", StringFormat("%s - Killed process %s", "StopAutoStep", $processName))
 			   ExitLoop
 			EndIf
-			Sleep(500)
+			Sleep(100)
 		 WEnd
 		 If $count = 100 Then
 			footLog("ERROR", StringFormat("%s - Can not exit exists process %s", "StopAutoStep", $processName))
