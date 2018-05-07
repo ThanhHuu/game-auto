@@ -8,11 +8,13 @@ FileInstall("conf\Features.fea", "Features.fea")
 FileInstall("scenario\guest\ChuyenDo\ShowHide0.sce", "ShowHide0.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\ShowHide1.sce", "ShowHide1.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\ChonItem.sce", "ChonItem.sce", 1)
-FileInstall("scenario\guest\ChuyenDo\DenDiemGD.sce", "DenDiemGD.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\DenDiemGD0.sce", "DenDiemGD0.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\DenDiemGD1.sce", "DenDiemGD1.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\HoanTatGD.sce", "HoanTatGD.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\MoiGD.sce", "MoiGD.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\MuaVoHon.sce", "MuaVoHon.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\NhanGD.sce", "NhanGD.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\LoVoHon.sce", "LoVoHon.sce", 1)
 FileInstall("tm\ChuyenDo.tm", "ChuyenDo.tm", 1)
 
 Global $startDate
@@ -35,6 +37,7 @@ Func RunFeature($feature)
    Local $template = $featureName & ".tm"
    footLog("INFO", StringFormat("%s - Run feature %s", "Main", $featureName))
    Local $files = _FileListToArrayRec(@WorkingDir, "*.acc", 1 + 4, 1, 1)
+   Local $count = 0
    If $files <> "" Then
 	  footLog("INFO", StringFormat("%s - Num of file %i", "Main", $files[0]))
 	  Local $ignoreAccounts = ReadIgnoreAccount($featureName)
@@ -51,6 +54,7 @@ Func RunFeature($feature)
 
 		 Local $accounts = ParseAccounts($accFile)
 		 For $account In $accounts
+			$count += 1
 			Local $newAccounts[2] = [$account, $targetAccount]
 			Local $next = FirstScenario($template, $newAccounts)
 			If $next = 0 Then
@@ -67,16 +71,25 @@ Func RunFeature($feature)
 			   footLog("ERROR", StringFormat("$s - Error run for %s", "RunFeature", $accFile))
 			Else
 			   ApplyActionStepsForChar($hwndAuto, "MuaVoHon.sce", 0)
-			   ApplyActionStepsForChar($hwndAuto, "DenDiemGD.sce", 0)
-			   ApplyActionStepsForChar($hwndAuto, "DenDiemGD.sce", 1)
+			   ApplyActionStepsForChar($hwndAuto, "DenDiemGD0.sce", 0)
+			   If $count = 1 Then
+				  ApplyActionStepsForChar($hwndAuto, "DenDiemGD1.sce", 1)
+			   EndIf
 			   ApplyActionStepsForChar($hwndAuto, "MoiGD.sce", 0)
 			   ApplyActionStepsForChar($hwndAuto, "NhanGD.sce", 1)
 			   ApplyActionStepsForChar($hwndAuto, "ChonItem.sce", 0)
+			   Sleep(3000)
 			   ApplyActionStepsForChar($hwndAuto, "HoanTatGD.sce", 1)
+
 			   FinalScenario($hwndAuto)
 			EndIf
 		 Next
 		 MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
+		 If $count = 45 Then
+			footLog("DEBUG", StringFormat("%s - Done chuyen do cho %i character", "RunFeature", $count))
+			$count = 0
+			ApplyActionStepsForChar($hwndAuto, "LoVoHon.sce", 1)
+		 EndIf
 
 		 If _NowCalcDate() > $startDate Then
 			Return -1
