@@ -5,5 +5,5 @@ action=press;key=0;pause=200
 action=click;x=441;y=333;pause=500
 action=click;x=439;y=336;pause=10000
 action=press;key={TAB};pause=200
-action=click;x=1150;y=331;pause=80000
+action=click;x=1155;y=331;pause=10000
 action=press;key={TAB};pause=200
