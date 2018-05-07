@@ -53,5 +53,5 @@ action=click;x=1587;y=294;pause=0
 action=click;x=1587;y=334;pause=0
 action=click;x=1587;y=374;pause=0
 action=click;x=1587;y=414;pause=0
-action=click;x=930;y=622;pause=200
-action=click;x=1010;y=623;pause=200
+action=click;x=930;y=622;pause=2000
+action=click;x=1010;y=623;pause=100

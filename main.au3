@@ -10,6 +10,7 @@ FileInstall("scenario\guest\ChuyenDo\ShowHide1.sce", "ShowHide1.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\ChonItem.sce", "ChonItem.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\DenDiemGD0.sce", "DenDiemGD0.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\DenDiemGD1.sce", "DenDiemGD1.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\DiemGD1.sce", "DiemGD1.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\HoanTatGD.sce", "HoanTatGD.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\MoiGD.sce", "MoiGD.sce", 1)
 FileInstall("scenario\guest\ChuyenDo\MuaVoHon.sce", "MuaVoHon.sce", 1)
@@ -74,11 +75,13 @@ Func RunFeature($feature)
 			   ApplyActionStepsForChar($hwndAuto, "DenDiemGD0.sce", 0)
 			   If $count = 1 Then
 				  ApplyActionStepsForChar($hwndAuto, "DenDiemGD1.sce", 1)
+			   Else
+				  ApplyActionStepsForChar($hwndAuto, "DiemGD1.sce", 1)
 			   EndIf
 			   ApplyActionStepsForChar($hwndAuto, "MoiGD.sce", 0)
 			   ApplyActionStepsForChar($hwndAuto, "NhanGD.sce", 1)
 			   ApplyActionStepsForChar($hwndAuto, "ChonItem.sce", 0)
-			   Sleep(3000)
+			   Sleep(6000)
 			   ApplyActionStepsForChar($hwndAuto, "HoanTatGD.sce", 1)
 
 			   FinalScenario($hwndAuto)
