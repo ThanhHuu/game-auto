@@ -5,22 +5,15 @@
 
 FileInstall("conf\Variables.cons", "Variables.cons")
 FileInstall("conf\Features.fea", "Features.fea")
-FileInstall("scenario\guest\BuyItems.sce", "BuyItems.sce", 1)
-FileInstall("scenario\guest\CauPhuc.sce", "CauPhuc.sce", 1)
-FileInstall("scenario\guest\LatThe.sce", "LatThe.sce", 1)
-FileInstall("scenario\guest\NhanSoiNoi.sce", "NhanSoiNoi.sce", 1)
-FileInstall("scenario\guest\ShowHide0.sce", "ShowHide0.sce", 1)
-FileInstall("scenario\guest\ShowHide1.sce", "ShowHide1.sce", 1)
-FileInstall("scenario\guest\ShowHide2.sce", "ShowHide2.sce", 1)
-FileInstall("scenario\guest\ShowHide3.sce", "ShowHide3.sce", 1)
-FileInstall("scenario\guest\ShowHide4.sce", "ShowHide4.sce", 1)
-FileInstall("tm\Action.tm", "Action.tm", 1)
-FileInstall("tm\BiCanh1.tm", "BiCanh1.tm", 1)
-FileInstall("tm\BiCanh2.tm", "BiCanh2.tm", 1)
-FileInstall("tm\NguTrucDam1.tm", "NguTrucDam1.tm", 1)
-FileInstall("tm\NguTrucDam2.tm", "NguTrucDam2.tm", 1)
-FileInstall("tm\NhanMonQuan.tm", "NhanMonQuan.tm", 1)
-FileInstall("tm\ThuVePhai.tm", "ThuVePhai.tm", 1)
+FileInstall("scenario\guest\ChuyenDo\ShowHide0.sce", "ShowHide0.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\ShowHide1.sce", "ShowHide1.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\ChonItem.sce", "ChonItem.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\DenDiemGD.sce", "DenDiemGD.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\HoanTatGD.sce", "HoanTatGD.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\MoiGD.sce", "MoiGD.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\MuaVoHon.sce", "MuaVoHon.sce", 1)
+FileInstall("scenario\guest\ChuyenDo\NhanGD.sce", "NhanGD.sce", 1)
+FileInstall("tm\ChuyenDo.tm", "ChuyenDo.tm", 1)
 
 Global $startDate
 Global $features
@@ -52,34 +45,38 @@ Func RunFeature($feature)
 			; Ingore this account
 			ContinueLoop
 		 EndIf
+		 Local $targetAccount = ObjCreate("Scripting.Dictionary")
+		 $targetAccount.Add("account", "thanhhuupq5")
+		 $targetAccount.Add("character", "Sao•Hỏa")
 
-		 Local $next = FirstScenario($template, $accFile)
-		 If $next = 0 Then
-			; Error step move file Accounts.xml
-			ContinueLoop
-		 EndIf
-		 Local $hwndAuto = SecondScenario(5)
-		 If $hwndAuto = -1 Then
-			; Error login to window auto
-			Exit
-		 EndIf
-		 Local $logonGame = ThirdScenario($hwndAuto, $time*60)
-		 If $logonGame = -1 Then
-			footLog("ERROR", StringFormat("$s - Error run for %s", "RunFeature", $accFile))
-		 Else
-			MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
-
-			If $feature.Exists("scenarios") Then
-			   footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))
-			   Local $scenarios = StringSplit($feature.Item("scenarios"), "|")
-			   For $i = 1 To $scenarios[0]
-				  Local $sceFile = $scenarios[$i] & ".sce"
-
-				  ApplyActionSteps($hwndAuto, $sceFile)
-			   Next
+		 Local $accounts = ParseAccounts($accFile)
+		 For $account In $accounts
+			Local $newAccounts[2] = [$account, $targetAccount]
+			Local $next = FirstScenario($template, $accounts)
+			If $next = 0 Then
+			   ; Error step move file Accounts.xml
+			   ContinueLoop
 			EndIf
-			FinalScenario($hwndAuto)
-		 EndIf
+			Local $hwndAuto = SecondScenario(5)
+			If $hwndAuto = -1 Then
+			   ; Error login to window auto
+			   Exit
+			EndIf
+			Local $logonGame = ThirdScenario($hwndAuto, $time*60)
+			If $logonGame = -1 Then
+			   footLog("ERROR", StringFormat("$s - Error run for %s", "RunFeature", $accFile))
+			Else
+			   ApplyActionStepsForChar($hwndAuto, "MuaVoHon.sce", 0)
+			   ApplyActionStepsForChar($hwndAuto, "DenDiemGD.sce", 0)
+			   ApplyActionStepsForChar($hwndAuto, "DenDiemGD.sce", 1)
+			   ApplyActionStepsForChar($hwndAuto, "MoiGD.sce", 0)
+			   ApplyActionStepsForChar($hwndAuto, "NhanGD.sce", 1)
+			   ApplyActionStepsForChar($hwndAuto, "ChonItem.sce", 0)
+			   ApplyActionStepsForChar($hwndAuto, "HoanTatGD.sce", 1)
+			   FinalScenario($hwndAuto)
+			EndIf
+		 Next
+
 		 If _NowCalcDate() > $startDate Then
 			Return -1
 		 EndIf

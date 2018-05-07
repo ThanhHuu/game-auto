@@ -12,13 +12,13 @@ return 0: fail
 return 1: success
 Prepare account and start auto
 #ce
-Func FirstScenario($template, $accFile)
+
+Func FirstScenario($template, $accounts)
    CleanUpError()
    If FileExists($template) = 0 Or FileExists($template) = 0 Then
 	  ; Missing param
 	  Return 0
    EndIf
-   Local $accounts = ParseAccounts($accFile)
    ; Generate file
    Local $accountsFile = CreateAccountsFile($template, $accounts)
    If $accountsFile = -1 Then

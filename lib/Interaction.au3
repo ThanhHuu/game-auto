@@ -288,6 +288,19 @@ Func KillProcess($processName)
    Return 1
 EndFunc
 
+Func ApplyActionStepsForChar($hwnd, $scenario, $order)
+   WinActivate($hwnd)
+   Local $showHideSce = StringReplace($SHOW_HIDE_SCENARIO_PATTERN, "{}", $order)
+   Local $showHideSteps = BuildActionSteps($showHideSce)
+
+   ; Show game
+   ImplementAction($showHideSteps)
+   footLog("DEBUG", StringFormat("%s - Run scenario %s for character %i", "ApplyActionStepsForChar", $scenario, $order))
+   Local $actionSteps = BuildActionSteps($scenario)
+   ImplementAction($actionSteps)
+   ; Hide game
+   ImplementAction($showHideSteps)
+EndFunc
 
 
 Func ApplyActionSteps($hwnd, $scenario)
