@@ -2,8 +2,8 @@ action=click;x=328;y=12;pause=200
 action=press;key={TAB};pause=200
 action=press;key={ESC};pause=200
 action=press;key=0;pause=200
-action=click;x=448;y=336;pause=500
-action=click;x=445;y=335;pause=10000
+action=click;x=441;y=333;pause=500
+action=click;x=439;y=336;pause=10000
 action=press;key={TAB};pause=200
-action=click;x=563;y=567;pause=80000
+action=click;x=1150;y=331;pause=80000
 action=press;key={TAB};pause=200
