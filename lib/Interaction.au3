@@ -263,22 +263,28 @@ Func StopAutoStep($hwndId, $waiting)
 EndFunc
 
 Func KillProcess($processName)
-   If ProcessExists($processName) <> 0 Then
-	  footLog("DEBUG", StringFormat("%s - Still exists process %s", "StopAutoStep", $processName))
-	  Local $count = 0;
-	  While $count < 100
-		 $count += 1
-		 If ProcessClose($PROCESS_OF_GAME) = 1 Then
-			footLog("DEBUG", StringFormat("%s - Killed process %s", "StopAutoStep", $processName))
-			ExitLoop
+   Local $try = 0
+   While $try < 100
+	  $try += 1
+	  If ProcessExists($processName) <> 0 Then
+		 footLog("DEBUG", StringFormat("%s - Still exists process %s", "StopAutoStep", $processName))
+		 Local $count = 0;
+		 While $count < 100
+			$count += 1
+			If ProcessClose($PROCESS_OF_GAME) = 1 Then
+			   footLog("DEBUG", StringFormat("%s - Killed process %s", "StopAutoStep", $processName))
+			   ExitLoop
+			EndIf
+			Sleep(500)
+		 WEnd
+		 If $count = 100 Then
+			footLog("ERROR", StringFormat("%s - Can not exit exists process %s", "StopAutoStep", $processName))
+			Return -1
 		 EndIf
-		 Sleep(500)
-	  WEnd
-	  If $count = 100 Then
-		 footLog("ERROR", StringFormat("%s - Can not exit exists process %s", "StopAutoStep", $processName))
-		 Return -1
+	  Else
+		 ExitLoop
 	  EndIf
-   EndIf
+   WEnd
    Return 1
 EndFunc
 
