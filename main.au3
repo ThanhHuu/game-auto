@@ -63,20 +63,23 @@ Func RunFeature($feature)
 			; Error login to window auto
 			Exit
 		 EndIf
-		 ThirdScenario($hwndAuto, $time*60)
-		 MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
+		 Local $logonGame = ThirdScenario($hwndAuto, $time*60)
+		 If $logonGame = -1 Then
+			footLog("ERROR", StringFormat("$s - Error run for %s", "RunFeature", $accFile))
+		 Else
+			MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
 
-		 If $feature.Exists("scenarios") Then
-			footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))
-			Local $scenarios = StringSplit($feature.Item("scenarios"), "|")
-			For $i = 1 To $scenarios[0]
-			   Local $sceFile = $scenarios[$i] & ".sce"
+			If $feature.Exists("scenarios") Then
+			   footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))
+			   Local $scenarios = StringSplit($feature.Item("scenarios"), "|")
+			   For $i = 1 To $scenarios[0]
+				  Local $sceFile = $scenarios[$i] & ".sce"
 
-			   ApplyActionSteps($hwndAuto, $sceFile)
-			Next
+				  ApplyActionSteps($hwndAuto, $sceFile)
+			   Next
+			EndIf
+			FinalScenario($hwndAuto)
 		 EndIf
-		 FinalScenario($hwndAuto)
-
 		 If _NowCalcDate() > $startDate Then
 			Return -1
 		 EndIf

@@ -65,8 +65,9 @@ $pause: wait logon all character
 #ce
 Func ThirdScenario($hwndAuto, $pause)
    Local $loggedOn = LogOnGameStep($hwndAuto, 5)
-   If $loggedOn = -1 Or $loggedOn = 0 Then
+   If $loggedOn = -1 Then
 	  ; error dang nhap tat ca
+	  footLog("ERROR", StringFormat("%s - Can not logon game", "ThirdScenario") )
 	  Return -1
    Else
 	  ; bat dau chay hoat dong
