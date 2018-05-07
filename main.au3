@@ -52,7 +52,7 @@ Func RunFeature($feature)
 		 Local $accounts = ParseAccounts($accFile)
 		 For $account In $accounts
 			Local $newAccounts[2] = [$account, $targetAccount]
-			Local $next = FirstScenario($template, $accounts)
+			Local $next = FirstScenario($template, $newAccounts)
 			If $next = 0 Then
 			   ; Error step move file Accounts.xml
 			   ContinueLoop
