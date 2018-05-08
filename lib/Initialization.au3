@@ -208,13 +208,20 @@ EndFunc
 
 Func ResetBeforeInitialization()
    Local $dones = _FileListToArrayRec(@WorkingDir, "*.done", 1)
-   For $i = 1 To $dones[0]
-	  FileDelete($done[$i])
-   Next
+   If $dones <> "" Then
+	  For $i = 1 To $dones[0]
+		 FileDelete($dones[$i])
+		 footLog("DEBUG", StringFormat("%s - Delete file %s", "ResetBeforeInitialization", $dones[$i]))
+	  Next
+   EndIf
+
    Local $ignores = _FileListToArrayRec(@WorkingDir, "*.ig", 1)
-   For $j To $ignores[0]
-	  FileDelete($ignores[$j])
-   Next
+   If $ignores <> "" Then
+	  For $j = 1 To $ignores[0]
+		 FileDelete($ignores[$j])
+		 footLog("DEBUG", StringFormat("%s - Delete file %s", "ResetBeforeInitialization", $ignores[$j]))
+	  Next
+   EndIf
 EndFunc
 
 
