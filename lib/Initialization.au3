@@ -208,12 +208,12 @@ EndFunc
 
 Func ResetBeforeInitialization()
    Local $dones = _FileListToArrayRec(@WorkingDir, "*.done", 1)
-   For $done In $dones
-	  FileDelete($done)
+   For $i = 1 To $dones[0]
+	  FileDelete($done[$i])
    Next
    Local $ignores = _FileListToArrayRec(@WorkingDir, "*.ig", 1)
-   For $ingore In $ignores
-	  FileDelete($ingore)
+   For $j To $ignores[0]
+	  FileDelete($ignores[$j])
    Next
 EndFunc
 

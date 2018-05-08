@@ -109,7 +109,6 @@ While True
    If $reset Then
 	  footLog("INFO", StringFormat("%s - Reset for date %s", "Main", _NowCalcDate()))
 	  ResetBeforeInitialization()
-	  ExitLoop
    Else
 	  While True
 		 Sleep(120000)
