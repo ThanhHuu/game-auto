@@ -10,7 +10,7 @@ action=press;key={TAB};pause=300
 action=click;x=951;y=472;pause=300
 action=click;x=447;y=315;pause=300
 action=click;x=472;y=316;pause=300
-action=press;key=1;pause=300
+action=press;key=5;pause=300
 action=click;x=972;y=435;pause=300
 action=press;key={ESC};pause=
 action=press;key={TAB};pause=300
