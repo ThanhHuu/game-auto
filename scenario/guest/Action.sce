@@ -7,6 +7,7 @@ action=press;key={TAB};pause=50
 action=press;key={ESC};pause=50
 action=description;content=SellItems;pause=10
 action=press;key=b;pause=100
+action=click;x=1334;y=735;pause=500
 action=click;x=1334;y=714;pause=500
 action=click;x=1334;y=674;pause=500
 action=right-click;x=1304;y=275;pause=10
