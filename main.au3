@@ -5,9 +5,7 @@
 
 FileInstall("conf\Variables.cons", "Variables.cons")
 FileInstall("conf\Features.fea", "Features.fea")
-FileInstall("scenario\guest\BuyItems.sce", "BuyItems.sce", 1)
-FileInstall("scenario\guest\CauPhuc.sce", "CauPhuc.sce", 1)
-FileInstall("scenario\guest\LatThe.sce", "LatThe.sce", 1)
+FileInstall("scenario\guest\Action.sce", "Action.sce")
 FileInstall("scenario\guest\NhanSoiNoi.sce", "NhanSoiNoi.sce", 1)
 FileInstall("scenario\guest\ShowHide0.sce", "ShowHide0.sce", 1)
 FileInstall("scenario\guest\ShowHide1.sce", "ShowHide1.sce", 1)
