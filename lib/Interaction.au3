@@ -302,7 +302,7 @@ Func ApplyActionSteps($hwnd, $scenarios)
 	  Local $scenarios = StringSplit($scenarios, "|")
 	  If $scenarios <> "" Then
 		 For $j = 1 To $scenarios[0]
-			Local $scenario = $scenarios[$i] & ".sce"
+			Local $scenario = $scenarios[$j] & ".sce"
 			footLog("DEBUG", StringFormat("%s - Run scenario %s", "ApplyActionSteps", $scenario))
 			Local $actionSteps = BuildActionSteps($scenario)
 			ImplementAction($actionSteps)
