@@ -5,13 +5,18 @@
 
 FileInstall("conf\Variables.cons", "Variables.cons")
 FileInstall("conf\Features.fea", "Features.fea")
-FileInstall("scenario\guest\Action.sce", "Action.sce")
-FileInstall("scenario\guest\NhanSoiNoi.sce", "NhanSoiNoi.sce", 1)
-FileInstall("scenario\guest\ShowHide0.sce", "ShowHide0.sce", 1)
-FileInstall("scenario\guest\ShowHide1.sce", "ShowHide1.sce", 1)
-FileInstall("scenario\guest\ShowHide2.sce", "ShowHide2.sce", 1)
-FileInstall("scenario\guest\ShowHide3.sce", "ShowHide3.sce", 1)
-FileInstall("scenario\guest\ShowHide4.sce", "ShowHide4.sce", 1)
+FileInstall("scenario\guest\BackHome.sce", "BackHome.sce")
+FileInstall("scenario\guest\SellItems.sce", "SellItems.sce")
+FileInstall("scenario\guest\UseItems.sce", "UseItems.sce")
+FileInstall("scenario\guest\LatThe.sce", "LatThe.sce")
+FileInstall("scenario\guest\CauPhuc.sce", "CauPhuc.sce")
+FileInstall("scenario\guest\NhanSoiNoi.sce", "NhanSoiNoi.sce")
+FileInstall("scenario\guest\BuyItems.sce", "BuyItems.sce")
+FileInstall("scenario\guest\ShowHide0.sce", "ShowHide0.sce")
+FileInstall("scenario\guest\ShowHide1.sce", "ShowHide1.sce")
+FileInstall("scenario\guest\ShowHide2.sce", "ShowHide2.sce")
+FileInstall("scenario\guest\ShowHide3.sce", "ShowHide3.sce")
+FileInstall("scenario\guest\ShowHide4.sce", "ShowHide4.sce")
 FileInstall("tm\Action.tm", "Action.tm", 1)
 FileInstall("tm\BiCanh1.tm", "BiCanh1.tm", 1)
 FileInstall("tm\BiCanh2.tm", "BiCanh2.tm", 1)
@@ -69,12 +74,7 @@ Func RunFeature($feature)
 
 			If $feature.Exists("scenarios") Then
 			   footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))
-			   Local $scenarios = StringSplit($feature.Item("scenarios"), "|")
-			   For $i = 1 To $scenarios[0]
-				  Local $sceFile = $scenarios[$i] & ".sce"
-
-				  ApplyActionSteps($hwndAuto, $sceFile)
-			   Next
+			   ApplyActionSteps($hwndAuto, $feature.Item("scenarios"))
 			EndIf
 			FinalScenario($hwndAuto)
 		 EndIf

@@ -289,8 +289,7 @@ Func KillProcess($processName)
 EndFunc
 
 
-
-Func ApplyActionSteps($hwnd, $scenario)
+Func ApplyActionSteps($hwnd, $scenarios)
    Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
    Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
 
@@ -300,9 +299,15 @@ Func ApplyActionSteps($hwnd, $scenario)
 
 	  ; Show game
 	  ImplementAction($showHideSteps)
-	  footLog("DEBUG", StringFormat("%s - Run scenario %s", "ApplyActionSteps", $scenario))
-	  Local $actionSteps = BuildActionSteps($scenario)
-	  ImplementAction($actionSteps)
+	  Local $scenarios = StringSplit($scenarios, "|")
+	  If $scenarios <> "" Then
+		 For $j = 1 To $scenarios[0]
+			Local $scenario = $scenarios[$i] & ".sce"
+			footLog("DEBUG", StringFormat("%s - Run scenario %s", "ApplyActionSteps", $scenario))
+			Local $actionSteps = BuildActionSteps($scenario)
+			ImplementAction($actionSteps)
+		 Next
+	  EndIf
 	  ; Hide game
 	  ImplementAction($showHideSteps)
    Next
