@@ -289,7 +289,7 @@ Func KillProcess($processName)
 EndFunc
 
 
-Func ApplyActionSteps($hwnd, $scenarios)
+Func ApplyActionSteps($hwnd, $strScenarios)
    Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
    Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
 
@@ -299,7 +299,7 @@ Func ApplyActionSteps($hwnd, $scenarios)
 
 	  ; Show game
 	  ImplementAction($showHideSteps)
-	  Local $scenarios = StringSplit($scenarios, "|")
+	  Local $scenarios = StringSplit($strScenarios, "|")
 	  If $scenarios <> "" Then
 		 For $j = 1 To $scenarios[0]
 			Local $scenario = $scenarios[$j] & ".sce"
