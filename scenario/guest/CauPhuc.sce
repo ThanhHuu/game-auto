@@ -1,10 +1,9 @@
-action=click;x=329;y=12;pause=200
-action=press;key=j;pause=200
-action=click;x=1270;y=489;pause=200
+action=press;key=j;pause=100
+action=click;x=1270;y=489;pause=100
 action=double-click;x=862;y=444;pause=5000
 action=double-click;x=862;y=444;pause=5000
 action=double-click;x=862;y=444;pause=5000
 action=double-click;x=862;y=444;pause=5000
 action=double-click;x=862;y=444;pause=5000
-action=click;x=1168;y=593;pause=200
-action=press;key={ESC};pause=200
+action=click;x=1168;y=593;pause=50
+action=press;key={ESC};pause=10
