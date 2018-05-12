@@ -14,6 +14,7 @@ Prepare account and start auto
 #ce
 Func FirstScenario($template, $accFile)
    CleanUpError()
+   CleanUpProcess()
    If FileExists($template) = 0 Or FileExists($template) = 0 Then
 	  ; Missing param
 	  Return 0
@@ -40,6 +41,7 @@ Return window auto
 #ce
 Func SecondScenario($pause)
    CleanUpError()
+   CleanUpProcess()
    Local $hwnUpdate = StartStep($APP_PATH)
    If $hwnUpdate = -1 Then
 	  ; Error start auto

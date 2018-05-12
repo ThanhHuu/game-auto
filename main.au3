@@ -46,7 +46,7 @@ Func RunFeature($feature)
    footLog("INFO", StringFormat("%s - Run feature %s", "Main", $featureName))
    Local $files = _FileListToArrayRec(@WorkingDir, "*.acc", 1 + 4, 1, 1)
    If $files <> "" Then
-	  footLog("INFO", StringFormat("%s - Num of file %i", "Main", $files[0]))
+	  footLog("INFO", StringFormat("%s - Num of file %i", "RunFeature", $files[0]))
 	  Local $ignoreAccounts = ReadIgnoreAccount($featureName)
 	  For $i = 1 To $files[0]
 
@@ -55,7 +55,7 @@ Func RunFeature($feature)
 			; Ingore this account
 			ContinueLoop
 		 EndIf
-
+		 footLog("INFO", StringFormat("%s - run for file %s", "RunFeature", $accFile))
 		 Local $next = FirstScenario($template, $accFile)
 		 If $next = 0 Then
 			; Error step move file Accounts.xml

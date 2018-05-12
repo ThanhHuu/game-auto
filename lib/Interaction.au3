@@ -28,6 +28,10 @@ Func CleanUpError()
    Next
    KillProcess($PROCESS_OF_GAME)
 EndFunc
+Func CleanUpProcess()
+   KillProcess($PROCESS_OF_GAME)
+   KillProcess($PROCESS_OF_DUMP)
+EndFunc
 
 
 #cs
