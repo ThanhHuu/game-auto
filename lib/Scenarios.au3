@@ -39,6 +39,7 @@ Update and login
 Return window auto
 #ce
 Func SecondScenario($pause)
+   CleanUpError()
    Local $hwnUpdate = StartStep($APP_PATH)
    If $hwnUpdate = -1 Then
 	  ; Error start auto
@@ -71,6 +72,7 @@ Func ThirdScenario($hwndAuto, $pause)
 	  Return -1
    Else
 	  ; bat dau chay hoat dong
+	  CleanUpError()
 	  ApplyToAllCharacter($hwndAuto)
 	  Sleep($pause*1000)
 	  Return 1
@@ -82,6 +84,7 @@ logout and stop auto
 #ce
 Func FinalScenario($hwndAuto)
    LogOutGameStep($hwndAuto, 5)
+   Sleep(3000)
    StopAutoStep($hwndAuto, 5)
 EndFunc
 

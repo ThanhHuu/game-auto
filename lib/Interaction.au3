@@ -115,7 +115,7 @@ Func LoginStep($hwndId, $waiting)
    EndIf
    Local $hbtLogin = FindButtonWithInstance($hwnd, 1, $waiting)
    If $hbtLogin = -1 Or $hbtLogin = -2 Then
-	  ; not found button login
+	   footLog("ERROR", StringFormat("%s - Clicked login fail", "LoginStep"))
 	  Return -1
    Else
 	  ClickButton($hwnd, $hbtLogin)
