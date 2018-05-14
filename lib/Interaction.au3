@@ -298,7 +298,7 @@ Func ApplyActionSteps($hwnd, $strScenarios)
    Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
 
    For $i = 0 To $noCharacter - 1
-	  Local $showHideSce = StringReplace($SHOW_HIDE_SCENARIO_PATTERN, "{}", $i)
+	  Local $showHideSce = $SCENARIO_DIR & StringReplace($SHOW_HIDE_SCENARIO_PATTERN, "{}", $i)
 	  Local $showHideSteps = BuildActionSteps($showHideSce)
 
 	  ; Show game
