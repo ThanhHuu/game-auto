@@ -9,6 +9,7 @@ Local $RIGHT_CLICK = "right-click"
 Local $DOUBLE_CLICK = "double-click"
 Local $PRESS = "press"
 Local $CALL = "call"
+Local $DRAG = "drag"
 
 Func ImplementAction($steps)
    For $step In $steps
@@ -41,6 +42,13 @@ Func ImplementAction($steps)
 		 Local $funcName = $step.Item("func")
 		 Local $hwnd = $step.Item("hwnd")
 		 Call($funcName, $hwnd)
+		 Local $pause = $step.Item("pause")
+		 Sleep($pause)
+	  Case $DRAG
+		 Local $x = $step.Item("x")
+		 Local $y = $step.Item("y")
+		 Local $z = $step.Item("z")
+		 MouseClickDrag("left",$x,$y,$z,$y)
 		 Local $pause = $step.Item("pause")
 		 Sleep($pause)
 	  Case Else
