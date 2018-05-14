@@ -67,4 +67,5 @@ action=right-click;x=1624;y=455;pause=10
 action=right-click;x=1624;y=495;pause=10
 action=right-click;x=1624;y=535;pause=10
 action=click;x=966;y=580;pause=50
-action=press;key={ESC};pause=50
+action=press;key={TAB};pause=10
+action=press;key={ESC};pause=10

@@ -15,4 +15,5 @@ action=click;x=450;y=355;pause=100
 action=click;x=551;y=340;pause=100
 action=press;key=60;pause=100
 action=click;x=972;y=540;pause=100
+action=press;key={TAB};pause=10
 action=press;key={ESC};pause=10

@@ -26,7 +26,6 @@ Func CleanUpError()
 		 EndIf
 	  EndIf
    Next
-   KillProcess($PROCESS_OF_GAME)
 EndFunc
 Func CleanUpProcess()
    KillProcess($PROCESS_OF_GAME)

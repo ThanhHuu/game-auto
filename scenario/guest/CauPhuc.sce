@@ -6,4 +6,5 @@ action=double-click;x=862;y=465;pause=5000
 action=double-click;x=862;y=465;pause=5000
 action=double-click;x=862;y=465;pause=5000
 action=click;x=1168;y=610;pause=50
+action=press;key={TAB};pause=10
 action=press;key={ESC};pause=10
