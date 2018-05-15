@@ -5,5 +5,13 @@ action=click;x=706;y=634;pause=10
 action=click;x=706;y=634;pause=10
 action=click;x=706;y=634;pause=10
 action=click;x=706;y=634;pause=10
+action=press;key=1;pause=10
+action=press;key=2;pause=10
+action=press;key=3;pause=10
+action=press;key=4;pause=10
+action=press;key=5;pause=10
+action=press;key=6;pause=10
+action=press;key=7;pause=10
+action=press;key=8;pause=10
 action=press;key={TAB};pause=0
 action=press;key={ESC};pause=0
