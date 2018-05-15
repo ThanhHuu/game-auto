@@ -197,7 +197,9 @@ return 1: checked
 Func ApplyToAllCharacter($hwnd)
    Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
    Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
+   Local $winPos = WinGetPos($hwnd)
    WinActivate($hwnd)
+   WinMove($hwnd, "", $winPos[0], $winPos[1] - 30)
    For $i = 0 To $noCharacter - 1
 	  Local $chaStatus = _GUICtrlListView_GetItemText($listView, $i, $CHARACTER_STATUS_POSITION)
 	  If StringStripWS ($chaStatus, 8) == "OFFLINE" Then
