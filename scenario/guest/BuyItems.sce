@@ -1,5 +1,5 @@
 action=press;key={TAB};pause=300
-action=double-click;x=1378;y=397;pause=4000
+action=double-click;x=1378;y=397;pause=12000
 action=press;key={ESC};pause=10
 action=click;x=948;y=471;pause=10
 action=click;x=447;y=315;pause=10
@@ -7,7 +7,7 @@ action=click;x=472;y=316;pause=10
 action=press;key=5;pause=10
 action=click;x=972;y=435;pause=300
 action=press;key={TAB};pause=300
-action=double-click;x=1365;y=306;pause=10000
+action=double-click;x=1365;y=306;pause=12000
 action=press;key={ESC};pause=50
 action=click;x=973;y=477;pause=10
 action=click;x=450;y=335;pause=10
