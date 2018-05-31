@@ -9,6 +9,7 @@
 #ce ----------------------------------------------------------------------------
 
 ; Script Start - Add your code below here
+<<<<<<< HEAD
 #include-once
 #RequireAdmin
 #include("lib\Initialization.au3")
@@ -67,3 +68,5 @@ If $accountFiles <> "" And WinExists() Then
 EndIf
 
 
+=======
+>>>>>>> feature/functions
