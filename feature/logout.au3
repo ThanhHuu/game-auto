@@ -18,32 +18,33 @@ Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WAIT_LOAD = 5000;
 Local $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
-Local $currentY = 35
-If WinExists($WINDOW_LOGIN) Then
-   WinActivate($WINDOW_LOGIN)
-   If WinActive($WINDOW_LOGIN) Then
-	  ; Click thoat game
-	  MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 50, $currentY + 15)
-	  Sleep(100)
 
-	  ; click xoa khoi danh sach
-	  MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 50, $currentY + 60)
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 70, 100)
+Func Logout($currentY)
+   If WinExists($WINDOW_LOGIN) Then
+	  WinActivate($WINDOW_LOGIN)
+	  If WinActive($WINDOW_LOGIN) Then
+		 ; Click thoat game
+		 MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)
+		 Sleep(100)
+		 MouseClick($MOUSE_CLICK_LEFT, 50, $currentY + 15)
+		 Sleep(100)
+
+		 ; click xoa khoi danh sach
+		 MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)
+		 Sleep(100)
+		 MouseClick($MOUSE_CLICK_LEFT, 50, $currentY + 60)
+		 Sleep(100)
+		 MouseClick($MOUSE_CLICK_LEFT, 70, 100)
+	  Else
+		 Local $msg = StringFormat("%s - %s", "login", "Can not active window game")
+		 _FileWriteLog($LOG_FILE, $msg)
+	  EndIf
    Else
-	  Local $msg = StringFormat("%s - %s", "login", "Can not active window game")
-	  _FileWriteLog($LOG_FILE, $msg)
+	  Local $msg = StringFormat("%s - %s", "login", "Not found window game")
+		 _FileWriteLog($LOG_FILE, $msg)
    EndIf
-Else
-   Local $msg = StringFormat("%s - %s", "login", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
-EndIf
+EndFunc

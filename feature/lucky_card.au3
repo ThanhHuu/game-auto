@@ -31,30 +31,32 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
-If WinExists($WindowGame) Then
-   WinActivate($WindowGame)
-   If WinActive($WindowGame) Then
-	  MouseClick($MOUSE_CLICK_LEFT, 650,890)
-	  Sleep(500)
-	  Local $firstY = 390;
-	  Local $currentX = 580;
-	  For $i = 0 To 2
-		 MouseClick($MOUSE_CLICK_LEFT, $currentX ,$firstY)
-		 Sleep(100)
-		 $currentX += 170
-	  Next
-	  $currentX -= 170
-	  For $j = 0 To 2
-		 MouseClick($MOUSE_CLICK_LEFT, $currentX ,$firstY)
-		 Sleep(100)
-		 $firstY += 200
-	  Next
-	  Send("{ESC}")
+Func TryLuckyCard()
+   If WinExists($WindowGame) Then
+	  WinActivate($WindowGame)
+	  If WinActive($WindowGame) Then
+		 MouseClick($MOUSE_CLICK_LEFT, 650,890)
+		 Sleep(500)
+		 Local $firstY = 390;
+		 Local $currentX = 580;
+		 For $i = 0 To 2
+			MouseClick($MOUSE_CLICK_LEFT, $currentX ,$firstY)
+			Sleep(100)
+			$currentX += 170
+		 Next
+		 $currentX -= 170
+		 For $j = 0 To 2
+			MouseClick($MOUSE_CLICK_LEFT, $currentX ,$firstY)
+			Sleep(100)
+			$firstY += 200
+		 Next
+		 Send("{ESC}")
+	  Else
+		 Local $msg = StringFormat("%s - %s", "lucky_card", "Can not active window game")
+		 _FileWriteLog($LOG_FILE, $msg)
+	  EndIf
    Else
-	  Local $msg = StringFormat("%s - %s", "lucky_card", "Can not active window game")
+	  Local $msg = StringFormat("%s - %s", "lucky_card", "Not found window game")
 	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
-Else
-   Local $msg = StringFormat("%s - %s", "lucky_card", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
-EndIf
+EndFunc

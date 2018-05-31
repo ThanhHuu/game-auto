@@ -12,7 +12,7 @@
 #include-once
 #RequireAdmin
 #include <Date.au3>
-
+#include <File.au3>
 
 Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
@@ -26,25 +26,27 @@ Local $usr = "ngoc_anh1"
 Local $pwd = "Ngoc@nh91"
 Local $character = "ChuLamDoiA"
 
-If WinExists($WINDOW_LOGIN) Then
-   WinActivate($WINDOW_LOGIN)
-   If WinActive($WINDOW_LOGIN) Then
-	  MouseClick($MOUSE_CLICK_LEFT, 160, 260)
-	  Sleep(100)
-	  Send("{BS 32}")
-	  Send("{DEL 32}")
-	  Send($usr)
-	  Send("{TAB}")
-	  Send($pwd)
-	  Send("{TAB}")
-	  Send($character)
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 260, 220)
+Func AddAccount($usr, $pwd, $character)
+   If WinExists($WINDOW_LOGIN) Then
+	  WinActivate($WINDOW_LOGIN)
+	  If WinActive($WINDOW_LOGIN) Then
+		 MouseClick($MOUSE_CLICK_LEFT, 160, 260)
+		 Sleep(100)
+		 Send("{BS 32}")
+		 Send("{DEL 32}")
+		 Send($usr)
+		 Send("{TAB}")
+		 Send($pwd)
+		 Send("{TAB}")
+		 Send($character)
+		 Sleep(100)
+		 MouseClick($MOUSE_CLICK_LEFT, 260, 220)
+	  Else
+		 Local $msg = StringFormat("%s - %s", "add_account", "Can not active window game")
+		 _FileWriteLog($LOG_FILE, $msg)
+	  EndIf
    Else
-	  Local $msg = StringFormat("%s - %s", "login", "Can not active window game")
+	  Local $msg = StringFormat("%s - %s", "add_account", "Not found window game")
 	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
-Else
-   Local $msg = StringFormat("%s - %s", "login", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
-EndIf
+EndFunc
