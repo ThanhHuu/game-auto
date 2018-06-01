@@ -60,3 +60,4 @@ Func TryLuckyCard()
 	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
 EndFunc
+
