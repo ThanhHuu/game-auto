@@ -13,7 +13,6 @@
 #RequireAdmin
 #include <Date.au3>
 
-
 Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
 DllCall("User32.dll","bool","SetProcessDPIAware")
