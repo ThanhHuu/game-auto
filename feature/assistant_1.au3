@@ -23,7 +23,10 @@ Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Func AssignPrevention()
    If WinExists($WindowGame) Then
-	  WinActivate($WindowGame)
+	  If Not WinActive($WindowGame) Then
+		 WinActivate($WindowGame)
+		 Sleep(500)
+	  EndIf
 	  If WinActive($WindowGame) Then
 		 Send("{0}")
 		 Sleep(1000)

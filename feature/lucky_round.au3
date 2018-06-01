@@ -34,7 +34,10 @@ Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Func TryLuckyRound()
    If WinExists($WindowGame) Then
-	  WinActivate($WindowGame)
+	  If Not WinActive($WindowGame) Then
+		 WinActivate($WindowGame)
+		 Sleep(500)
+	  EndIf
 	  If WinActive($WindowGame) Then
 		 Send("j")
 		 Sleep(500)

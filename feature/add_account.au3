@@ -28,7 +28,10 @@ Local $character = "ChuLamDoiA"
 
 Func AddAccount($usr, $pwd, $character)
    If WinExists($WINDOW_LOGIN) Then
-	  WinActivate($WINDOW_LOGIN)
+	  If Not WinActive($WINDOW_LOGIN) Then
+		 WinActivate($WINDOW_LOGIN)
+		 Sleep(500)
+	  EndIf
 	  If WinActive($WINDOW_LOGIN) Then
 		 MouseClick($MOUSE_CLICK_LEFT, 160, 260)
 		 Sleep(100)

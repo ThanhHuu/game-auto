@@ -34,7 +34,10 @@ Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Func TryLuckyCard()
    If WinExists($WindowGame) Then
-	  WinActivate($WindowGame)
+	  If Not WinActive($WindowGame) Then
+		 WinActivate($WindowGame)
+		 Sleep(500)
+	  EndIf
 	  If WinActive($WindowGame) Then
 		 MouseClick($MOUSE_CLICK_LEFT, 450,590)
 		 Sleep(500)

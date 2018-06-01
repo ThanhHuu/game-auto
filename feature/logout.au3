@@ -23,7 +23,10 @@ Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Func Logout($currentY)
    If WinExists($WINDOW_LOGIN) Then
-	  WinActivate($WINDOW_LOGIN)
+	  If Not WinActive($WINDOW_LOGIN) Then
+		 WinActivate($WINDOW_LOGIN)
+		 Sleep(500)
+	  EndIf
 	  If WinActive($WINDOW_LOGIN) Then
 		 ; Click thoat game
 		 MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)

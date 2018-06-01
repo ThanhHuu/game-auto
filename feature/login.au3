@@ -26,7 +26,10 @@ Dim $FIRST_Y = 35
 
 Func Login($currentY)
    If WinExists($WINDOW_LOGIN) Then
-	  WinActivate($WINDOW_LOGIN)
+	  If Not WinActive($WINDOW_LOGIN) Then
+		 WinActivate($WINDOW_LOGIN)
+		 Sleep(500)
+	  EndIf
 	  If WinActive($WINDOW_LOGIN) Then
 		 MouseClick($MOUSE_CLICK_LEFT, 14, $currentY)
 		 While True

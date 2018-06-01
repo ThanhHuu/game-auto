@@ -33,7 +33,10 @@ DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 Func GetActiveAeard()
    If WinExists($WindowGame) Then
-	  WinActivate($WindowGame)
+	  If Not WinActive($WindowGame) Then
+		 WinActivate($WindowGame)
+		 Sleep(500)
+	  EndIf
 	  If WinActive($WindowGame) Then
 		 Send("{F11}")
 		 Sleep(100)
