@@ -37,10 +37,10 @@ Func GetActiveAeard()
 	  If WinActive($WindowGame) Then
 		 Send("{F11}")
 		 Sleep(100)
-		 MouseClick($MOUSE_CLICK_LEFT, 850, 180)
+		 MouseClick($MOUSE_CLICK_LEFT, 560, 125)
 		 Sleep(100)
 		 For $i = 0 To 4
-			MouseClick($MOUSE_CLICK_LEFT, 400, 850)
+			MouseClick($MOUSE_CLICK_LEFT, 260, 565)
 			Sleep(100)
 		 Next
 		 Send("{ESC}")

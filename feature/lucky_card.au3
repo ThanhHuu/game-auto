@@ -31,24 +31,25 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
+
 Func TryLuckyCard()
    If WinExists($WindowGame) Then
 	  WinActivate($WindowGame)
 	  If WinActive($WindowGame) Then
-		 MouseClick($MOUSE_CLICK_LEFT, 650,890)
+		 MouseClick($MOUSE_CLICK_LEFT, 450,590)
 		 Sleep(500)
-		 Local $firstY = 390;
-		 Local $currentX = 580;
+		 Local $firstY = 260;
+		 Local $currentX = 390;
 		 For $i = 0 To 2
 			MouseClick($MOUSE_CLICK_LEFT, $currentX ,$firstY)
 			Sleep(100)
-			$currentX += 170
+			$currentX += 115
 		 Next
-		 $currentX -= 170
+		 $currentX -= 115
 		 For $j = 0 To 2
 			MouseClick($MOUSE_CLICK_LEFT, $currentX ,$firstY)
 			Sleep(100)
-			$firstY += 200
+			$firstY += 130
 		 Next
 		 Send("{ESC}")
 	  Else
@@ -60,4 +61,3 @@ Func TryLuckyCard()
 	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
 EndFunc
-

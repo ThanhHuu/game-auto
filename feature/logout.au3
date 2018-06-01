@@ -22,7 +22,6 @@ Local $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
-
 Func Logout($currentY)
    If WinExists($WINDOW_LOGIN) Then
 	  WinActivate($WINDOW_LOGIN)

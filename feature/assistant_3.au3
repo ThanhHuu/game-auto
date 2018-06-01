@@ -20,38 +20,38 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
+
 Func AssignStory($level)
    If WinExists($WindowGame) Then
 	  WinActivate($WindowGame)
 	  If WinActive($WindowGame) Then
 		 Send("{0}")
-		 Sleep(500)
-		 MouseClick($MOUSE_CLICK_LEFT, 195,485)
+		 Sleep(1000)
+		 MouseClick($MOUSE_CLICK_LEFT,160,325)
 		 Sleep(8000)
-
 		 ; Nhan thuong
-		 MouseClick($MOUSE_CLICK_LEFT, 1150,550)
+		 MouseClick($MOUSE_CLICK_LEFT, 765, 370)
 		 Sleep(500)
-		 MouseClick($MOUSE_CLICK_LEFT, 700, 880)
+		 MouseClick($MOUSE_CLICK_LEFT, 470, 590)
 		 Sleep(500)
-		 MouseClick($MOUSE_CLICK_LEFT, 1250, 800)
+		 MouseClick($MOUSE_CLICK_LEFT, 865, 530)
 		 Sleep(500)
-		 MouseClick($MOUSE_CLICK_LEFT, 1500,300)
+		 MouseClick($MOUSE_CLICK_LEFT, 1000,210)
 		 Sleep(100)
 		 Send("{ESC}")
 
 		 ; Dieu doi BiCanh
-		 MouseClick($MOUSE_CLICK_LEFT, 1150,550)
+		 MouseClick($MOUSE_CLICK_LEFT, 765, 370)
 		 Sleep(500)
-		 MouseClick($MOUSE_CLICK_LEFT, 650, 550)
+		 MouseClick($MOUSE_CLICK_LEFT, 365, 375)
 		 Sleep(500)
-		 MouseClick($MOUSE_CLICK_LEFT, 720, 890)
+		 MouseClick($MOUSE_CLICK_LEFT, 470, 590)
 		 Sleep(500)
 		 If $level = 80  Then
-			MouseClick($MOUSE_CLICK_LEFT, 450, 500)
+			MouseClick($MOUSE_CLICK_LEFT, 175, 325)
 			Sleep(500)
 		 ElseIf $level = 70 Then
-			MouseClick($MOUSE_CLICK_LEFT, 450, 450)
+			MouseClick($MOUSE_CLICK_LEFT, 175, 295)
 			Sleep(500)
 		 EndIf
 		 Sleep(100)

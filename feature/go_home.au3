@@ -26,9 +26,9 @@ Func GoHome()
 	  If WinActive($WindowGame) Then
 		 Send("{0}")
 		 Sleep(100)
-		 MouseClick($MOUSE_CLICK_LEFT, 225,395)
+		 MouseClick($MOUSE_CLICK_LEFT, 140,265)
 		 Sleep(1000)
-		 MouseClick($MOUSE_CLICK_LEFT, 225,395)
+		 MouseClick($MOUSE_CLICK_LEFT, 140,265)
 		 Sleep(15000)
 		 Send("{ESC}")
 	  Else
