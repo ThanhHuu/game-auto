@@ -23,6 +23,7 @@ Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 Func GoHome()
    If WinExists($WindowGame) Then
 	  WinActivate($WindowGame)
+	  Sleep(500)
 	  If WinActive($WindowGame) Then
 		 Send("{0}")
 		 Sleep(100)

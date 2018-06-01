@@ -27,11 +27,11 @@ Func BuyItems($level)
    If WinExists($WindowGame) Then
 	  If Not WinActive($WindowGame) Then
 		 WinActivate($WindowGame)
+		 Sleep(500)
 	  EndIf
 	  If WinActive($WindowGame) Then
 		 If IsBuyGoHomeItem() Then
-
-			BuyItemGoHome("" & 1)
+			BuyItemGoHome("" & 10)
 			If $level = 80 Then
 			   Local $msg = StringFormat("%s - %s", "buy_items", "Go buy items")
 			   _FileWriteLog($LOG_FILE, $msg)
