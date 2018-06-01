@@ -31,7 +31,7 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
-Func GetActiveAeard()
+Func GetActiveAward()
    If WinExists($WindowGame) Then
 	  If Not WinActive($WindowGame) Then
 		 WinActivate($WindowGame)

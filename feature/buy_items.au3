@@ -23,7 +23,7 @@ DIM $TIME_TO_STORE=20000
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
-Func BuyItems($level)
+Func BuyItems($level, $noGoHome, $noMana, $noFood)
    If WinExists($WindowGame) Then
 	  If Not WinActive($WindowGame) Then
 		 WinActivate($WindowGame)
@@ -31,7 +31,7 @@ Func BuyItems($level)
 	  EndIf
 	  If WinActive($WindowGame) Then
 		 If IsBuyGoHomeItem() Then
-			BuyItemGoHome("" & 10)
+			BuyItemGoHome("" & $noGoHome)
 			If $level = 80 Then
 			   Local $msg = StringFormat("%s - %s", "buy_items", "Go buy items")
 			   _FileWriteLog($LOG_FILE, $msg)
@@ -42,14 +42,15 @@ Func BuyItems($level)
 			   Sleep(300)
 			   MouseClick($MOUSE_CLICK_LEFT, 270,250)
 			   Sleep(300)
-			   Send("82")
+			   Send("" & $noMana)
 			   MouseClick($MOUSE_CLICK_LEFT,525, 450)
 			   Sleep(300)
 			   MouseClick($MOUSE_CLICK_LEFT, 280,290)
 			   Sleep(300)
-			   Send("3")
+			   Send("" & $noFood)
 			   MouseClick($MOUSE_CLICK_LEFT,525, 450)
 			   Send("{ESC}")
+			   Sleep(500)
 			EndIf
 		 EndIf
 	  Else
@@ -83,11 +84,11 @@ EndFunc
 
 Func BuyItemGoHome($no)
    Send("{TAB}")
-   ; Mua PhuHoiThanh
+   Sleep(300)
    MouseClick($MOUSE_CLICK_LEFT, 930,330, 2)
    Send("{ESC}")
    Send("m")
-   Sleep(100)
+   Sleep(1000)
    Send("m")
    Sleep(15000)
    Send("m")
@@ -104,5 +105,6 @@ Func BuyItemGoHome($no)
    MouseClick($MOUSE_CLICK_LEFT, 520, 450)
    Sleep(300)
    Send("{ESC}")
+   Sleep(300)
 EndFunc
 

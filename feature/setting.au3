@@ -30,10 +30,8 @@ Func Setting()
 		 Sleep(500)
 	  EndIf
 	  If WinActive($WindowGame) Then
-		 Send("{TAB}")
-		 Send("{ESC}")
-		 SetupFighting()
 		 TurnOffGraphic()
+		 SetupFighting()
 	  Else
 		 Local $msg = StringFormat("%s - %s", "setting", "Can not active window game")
 		 _FileWriteLog($LOG_FILE, $msg)
@@ -43,9 +41,6 @@ Func Setting()
 	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
 EndFunc
-WinActivate($WindowGame)
-Sleep(300)
-TurnOnFighting()
 
 Func SetupFighting()
    MouseClick($MOUSE_CLICK_LEFT, 820,687)

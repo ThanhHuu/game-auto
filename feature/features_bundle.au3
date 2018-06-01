@@ -21,3 +21,4 @@
 #include"logout.au3"
 #include"lucky_card.au3"
 #include"lucky_round.au3"
+#include"setting.au3"
