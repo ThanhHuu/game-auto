@@ -24,40 +24,43 @@ Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 DIM $ITEM_CELL_WIDTH = 37
 DIM $ITEM_CELL_HEIGHT = 40
 
-Func SellItems()
+Func UseItems()
    If WinExists($WindowGame) Then
 	  If Not WinActive($WindowGame) Then
 		 WinActivate($WindowGame)
 		 Sleep(500)
 	  EndIf
 	  If WinActive($WindowGame) Then
-		 Local $cellPointer = OpenSaleBag()
-		 Local $countSaleCell = $cellPointer[2]/2
-		 For $row = 0 To $countSaleCell
+		 Local $cellPointer = OpenUseBag()
+		 Local $countUseCell = $cellPointer[2]/2
+		 Local $basePx = PixelGetColor(715, 115)
+		 For $row = 0 To $countUseCell
 			Local $currentCellY = $cellPointer[1] + $row*$ITEM_CELL_HEIGHT
 			For $column = 0 To 8
 			   Local $currentCellX = $cellPointer[0] + $column*$ITEM_CELL_WIDTH
-			   MouseClick($MOUSE_CLICK_LEFT, $currentCellX, $currentCellY)
+			   MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY)
+			   If PixelGetColor(715, 115) <> $basePx Then
+				  MouseClick($MOUSE_CLICK_LEFT, 715, 115)
+				  ContinueLoop
+			   Else
+				  MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 4)
+			   EndIf
 			Next
 		 Next
-		 MouseClick($MOUSE_CLICK_LEFT, 525, 165)
-		 Sleep(100)
-		 MouseClick($MOUSE_CLICK_LEFT, 655, 500)
-		 Sleep(100)
 		 Send("{TAB}")
 		 Send("{ESC}")
 		 Sleep(1000)
 	  Else
-		 Local $msg = StringFormat("%s - %s", "sell_items", "Can not active window game")
+		 Local $msg = StringFormat("%s - %s", "use_items", "Can not active window game")
 		 _FileWriteLog($LOG_FILE, $msg)
 	  EndIf
    Else
-	  Local $msg = StringFormat("%s - %s", "sell_items", "Not found window game")
+	  Local $msg = StringFormat("%s - %s", "use_items", "Not found window game")
 	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
 EndFunc
 
-Func OpenSaleBag()
+Func OpenUseBag()
    MouseClick($MOUSE_CLICK_LEFT, 945, 696)
    Sleep(100)
    MouseClick($MOUSE_CLICK_LEFT, 863, 683)
@@ -89,8 +92,6 @@ Func OpenSaleBag()
    Send("b")
    Sleep(500)
    MouseClick($MOUSE_CLICK_LEFT, $endX - $ITEM_CELL_WIDTH * 3, $currentY)
-   Sleep(100)
-   MouseClick($MOUSE_CLICK_LEFT, $endX - $ITEM_CELL_WIDTH * 8, $currentY)
    Sleep(100)
    Local $topBag = [$endX - $ITEM_CELL_WIDTH * 8, $currentY - $countCell*$ITEM_CELL_HEIGHT]
    MouseClick($MOUSE_CLICK_LEFT, $topBag[0], $topBag[1])

@@ -191,15 +191,13 @@ Func BuildTabCb($position)
 
    GUICtrlCreateLabel ("ThucAn", 300, $position + 3, 40, $rowHeight)
    $cbNoFoodItem = GUICtrlCreateCombo("", 350, $position, 40, $rowHeight)
-   GUICtrlSetData($cbNoFoodItem, "10|20|30|40|50|60", "20")
+   GUICtrlSetData($cbNoFoodItem, "5|10|20|30|40|50|60", "20")
 
    $position += 30
    $cbSellItem = GUICtrlCreateCheckbox ("SellItems", 30, $position, 60, $rowHeight)
-   GUICtrlSetState($cbSellItem, $GUI_DISABLE + $GUI_CHECKED)
 
    $position += 30
    $cbUseItem = GUICtrlCreateCheckbox ("UseItems", 30, $position, 60, $rowHeight)
-   GUICtrlSetState($cbUseItem, $GUI_DISABLE + $GUI_CHECKED)
 EndFunc
 
 BuildUI()
@@ -291,6 +289,16 @@ Func BuildUI()
 			$basicObj.Add("noGoHome", GUICtrlRead($cbNoBackHomeItem))
 			$basicObj.Add("noMana", GUICtrlRead($cbNoManaItem))
 			$basicObj.Add("notFood", GUICtrlRead($cbNoFoodItem))
+			If GUICtrlRead($cbSellItem) = $GUI_CHECKED Then
+			   $basicObj.Add("sellItem", True)
+			Else
+			   $basicObj.Add("sellItem", False)
+			EndIf
+			If GUICtrlRead($cbUseItem) = $GUI_CHECKED Then
+			   $basicObj.Add("useItem", True)
+			Else
+			   $basicObj.Add("useItem", False)
+			EndIf
 
 			; Feature thu ve phai
 			Local $tvpInWeek = [$tvp1, $tvp2, $tvp3, $tvp4, $tvp5, $tvp6, $tvp7]
@@ -449,7 +457,13 @@ Func RunFeature($featuresObj)
 			   TryLuckyCard()
 			   TryLuckyRound()
 			   Setting()
+			   If $basicObj.Item("sellItem") Then
+				  SellItems()
+			   EndIf
 			   BuyItems($basicObj.Item("level"), $basicObj.Item("noGoHome"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
+			   If $basicObj.Item("useItem") Then
+				  UseItems()
+			   EndIf
 
 			   Local $functions = $featureObj.Item("Functions")
 			   For $function In $functions
