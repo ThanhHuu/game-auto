@@ -75,7 +75,9 @@ Func SetupFighting()
 
    MouseClickDrag($MOUSE_CLICK_LEFT, 73,481,177, 481)
    Sleep(100)
-   Send("{ESC}")
+   MouseClick($MOUSE_CLICK_LEFT, 180,481)
+   Sleep(300)
+   Send("^f")
    Sleep(1000)
 EndFunc
 
@@ -107,7 +109,6 @@ Func TurnOnFighting()
 	  MouseClick($MOUSE_CLICK_LEFT, 40, 192)
 	  Sleep(100)
    EndIf
-   Send("{TAB}")
-   Send("{ESC}")
+   Send("^f")
    Sleep(500)
 EndFunc
