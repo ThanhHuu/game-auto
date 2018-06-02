@@ -23,6 +23,8 @@ DIM $TIME_TO_STORE=20000
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
+Local $SETTING_BASE_PX = ""
+
 Func Setting()
    If WinExists($WindowGame) Then
 	  If Not WinActive($WindowGame) Then
@@ -46,22 +48,32 @@ Func SetupFighting()
    Send("^f")
    Sleep(1000)
    MouseClick($MOUSE_CLICK_LEFT, 295,298)
-   If Hex(PixelGetColor (41,344), 6) <> "BB945D" Then
+   If $SETTING_BASE_PX = "" Then
+	  MouseMove(40,360)
+	  Sleep(200)
+	  $SETTING_BASE_PX = Hex(PixelGetColor (40,360), 6)
+   EndIf
+   MouseMove(41,344)
+   Sleep(100)
+   If Hex(PixelGetColor (41,344), 6) = $SETTING_BASE_PX Then
 	  MouseClick($MOUSE_CLICK_LEFT, 40, 341)
 	  Sleep(100)
    EndIf
-   If Hex(PixelGetColor (40,382), 6) <> "453826" Then
+   MouseMove(40,382)
+   Sleep(100)
+   If Hex(PixelGetColor (40,382), 6) = $SETTING_BASE_PX Then
 	  MouseClick($MOUSE_CLICK_LEFT, 41, 379)
 	  Sleep(100)
    EndIf
-   If Hex(PixelGetColor (39,411), 6) <> "B49263" Then
+   MouseMove(40,410)
+   Sleep(100)
+   If Hex(PixelGetColor (40,410), 6) = $SETTING_BASE_PX Then
 	  MouseClick($MOUSE_CLICK_LEFT, 41, 411)
 	  Sleep(100)
    EndIf
-   If Hex(PixelGetColor (73,481), 6) = "1E6C4C" Then
-	  MouseClickDrag($MOUSE_CLICK_LEFT, 73,481,177, 481)
-	  Sleep(100)
-   EndIf
+
+   MouseClickDrag($MOUSE_CLICK_LEFT, 73,481,177, 481)
+   Sleep(100)
    Send("{TAB}")
    Send("{ESC}")
    Sleep(1000)
@@ -84,7 +96,14 @@ EndFunc
 Func TurnOnFighting()
    Send("^f")
    Sleep(1000)
-   If Hex(PixelGetColor (41,192), 6) <> "BA9661" Then
+   If $SETTING_BASE_PX = "" Then
+	  MouseMove(40,360)
+	  Sleep(200)
+	  $SETTING_BASE_PX = Hex(PixelGetColor (40,360), 6)
+   EndIf
+   MouseMove(41,192)
+   Sleep(100)
+   If Hex(PixelGetColor (41,192), 6) = $SETTING_BASE_PX Then
 	  MouseClick($MOUSE_CLICK_LEFT, 40, 192)
 	  Sleep(100)
    EndIf

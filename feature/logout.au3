@@ -28,6 +28,10 @@ Func Logout($currentY)
 		 Sleep(500)
 	  EndIf
 	  If WinActive($WINDOW_LOGIN) Then
+		 If WinExists("Thông báo") Then
+			ControlClick("Thông báo", "", "CLASS:Button;INSTANCE:1")
+		 EndIf
+
 		 ; Click thoat game
 		 MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)
 		 Sleep(100)

@@ -28,8 +28,6 @@ Local $BUY_ITEMS_PX2 = "FE040B"
 Local $BUY_ITEMS_PX3 = "FE040B"
 Local $BUY_ITEMS_PX4 = "FE040B"
 
-BuyItems(100,1,1,1)
-BuyItems(100,1,1,1)
 Func BuyItems($level, $noGoHome, $noMana, $noFood)
    If WinExists($WindowGame) Then
 	  If Not WinActive($WindowGame) Then

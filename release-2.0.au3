@@ -448,8 +448,8 @@ Func RunFeature($featuresObj)
 			   Login($currentY)
 			   TryLuckyCard()
 			   TryLuckyRound()
-			   BuyItems($basicObj.Item("level"), $basicObj.Item("noGoHome"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
 			   Setting()
+			   BuyItems($basicObj.Item("level"), $basicObj.Item("noGoHome"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
 
 			   Local $functions = $featureObj.Item("Functions")
 			   For $function In $functions

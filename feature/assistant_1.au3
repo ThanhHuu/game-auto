@@ -29,7 +29,7 @@ Func AssignPrevention()
 	  EndIf
 	  If WinActive($WindowGame) Then
 		 Send("{0}")
-		 Sleep(1000)
+		 Sleep(2000)
 		 MouseClick($MOUSE_CLICK_LEFT,160,325)
 		 Sleep(8000)
 		 ; Nhan thuong
