@@ -48,13 +48,14 @@ Func SetupFighting()
    Send("^f")
    Sleep(1000)
    MouseClick($MOUSE_CLICK_LEFT, 295,298)
+   Sleep(200)
    If $SETTING_BASE_PX = "" Then
 	  MouseMove(40,360)
 	  Sleep(200)
 	  $SETTING_BASE_PX = Hex(PixelGetColor (40,360), 6)
    EndIf
    MouseMove(41,344)
-   Sleep(100)
+   Sleep(200)
    If Hex(PixelGetColor (41,344), 6) = $SETTING_BASE_PX Then
 	  MouseClick($MOUSE_CLICK_LEFT, 40, 341)
 	  Sleep(100)
@@ -74,7 +75,6 @@ Func SetupFighting()
 
    MouseClickDrag($MOUSE_CLICK_LEFT, 73,481,177, 481)
    Sleep(100)
-   Send("{TAB}")
    Send("{ESC}")
    Sleep(1000)
 EndFunc
@@ -90,7 +90,7 @@ Func TurnOffGraphic()
    Sleep(100)
    Send("{TAB}")
    Send("{ESC}")
-   Sleep(200)
+   Sleep(1000)
 EndFunc
 
 Func TurnOnFighting()
