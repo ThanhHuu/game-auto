@@ -32,6 +32,7 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
+Local $LUCKY_ROUND_PX = ""
 
 Func TryLuckyRound()
    If WinExists($WindowGame) Then
@@ -42,7 +43,11 @@ Func TryLuckyRound()
 	  If WinActive($WindowGame) Then
 		 Send("j")
 		 Sleep(500)
-		 If Hex(PixelGetColor(845, 422), 6) = "2C1009" And Hex(PixelGetColor(793, 422), 6) = "3B130B" Then
+		 If $LUCKY_ROUND_PX = "" Then
+			$LUCKY_ROUND_PX = Hex(PixelGetColor(820,420), 6)
+		 EndIf
+
+		 If $LUCKY_ROUND_PX  = Hex(PixelGetColor(820,420), 6) Then
 			MouseClick($MOUSE_CLICK_LEFT, 820,420)
 			Sleep(500)
 			For $i = 0 To 4
