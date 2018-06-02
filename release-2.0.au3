@@ -216,7 +216,7 @@ Func BuildUI()
    ; View for row 2
    GUICtrlCreateLabel("Level", 20, 69, 70, $rowHeight)
    $comboLevel = GUICtrlCreateCombo ("", 110, 65, 100, $rowHeight)
-   GUICtrlSetData($comboLevel, "70|80|100", "70")
+   GUICtrlSetData($comboLevel, "60|80|100", "60")
    GUICtrlCreateLabel("Loading Time", 220, 69, 70, $rowHeight)
    Local $cbLoadingTime = GUICtrlCreateCombo ("", 300, 65, 40, $rowHeight)
    GUICtrlSetData($cbLoadingTime, "10|15|20|25|30", "15")
@@ -255,7 +255,7 @@ Func BuildUI()
 			   ContinueLoop
 			EndIf
 		 Case $comboLevel
-			If GUICtrlRead($comboLevel) = 70 Then
+			If GUICtrlRead($comboLevel) = 60 Then
 			   GUICtrlSetState ($tvp1, $GUI_CHECKED )
 			   GUICtrlSetState ($tvp2, $GUI_CHECKED )
 			   GUICtrlSetState ($tvp3, $GUI_CHECKED )
@@ -397,7 +397,7 @@ Func GetFeatureScheduler($dateInWeek)
    Return $scheduler
 EndFunc
 
-Func GetIgnoreAccountFile($featureName)
+Func GetIgnoreAccount($featureName)
    Local $ignoreAccountObj = ObjCreate("Scripting.Dictionary")
    Local $ignoreAcc = $featureName & ".ig"
    If Not FileExists($ignoreAcc) Then
@@ -414,50 +414,68 @@ Func GetIgnoreAccountFile($featureName)
 EndFunc
 
 Func RunFeature($featuresObj)
-   For $featureName In $featuresObj.Keys
-	  Local $featureObj = $featuresObj.Item($featureName)
-	  If FileExists($featureName & ".done") Then
-		 Local $msg = StringFormat("Feature %s is done", $featureName)
-		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", $msg))
-		 ContinueLoop
+   Local $startDate = _NowCalcDate()
+   Local $isNewDate = False
+   While True
+	  If $isNewDate Then
+		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", "Reset all for new date"))
+		 FileDelete("*.ig")
+		 FileDelete("*.done")
+		 $isNewDate = False
 	  EndIf
-	  Local $basicObj = $featureObj.Item("Basic")
-	  Local $ignoreAccountObj = GetIgnoreAccountFile($featureName)
-	  For $i = 1 To $accountFiles[0]
-		 Local $accountFile = $accountFiles[$i]
-		 If $ignoreAccountObj.Item($accountFile) Then
-			Local $msg = StringFormat("Feature %s is done for account %s", $featureName, $accountFile)
+	  For $featureName In $featuresObj.Keys
+		 Local $featureObj = $featuresObj.Item($featureName)
+		 If FileExists($featureName & ".done") Then
+			Local $msg = StringFormat("Feature %s is done", $featureName)
 			_FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", $msg))
 			ContinueLoop
 		 EndIf
-		 Local $accounts = ParseAccounts($accountFile)
-		 For $account In $accounts
-			Local $usr = $account.Item("account")
-			Local $character = $account.Item("character")
-			Local $currentY = $FIRST_Y
-			AddAccount($usr, $DEFAULT_PWD, $character)
-			Login($currentY)
-			TryLuckyCard()
-			TryLuckyRound()
-			BuyItems($basicObj.Item("level"), $basicObj.Item("noGoHome"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
-			Setting()
+		 Local $basicObj = $featureObj.Item("Basic")
+		 Local $ignoreAccountObj = GetIgnoreAccount($featureName)
+		 For $i = 1 To $accountFiles[0]
+			Local $accountFile = $accountFiles[$i]
+			Local $accounts = ParseAccounts($accountFile)
+			For $account In $accounts
+			   Local $usr = $account.Item("account")
+			   Local $character = $account.Item("character")
+			   If $ignoreAccountObj.Item($character) Then
+				  Local $msg = StringFormat("Feature %s is done for account %s", $featureName, $character)
+				  _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", $msg))
+				  ContinueLoop
+			   EndIf
+			   Local $currentY = $FIRST_Y
+			   AddAccount($usr, $DEFAULT_PWD, $character)
+			   Login($currentY)
+			   TryLuckyCard()
+			   TryLuckyRound()
+			   BuyItems($basicObj.Item("level"), $basicObj.Item("noGoHome"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
+			   Setting()
 
-			Local $functions = $featureObj.Item("Functions")
-			For $function In $functions
-			   Call($function, $basicObj.Item("level"))
+			   Local $functions = $featureObj.Item("Functions")
+			   For $function In $functions
+				  Call($function, $basicObj.Item("level"))
+			   Next
+			   If $featureObj.Item("Logout") Then
+				  Logout($currentY)
+			   EndIf
+			   FileWriteLine($featureName & ".ig", $character)
 			Next
-			If $featureObj.Item("Logout") Then
-			   Logout($currentY)
+			If $stop Then
+			   ExitLoop
 			EndIf
 		 Next
-		 FileWriteLine($featureName & ".ig", $accountFile)
 		 If $stop Then
 			ExitLoop
 		 EndIf
+		 FileMove($featureName & ".ig", $featureName & ".done")
 	  Next
-	  If $stop Then
-		 ExitLoop
-	  EndIf
-	  FileMove($featureName & ".ig", $featureName & ".done")
-   Next
+	  While True
+		 Sleep(60000)
+		 If _NowCalcDate() > $startDate Then
+			$startDate = _NowCalcDate()
+			$isNewDate = True
+			ExitLoop
+		 EndIf
+	  WEnd
+   WEnd
 EndFunc

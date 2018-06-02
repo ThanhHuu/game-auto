@@ -50,15 +50,20 @@ Func AssignStory($level)
 		 Sleep(500)
 		 MouseClick($MOUSE_CLICK_LEFT, 470, 590)
 		 Sleep(500)
-		 If $level = 80  Then
+		 If $level >= 100 Then
+			MouseClick($MOUSE_CLICK_LEFT, 175, 355)
+			Sleep(500)
+		 ElseIf $level >= 80 Then
 			MouseClick($MOUSE_CLICK_LEFT, 175, 325)
 			Sleep(500)
-		 ElseIf $level = 70 Then
+		 ElseIf $level >= 60 Then
 			MouseClick($MOUSE_CLICK_LEFT, 175, 295)
 			Sleep(500)
 		 EndIf
 		 Sleep(100)
+		 Send("{TAB}")
 		 Send("{ESC}")
+		 Sleep(200)
 	  Else
 		 Local $msg = StringFormat("%s - %s", "assitant_2", "Can not active window game")
 		 _FileWriteLog($LOG_FILE, $msg)

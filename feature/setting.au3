@@ -43,7 +43,7 @@ Func Setting()
 EndFunc
 
 Func SetupFighting()
-   MouseClick($MOUSE_CLICK_LEFT, 820,687)
+   Send("^f")
    Sleep(1000)
    MouseClick($MOUSE_CLICK_LEFT, 295,298)
    If Hex(PixelGetColor (41,344), 6) <> "BB945D" Then
@@ -62,30 +62,33 @@ Func SetupFighting()
 	  MouseClickDrag($MOUSE_CLICK_LEFT, 73,481,177, 481)
 	  Sleep(100)
    EndIf
+   Send("{TAB}")
    Send("{ESC}")
    Sleep(1000)
 EndFunc
 
 Func TurnOffGraphic()
    Send("{ESC}")
-   Sleep(100)
+   Sleep(1000)
    MouseClick($MOUSE_CLICK_LEFT, 505, 315)
    Sleep(100)
    MouseClick($MOUSE_CLICK_LEFT, 390, 225)
    Sleep(100)
    MouseClick($MOUSE_CLICK_LEFT, 309, 369)
    Sleep(100)
+   Send("{TAB}")
    Send("{ESC}")
-   Sleep(1000)
+   Sleep(200)
 EndFunc
 
 Func TurnOnFighting()
-   MouseClick($MOUSE_CLICK_LEFT, 820,687)
+   Send("^f")
    Sleep(1000)
    If Hex(PixelGetColor (41,192), 6) <> "BA9661" Then
 	  MouseClick($MOUSE_CLICK_LEFT, 40, 192)
 	  Sleep(100)
    EndIf
+   Send("{TAB}")
    Send("{ESC}")
    Sleep(500)
 EndFunc

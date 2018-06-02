@@ -27,6 +27,7 @@
 #include <Date.au3>
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
+Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
@@ -55,6 +56,7 @@ Func TryLuckyCard()
 			$firstY += 130
 		 Next
 		 Send("{ESC}")
+		 Sleep(300)
 	  Else
 		 Local $msg = StringFormat("%s - %s", "lucky_card", "Can not active window game")
 		 _FileWriteLog($LOG_FILE, $msg)

@@ -23,6 +23,13 @@ DIM $TIME_TO_STORE=20000
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
+Local $BUY_ITEMS_PX1 = "FE040B"
+Local $BUY_ITEMS_PX2 = "FE040B"
+Local $BUY_ITEMS_PX3 = "FE040B"
+Local $BUY_ITEMS_PX4 = "FE040B"
+
+BuyItems(100,1,1,1)
+BuyItems(100,1,1,1)
 Func BuyItems($level, $noGoHome, $noMana, $noFood)
    If WinExists($WindowGame) Then
 	  If Not WinActive($WindowGame) Then
@@ -31,28 +38,13 @@ Func BuyItems($level, $noGoHome, $noMana, $noFood)
 	  EndIf
 	  If WinActive($WindowGame) Then
 		 If IsBuyGoHomeItem() Then
+			Local $msg = StringFormat("%s - %s", "buy_items", "Go buy items")
+			_FileWriteLog($LOG_FILE, $msg)
 			BuyItemGoHome("" & $noGoHome)
-			If $level = 80 Then
-			   Local $msg = StringFormat("%s - %s", "buy_items", "Go buy items")
-			   _FileWriteLog($LOG_FILE, $msg)
-			   ; Mua Mana,ThucAn
-			   MouseClick($MOUSE_CLICK_LEFT, 15, 270)
-			   Sleep(5000)
-			   MouseClick($MOUSE_CLICK_LEFT, 150,260)
-			   Sleep(300)
-			   MouseClick($MOUSE_CLICK_LEFT, 270,250)
-			   Sleep(300)
-			   Send("" & $noMana)
-			   MouseClick($MOUSE_CLICK_LEFT,525, 450)
-			   Sleep(300)
-			   MouseClick($MOUSE_CLICK_LEFT, 280,290)
-			   Sleep(300)
-			   Send("" & $noFood)
-			   MouseClick($MOUSE_CLICK_LEFT,525, 450)
-			   Send("{ESC}")
-			   Sleep(500)
-			EndIf
+			BuyItemManaAndFood($level, $noMana, $noFood)
+			LearningPixel()
 		 EndIf
+		 Sleep(1000)
 	  Else
 		 Local $msg = StringFormat("%s - %s", "buy_items", "Can not active window game")
 		 _FileWriteLog($LOG_FILE, $msg)
@@ -63,36 +55,81 @@ Func BuyItems($level, $noGoHome, $noMana, $noFood)
    EndIf
 EndFunc
 
+Func LearningPixel()
+   Send("{0}")
+   Sleep(1000)
+   $BUY_ITEMS_PX1 = Hex(PixelGetColor (399,143), 6)
+   $BUY_ITEMS_PX2 = Hex(PixelGetColor (122,265), 6)
+   $BUY_ITEMS_PX3 = Hex(PixelGetColor (122,292), 6)
+   $BUY_ITEMS_PX4 = Hex(PixelGetColor (394,619), 6)
+   Send("{ESC}")
+   Sleep(200)
+EndFunc
+
+
 Func IsBuyGoHomeItem()
    Send("{0}")
    Sleep(1000)
    Local $pxColor1 = Hex(PixelGetColor (399,143), 6)
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item", "px1 = " & $pxColor1))
    Local $pxColor2 = Hex(PixelGetColor (122,265), 6)
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item", "px2 = " & $pxColor2))
    Local $pxColor3 = Hex(PixelGetColor (122,292), 6)
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item", "px3 = " & $pxColor3))
    Local $pxColor4 = Hex(PixelGetColor (394,619), 6)
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item", "px4 = " & $pxColor4))
-   If "FE040B" = $pxColor1 And "6F87B4" = $pxColor2 And "39578D" = $pxColor3 And "2C1009" = $pxColor4 Then
+   Local $msg = StringFormat("px1 = %s, px2 = %s, px3 = %s, px4 = %s", $pxColor1, $pxColor2, $pxColor3, $pxColor4)
+   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item",$msg))
+   If $BUY_ITEMS_PX1 = $pxColor1 And $BUY_ITEMS_PX2 = $pxColor2 And $BUY_ITEMS_PX3 = $pxColor3 And $BUY_ITEMS_PX4 = $pxColor4 Then
 	  Send("{ESC}")
+	  Sleep(100)
 	  Return False
    Else
+	  Send("{TAB}")
+	  Sleep(100)
+	  Send("{ESC}")
 	  Return True
    EndIf
+EndFunc
+
+Func BuyItemManaAndFood($level, $noMana, $noFood)
+   Send("{TAB}")
+   Sleep(300)
+   MouseClick($MOUSE_CLICK_LEFT, 930,330, 2)
+   Sleep(2000)
+   Send("{ESC}")
+   Local $firstPos = [242, 248]
+   Local $offsize = ($level - 60)*2
+   MouseClick($MOUSE_CLICK_LEFT, 15, 270)
+   Sleep(5000)
+   MouseClick($MOUSE_CLICK_LEFT, 150,260)
+   Sleep(300)
+   MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize ,$firstPos[1])
+   Sleep(300)
+   Send("" & $noMana)
+   MouseClick($MOUSE_CLICK_LEFT,525, 450)
+   Sleep(300)
+   MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize , $firstPos[1] + 40)
+   Sleep(300)
+   Send("" & $noFood)
+   MouseClick($MOUSE_CLICK_LEFT,525, 450)
+   Send("{TAB}")
+   Send("{ESC}")
+   Sleep(500)
 EndFunc
 
 Func BuyItemGoHome($no)
    Send("{TAB}")
    Sleep(300)
+   MouseClick($MOUSE_CLICK_LEFT, 82, 80)
+   Sleep(300)
+   MouseClick($MOUSE_CLICK_LEFT, 778, 431)
+   Sleep(300)
    MouseClick($MOUSE_CLICK_LEFT, 930,330, 2)
+   Sleep(1000)
    Send("{ESC}")
    Send("m")
    Sleep(1000)
    Send("m")
    Sleep(15000)
    Send("m")
-   Sleep($TIME_TO_STORE - 10000)
+   Sleep($TIME_TO_STORE - 16000)
 
    MouseClick($MOUSE_CLICK_LEFT, 500, 400)
    Sleep(300)
@@ -102,8 +139,10 @@ Func BuyItemGoHome($no)
    Sleep(300)
    Send($no)
    MouseClick($MOUSE_CLICK_LEFT, 520, 365)
+   Sleep(100)
    MouseClick($MOUSE_CLICK_LEFT, 520, 450)
-   Sleep(300)
+   Sleep(100)
+   Send("{TAB}")
    Send("{ESC}")
    Sleep(300)
 EndFunc
