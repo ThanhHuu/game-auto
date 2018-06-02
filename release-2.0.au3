@@ -175,7 +175,7 @@ Func BuildTabNtd($position)
 EndFunc
 
 Local $cbBuyItem, $cbSellItem, $cbUseItem
-Local $cbNoBackHomeItem, $cbNoManaItem, $cbNoFoodItem
+Local $cbNoBackHomeItem, $cbNoManaItem, $cbNoFoodItem, $cbSetting
 Func BuildTabCb($position)
    GUICtrlCreateTabItem("CanBan")
    $cbBuyItem = GUICtrlCreateCheckbox ("BuyItems", 30, $position, 60, $rowHeight)
@@ -198,6 +198,9 @@ Func BuildTabCb($position)
 
    $position += 30
    $cbUseItem = GUICtrlCreateCheckbox ("UseItems", 30, $position, 60, $rowHeight)
+
+   $position += 30
+   $cbSetting = GUICtrlCreateCheckbox ("Setting", 30, $position, 60, $rowHeight)
 EndFunc
 
 BuildUI()
@@ -298,6 +301,11 @@ Func BuildUI()
 			   $basicObj.Add("useItem", True)
 			Else
 			   $basicObj.Add("useItem", False)
+			EndIf
+			If GUICtrlRead($cbSetting) = $GUI_CHECKED Then
+			   $basicObj.Add("setting", True)
+			Else
+			   $basicObj.Add("setting", False)
 			EndIf
 
 			; Feature thu ve phai
@@ -456,7 +464,9 @@ Func RunFeature($featuresObj)
 			   Login($currentY)
 			   TryLuckyCard()
 			   TryLuckyRound()
-			   Setting()
+			   If $basicObj.Item("setting") Then
+				  Setting()
+			   EndIf
 			   If $basicObj.Item("sellItem") Then
 				  SellItems()
 			   EndIf
@@ -473,12 +483,15 @@ Func RunFeature($featuresObj)
 				  Logout($currentY)
 			   EndIf
 			   FileWriteLine($featureName & ".ig", $character)
+			   If _NowCalcDate() > $startDate Then
+				  ExitLoop
+			   EndIf
 			Next
-			If $stop Then
+			If _NowCalcDate() > $startDate Then
 			   ExitLoop
 			EndIf
 		 Next
-		 If $stop Then
+		 If _NowCalcDate() > $startDate Then
 			ExitLoop
 		 EndIf
 		 FileMove($featureName & ".ig", $featureName & ".done")
