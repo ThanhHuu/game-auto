@@ -37,6 +37,8 @@ Func Logout($currentY)
 		 Sleep(500)
 		 MouseClick($MOUSE_CLICK_LEFT, 50, $currentY + 15)
 		 Sleep(500)
+		 ProcessClose("ClientX86.exe")
+		 Sleep(500)
 
 		 ; click xoa khoi danh sach
 		 MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)

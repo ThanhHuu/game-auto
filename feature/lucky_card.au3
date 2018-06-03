@@ -40,6 +40,8 @@ Func TryLuckyCard()
 		 Sleep(500)
 	  EndIf
 	  If WinActive($WindowGame) Then
+		 Local $basePx1 = PixelGetColor(384, 260)
+		 Local $basePx2 = PixelGetColor(620, 532)
 		 MouseClick($MOUSE_CLICK_LEFT, 450,590)
 		 Sleep(500)
 		 Local $firstY = 260;
@@ -55,8 +57,12 @@ Func TryLuckyCard()
 			Sleep(100)
 			$firstY += 130
 		 Next
+		 Send("{TAB}")
+		 Sleep(100)
 		 Send("{ESC}")
-		 Sleep(300)
+		 Sleep(100)
+		 MouseClick($MOUSE_CLICK_LEFT, 498, 497)
+		 Sleep(1000)
 	  Else
 		 Local $msg = StringFormat("%s - %s", "lucky_card", "Can not active window game")
 		 _FileWriteLog($LOG_FILE, $msg)

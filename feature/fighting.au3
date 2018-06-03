@@ -41,7 +41,7 @@ Func Fighting()
 		 MouseClick($MOUSE_CLICK_LEFT, 998, 420)
 		 Sleep(200)
 		 MouseClick($MOUSE_CLICK_LEFT, 903, 420, 2)
-		 Sleep(200)
+		 Sleep(20000)
 		 Send("{ESC}")
 		 Sleep(100)
 		 MouseClick($MOUSE_CLICK_LEFT, 505, 400)
@@ -67,14 +67,16 @@ Func StartFighting()
    MouseClick($MOUSE_CLICK_LEFT, 975, 305)
    Sleep(1000)
    MouseClick($MOUSE_CLICK_LEFT, 168, 270)
-   Sleep(1000)
    While True
+	  Sleep(1000)
 	  If Not TurnOnFighting() Then
 		 ExitLoop
 	  EndIf
 	  Sleep(5000)
+	  MouseClick($MOUSE_CLICK_LEFT, 935, 444)
+	  Sleep(100)
 	  MouseClick($MOUSE_CLICK_LEFT, 832, 528)
-	  Sleep(1000)
+	  Sleep(200)
    WEnd
 EndFunc
 
