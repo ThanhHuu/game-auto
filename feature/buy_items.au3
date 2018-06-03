@@ -128,9 +128,7 @@ Func BuyItemManaAndFood($level, $noMana, $noFood)
    Send("{ESC}")
    Sleep(500)
 EndFunc
-WinActivate($WindowGame)
-Sleep(500)
-BuyItemManaAndFood(80, 1, 1)
+
 Func BuyItemGoHome($no)
    Local $basePx = PixelGetColor(172, 45)
    Send("{TAB}")
