@@ -30,8 +30,14 @@ Func Fighting()
 		 Sleep(500)
 	  EndIf
 	  If WinActive($WindowGame) Then
+		 Local $basePx = PixelGetColor(172, 45)
 		 Send("{TAB}")
-		 Sleep(1000)
+		 While True
+			If $basePx <> PixelGetColor(172, 45) Then
+			   ExitLoop
+			EndIf
+			Sleep(300)
+		 WEnd
 		 MouseClick($MOUSE_CLICK_LEFT, 82, 80)
 		 Sleep(1000)
 		 MouseClick($MOUSE_CLICK_LEFT, 778, 431)
@@ -41,11 +47,19 @@ Func Fighting()
 		 MouseClick($MOUSE_CLICK_LEFT, 998, 420)
 		 Sleep(200)
 		 MouseClick($MOUSE_CLICK_LEFT, 903, 420, 2)
-		 Sleep(20000)
+		 Sleep(2000)
 		 Send("{ESC}")
-		 Sleep(100)
-		 MouseClick($MOUSE_CLICK_LEFT, 505, 400)
-		 Sleep(100)
+		 Local $pointer = [511, 326]
+		 Moving($pointer, 100)
+
+		 $basePx = PixelGetColor(286, 387)
+		 While True
+			Sleep(100)
+			MouseClick($MOUSE_CLICK_LEFT, 505, 400)
+			If $basePx <> PixelGetColor(286, 387) Then
+			   ExitLoop
+			EndIf
+		 WEnd
 		 MouseClick($MOUSE_CLICK_LEFT, 231, 288)
 		 Sleep(200)
 		 MouseClick($MOUSE_CLICK_LEFT, 165, 270)
@@ -67,7 +81,18 @@ Func StartFighting()
    MouseClick($MOUSE_CLICK_LEFT, 975, 305)
    Sleep(1000)
    MouseClick($MOUSE_CLICK_LEFT, 168, 270)
+   Local $count = 0
    While True
+	  $count += 1
+	  If $count = 50 Then
+		 $count = 0
+		 Send("{TAB}")
+		 Sleep(1000)
+		 MouseClick($MOUSE_CLICK_LEFT, 397, 405, 2)
+		 Sleep(500)
+		 Send("{ESC}")
+	  EndIf
+
 	  Sleep(1000)
 	  If Not TurnOnFighting() Then
 		 ExitLoop

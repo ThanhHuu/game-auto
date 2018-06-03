@@ -132,8 +132,14 @@ WinActivate($WindowGame)
 Sleep(500)
 BuyItemManaAndFood(80, 1, 1)
 Func BuyItemGoHome($no)
+   Local $basePx = PixelGetColor(172, 45)
    Send("{TAB}")
-   Sleep(1000)
+   While True
+	  If $basePx <> PixelGetColor(172, 45) Then
+		 ExitLoop
+	  EndIf
+	  Sleep(300)
+   WEnd
    MouseClick($MOUSE_CLICK_LEFT, 82, 80)
    Sleep(500)
    MouseClick($MOUSE_CLICK_LEFT, 778, 431)

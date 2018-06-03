@@ -45,8 +45,14 @@ Func Setting()
 EndFunc
 
 Func SetupFighting()
+   Local $basePx = PixelGetColor(309, 518)
    Send("^f")
-   Sleep(1000)
+   While True
+	  if $basePx <> PixelGetColor(309, 518) Then
+		 ExitLoop
+	  EndIf
+	  Sleep(300)
+   WEnd
    MouseClick($MOUSE_CLICK_LEFT, 295,298)
    Sleep(200)
    If $SETTING_BASE_PX = "" Then
@@ -75,17 +81,29 @@ Func SetupFighting()
 
    MouseClickDrag($MOUSE_CLICK_LEFT, 73,481,177, 481)
    Sleep(100)
-   MouseClick($MOUSE_CLICK_LEFT, 180,481)
-   Sleep(300)
-   Send("^f")
+   MouseClick($MOUSE_CLICK_LEFT, 292, 514)
+   Sleep(100)
+   Send("{ESC}")
    Sleep(1000)
 EndFunc
 
 Func TurnOffGraphic()
-   Send("{ESC}")
-   Sleep(1000)
-   MouseClick($MOUSE_CLICK_LEFT, 505, 315)
-   Sleep(100)
+   Local $basePx = PixelGetColor(505, 444)
+   While True
+	  Send("{ESC}")
+	  Sleep(300)
+	  If $basePx <> PixelGetColor(505, 444) Then
+		 ExitLoop
+	  EndIf
+   WEnd
+   $basePx = PixelGetColor(261, 188)
+   While True
+	  Sleep(100)
+	  MouseClick($MOUSE_CLICK_LEFT, 505, 315)
+	  If $basePx <> PixelGetColor(261, 188) Then
+		 ExitLoop
+	  EndIf
+   WEnd
    MouseClick($MOUSE_CLICK_LEFT, 390, 225)
    Sleep(100)
    MouseClick($MOUSE_CLICK_LEFT, 309, 369)
