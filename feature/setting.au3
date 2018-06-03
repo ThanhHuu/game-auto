@@ -109,6 +109,8 @@ Func TurnOnFighting()
 	  MouseClick($MOUSE_CLICK_LEFT, 40, 192)
 	  Sleep(100)
    EndIf
+   Local $enabled = Hex(PixelGetColor (41,192), 6) <> $SETTING_BASE_PX
    Send("^f")
    Sleep(500)
+   Return $enabled
 EndFunc

@@ -24,3 +24,4 @@
 #include"setting.au3"
 #include"use_items.au3"
 #include"sell_items.au3"
+#include"fighting.au3"

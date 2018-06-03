@@ -203,6 +203,42 @@ Func BuildTabCb($position)
    $cbSetting = GUICtrlCreateCheckbox ("Setting", 30, $position, 60, $rowHeight)
 EndFunc
 
+Local $nmq1, $nmq2, $nmq3, $nmq4, $nmq5, $nmq6, $nmq7
+Local $nmqLogoutWhenDone
+Func BuildTabNmq($position)
+   GUICtrlCreateTabItem("NhanMonQuan")
+   $nmq1 = GUICtrlCreateCheckbox (_DateDayOfWeek (1), 30, $position, 90, $rowHeight)
+   GUICtrlSetState($nmq1, $GUI_UNCHECKED)
+
+   $nmqLogoutWhenDone = GUICtrlCreateCheckbox ("Logout When Done", 150, $position + 10, 120, $rowHeight)
+   GUICtrlSetState($nmqLogoutWhenDone, $GUI_DISABLE + $GUI_CHECKED)
+
+   $position+= 20
+   $nmq2 = GUICtrlCreateCheckbox (_DateDayOfWeek (2), 30, $position, 90, $rowHeight)
+   GUICtrlSetState($nmq2, $GUI_UNCHECKED)
+
+   $position+= 20
+   $nmq3 = GUICtrlCreateCheckbox (_DateDayOfWeek (3), 30, $position, 90, $rowHeight)
+   GUICtrlSetState($nmq3, $GUI_DISABLE + $GUI_UNCHECKED)
+
+   $position+= 20
+   $nmq4 = GUICtrlCreateCheckbox (_DateDayOfWeek (4), 30, $position, 90, $rowHeight)
+   GUICtrlSetState($nmq4, $GUI_UNCHECKED)
+
+   $position+= 20
+   $nmq5 = GUICtrlCreateCheckbox (_DateDayOfWeek (5), 30, $position, 90, $rowHeight)
+   GUICtrlSetState($nmq5, $GUI_DISABLE + $GUI_UNCHECKED)
+
+   $position+= 20
+   $nmq6 = GUICtrlCreateCheckbox (_DateDayOfWeek (6), 30, $position, 90, $rowHeight)
+   GUICtrlSetState($nmq6, $GUI_UNCHECKED)
+
+   $position+= 20
+   $nmq7 = GUICtrlCreateCheckbox (_DateDayOfWeek (7), 30, $position, 90, $rowHeight)
+   GUICtrlSetState($nmq7, $GUI_DISABLE + $GUI_UNCHECKED)
+EndFunc
+
+
 BuildUI()
 
 Local $comboLevel
@@ -238,6 +274,7 @@ Func BuildUI()
    BuildTabTvp(140)
    BuildTabBc(140)
    BuildTabNtd(140)
+   BuildTabNmq(140)
 
 
    GUISetState(@SW_SHOW)
@@ -256,7 +293,7 @@ Func BuildUI()
 			   ContinueLoop
 			EndIf
 		 Case $comboLevel
-			If GUICtrlRead($comboLevel) = 60 Then
+			If GUICtrlRead($comboLevel) < 80 Then
 			   GUICtrlSetState ($tvp1, $GUI_CHECKED )
 			   GUICtrlSetState ($tvp2, $GUI_CHECKED )
 			   GUICtrlSetState ($tvp3, $GUI_CHECKED )
@@ -264,6 +301,10 @@ Func BuildUI()
 			   GUICtrlSetState ($tvp5, $GUI_CHECKED )
 			   GUICtrlSetState ($tvp6, $GUI_CHECKED )
 			   GUICtrlSetState ($tvp7, $GUI_CHECKED )
+			   GUICtrlSetState ($nmq1, $GUI_UNCHECKED)
+			   GUICtrlSetState ($nmq2, $GUI_UNCHECKED)
+			   GUICtrlSetState ($nmq4, $GUI_UNCHECKED)
+			   GUICtrlSetState ($nmq6, $GUI_UNCHECKED)
 			Else
 			   GUICtrlSetState ($tvp1, $GUI_UNCHECKED)
 			   GUICtrlSetState ($tvp2, $GUI_UNCHECKED)
@@ -272,6 +313,10 @@ Func BuildUI()
 			   GUICtrlSetState ($tvp5, $GUI_UNCHECKED)
 			   GUICtrlSetState ($tvp6, $GUI_UNCHECKED)
 			   GUICtrlSetState ($tvp7, $GUI_UNCHECKED)
+			   GUICtrlSetState ($nmq1, $GUI_CHECKED )
+			   GUICtrlSetState ($nmq2, $GUI_CHECKED )
+			   GUICtrlSetState ($nmq4, $GUI_CHECKED )
+			   GUICtrlSetState ($nmq6, $GUI_CHECKED )
 			EndIf
 		 Case $buttonRun
 			If Not WinExists($WINDOW_AUTO) Then
@@ -326,7 +371,7 @@ Func BuildUI()
 			   $tvpFeature.Add("Logout", True)
 			EndIf
 			If $tvpSchedule.Item(_DateDayOfWeek(@WDAY)) Then
-			    $featuresObj.Add("ThuVePhai", $tvpFeature)
+			   $featuresObj.Add("ThuVePhai", $tvpFeature)
 			EndIf
 
 
@@ -370,11 +415,24 @@ Func BuildUI()
 			   $ntdFeature.Add("Logout", True)
 			EndIf
 			If $ntdSchedule.Item(_DateDayOfWeek(@WDAY)) Then
-			   Local $msg = StringFormat("NguTrucDam is disable on %s", _DateDayOfWeek(@WDAY))
-			   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", $msg))
 			   For $j = 1 To GUICtrlRead($ntdNo)
 				  $featuresObj.Add("NguTrucDam" & $j, $ntdFeature)
 			   Next
+			EndIf
+
+			; Feature NhanMonQuan
+			Local $nmqFeature = ObjCreate("Scripting.Dictionary")
+			$nmqFeature.Add("Basic", $basicObj)
+			Local $nmqInWeek = [$nmq1, $nmq2, $nmq3, $nmq4, $nmq5, $nmq6, $nmq7]
+			Local $nmqSchedule = GetFeatureScheduler($nmqInWeek)
+			$nmqFeature.Add("Scheduler", $nmqSchedule)
+			Local $nmqFuncs = ['Fighting']
+			$nmqFeature.Add("Functions", $nmqFuncs)
+			If GUICtrlRead($nmqLogoutWhenDone) = $GUI_CHECKED Then
+			   $nmqFeature.Add("Logout", True)
+			EndIf
+			If $nmqSchedule.Item(_DateDayOfWeek(@WDAY)) Then
+			   $featuresObj.Add("NhanMonQuan" & $j, $nmqFeature)
 			EndIf
 
 			Local $count = 10;

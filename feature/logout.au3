@@ -34,15 +34,15 @@ Func Logout($currentY)
 
 		 ; Click thoat game
 		 MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)
-		 Sleep(100)
+		 Sleep(500)
 		 MouseClick($MOUSE_CLICK_LEFT, 50, $currentY + 15)
-		 Sleep(100)
+		 Sleep(500)
 
 		 ; click xoa khoi danh sach
 		 MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)
-		 Sleep(100)
+		 Sleep(500)
 		 MouseClick($MOUSE_CLICK_LEFT, 50, $currentY + 60)
-		 Sleep(100)
+		 Sleep(500)
 		 MouseClick($MOUSE_CLICK_LEFT, 70, 100)
 	  Else
 		 Local $msg = StringFormat("%s - %s", "login", "Can not active window game")
