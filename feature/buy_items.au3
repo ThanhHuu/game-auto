@@ -23,11 +23,6 @@ DIM $TIME_TO_STORE=20000
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
-Local $BUY_ITEMS_PX1 = "FE040B"
-Local $BUY_ITEMS_PX2 = "FE040B"
-Local $BUY_ITEMS_PX3 = "FE040B"
-Local $BUY_ITEMS_PX4 = "FE040B"
-
 Func BuyItems($level, $noGoHome, $noMana, $noFood)
    If WinExists($WindowGame) Then
 	  If Not WinActive($WindowGame) Then
@@ -40,7 +35,6 @@ Func BuyItems($level, $noGoHome, $noMana, $noFood)
 			_FileWriteLog($LOG_FILE, $msg)
 			BuyItemGoHome("" & $noGoHome)
 			BuyItemManaAndFood($level, $noMana, $noFood)
-			LearningPixel()
 		 EndIf
 		 Sleep(1000)
 	  Else
@@ -53,35 +47,19 @@ Func BuyItems($level, $noGoHome, $noMana, $noFood)
    EndIf
 EndFunc
 
-Func LearningPixel()
-   Send("{0}")
-   Sleep(1000)
-   $BUY_ITEMS_PX1 = Hex(PixelGetColor (399,143), 6)
-   $BUY_ITEMS_PX2 = Hex(PixelGetColor (122,265), 6)
-   $BUY_ITEMS_PX3 = Hex(PixelGetColor (122,292), 6)
-   $BUY_ITEMS_PX4 = Hex(PixelGetColor (394,619), 6)
-   Send("{ESC}")
-   Sleep(200)
-EndFunc
-
-
 Func IsBuyGoHomeItem()
+   Local $basePx = PixelGetColor(205, 138)
    Send("{0}")
    Sleep(1000)
-   Local $pxColor1 = Hex(PixelGetColor (399,143), 6)
-   Local $pxColor2 = Hex(PixelGetColor (122,265), 6)
-   Local $pxColor3 = Hex(PixelGetColor (122,292), 6)
-   Local $pxColor4 = Hex(PixelGetColor (394,619), 6)
-   Local $msg = StringFormat("px1 = %s, px2 = %s, px3 = %s, px4 = %s", $pxColor1, $pxColor2, $pxColor3, $pxColor4)
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item",$msg))
-   If $BUY_ITEMS_PX1 = $pxColor1 And $BUY_ITEMS_PX2 = $pxColor2 And $BUY_ITEMS_PX3 = $pxColor3 And $BUY_ITEMS_PX4 = $pxColor4 Then
+   If $basePx <> PixelGetColor(205, 138) Then
 	  Send("{ESC}")
-	  Sleep(100)
+	  Sleep(500)
 	  Return False
    Else
 	  Send("{TAB}")
 	  Sleep(100)
 	  Send("{ESC}")
+	  Sleep(400)
 	  Return True
    EndIf
 EndFunc
@@ -89,29 +67,70 @@ EndFunc
 Func BuyItemManaAndFood($level, $noMana, $noFood)
    Send("{TAB}")
    Sleep(300)
-   MouseClick($MOUSE_CLICK_LEFT, 930,330, 2)
-   Sleep(2000)
+   MouseClickDrag($MOUSE_CLICK_LEFT, 996, 226, 996, 372)
+   Sleep(100)
+   MouseClick($MOUSE_CLICK_LEFT, 996, 325)
+   Sleep(200)
+   MouseClick($MOUSE_CLICK_LEFT, 920, 310, 2)
+   Sleep(3000)
    Send("{ESC}")
    Local $firstPos = [242, 248]
    Local $offsize = ($level - 60)*2
-   MouseClick($MOUSE_CLICK_LEFT, 15, 270)
-   Sleep(5000)
-   MouseClick($MOUSE_CLICK_LEFT, 150,260)
-   Sleep(300)
-   MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize ,$firstPos[1])
-   Sleep(300)
+   Local $basePx = PixelGetColor(115, 171)
+   While True
+	  Sleep(100)
+	  MouseClick($MOUSE_CLICK_LEFT, 490, 390)
+	  If $basePx <> PixelGetColor(115, 171) Then
+		 ExitLoop
+	  EndIf
+   WEnd
+   $basePx = PixelGetColor(74, 247)
+   While True
+	  Sleep(100)
+	  MouseClick($MOUSE_CLICK_LEFT, 178, 264)
+	  If $basePx <> PixelGetColor(74, 247) Then
+		 ExitLoop
+	  EndIf
+   WEnd
+   ; Buy mana
+   $basePx = PixelGetColor(519, 340)
+   While True
+	  Sleep(100)
+	  MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize ,$firstPos[1])
+	  If $basePx <> PixelGetColor(519, 340) Then
+		 ExitLoop
+	  EndIf
+   WEnd
    Send("" & $noMana)
-   MouseClick($MOUSE_CLICK_LEFT,525, 450)
-   Sleep(300)
-   MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize , $firstPos[1] + 40)
-   Sleep(300)
+   $basePx = PixelGetColor(316, 200)
+   MouseClick($MOUSE_CLICK_LEFT, 520, 365)
+   If $basePx = PixelGetColor(316, 200) Then
+	  MouseClick($MOUSE_CLICK_LEFT, 520, 450)
+   EndIf
+   Sleep(500)
+
+   ; Buy food
+   $basePx = PixelGetColor(519, 340)
+   While True
+	  Sleep(100)
+	  MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize , $firstPos[1] + 40)
+	  If $basePx <> PixelGetColor(519, 340) Then
+		 ExitLoop
+	  EndIf
+   WEnd
    Send("" & $noFood)
-   MouseClick($MOUSE_CLICK_LEFT,525, 450)
-   Send("{TAB}")
+   $basePx = PixelGetColor(316, 200)
+   MouseClick($MOUSE_CLICK_LEFT, 520, 365)
+   If $basePx = PixelGetColor(316, 200) Then
+	  MouseClick($MOUSE_CLICK_LEFT, 520, 450)
+   EndIf
+
    Send("{ESC}")
    Sleep(500)
 EndFunc
-
+WinActivate($WindowGame)
+Sleep(500)
+BuyItemManaAndFood(80, 1, 1)
 Func BuyItemGoHome($no)
    Send("{TAB}")
    Sleep(1000)
@@ -122,26 +141,60 @@ Func BuyItemGoHome($no)
    MouseClick($MOUSE_CLICK_LEFT, 930,330, 2)
    Sleep(1000)
    Send("{ESC}")
-   Send("m")
    Sleep(1000)
-   Send("m")
-   Sleep(15000)
-   Send("m")
-   Sleep($TIME_TO_STORE - 16000)
+   Local $pointer = [511, 326]
+   Moving($pointer, 100)
 
-   MouseClick($MOUSE_CLICK_LEFT, 500, 400)
-   Sleep(300)
-   MouseClick($MOUSE_CLICK_LEFT, 160,240)
-   Sleep(300)
-   MouseClick($MOUSE_CLICK_LEFT, 170,250)
-   Sleep(300)
+   Local $basePx = PixelGetColor(209, 140)
+   While True
+	  Sleep(100)
+	  MouseClick($MOUSE_CLICK_LEFT, 500, 400)
+	  If $basePx <> PixelGetColor(209, 140) Then
+		 ExitLoop
+	  EndIf
+   WEnd
+   $basePx = PixelGetColor(77, 268)
+   While True
+	  Sleep(100)
+	  MouseClick($MOUSE_CLICK_LEFT, 160,240)
+	  If $basePx <> PixelGetColor(77, 268) Then
+		 ExitLoop
+	  EndIf
+   WEnd
+   $basePx = PixelGetColor(502, 334)
+   While True
+	  Sleep(100)
+	  MouseClick($MOUSE_CLICK_LEFT, 170,250)
+	  If $basePx <> PixelGetColor(502, 334) Then
+		 ExitLoop
+	  EndIf
+   WEnd
    Send($no)
+   $basePx = PixelGetColor(316, 200)
    MouseClick($MOUSE_CLICK_LEFT, 520, 365)
-   Sleep(100)
-   MouseClick($MOUSE_CLICK_LEFT, 520, 450)
-   Sleep(100)
-   Send("{TAB}")
+   If $basePx = PixelGetColor(316, 200) Then
+	  MouseClick($MOUSE_CLICK_LEFT, 520, 450)
+   EndIf
    Send("{ESC}")
    Sleep(300)
+EndFunc
+
+Func Moving($pointerPos, $offset)
+   Local $pointerX = $pointerPos[0]
+   Local $pointerY = $pointerPos[1]
+   While True
+	  Local $preTopPx = PixelGetColor($pointerX - $offset, $pointerY - $offset)
+	  Local $preRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
+	  Local $preBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
+	  Local $preLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
+	  Sleep(3000)
+	  Local $nextTopPx = PixelGetColor($pointerX - $offset,$pointerY - $offset)
+	  Local $nextRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
+	  Local $nextBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
+	  Local $nextLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
+	  If $preTopPx = $nextTopPx And $preRightPx = $nextRightPx And $preBottomtPx = $nextBottomtPx And $preLeftPx = $nextLeftPx Then
+		 ExitLoop
+	  EndIf
+   WEnd
 EndFunc
 
