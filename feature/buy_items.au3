@@ -23,30 +23,6 @@ DIM $TIME_TO_STORE=20000
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
-Func BuyItems($level, $noGoHome, $noMana, $noFood)
-   If WinExists($WindowGame) Then
-	  If Not WinActive($WindowGame) Then
-		 WinActivate($WindowGame)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WindowGame) Then
-		 If IsBuyGoHomeItem() Then
-			Local $msg = StringFormat("%s - %s", "buy_items", "Go buy items")
-			_FileWriteLog($LOG_FILE, $msg)
-			BuyItemGoHome("" & $noGoHome)
-			BuyItemManaAndFood($level, $noMana, $noFood)
-		 EndIf
-		 Sleep(1000)
-	  Else
-		 Local $msg = StringFormat("%s - %s", "buy_items", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
-	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "buy_items", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
-   EndIf
-EndFunc
-
 Func IsBuyGoHomeItem()
    Local $basePx = PixelGetColor(205, 138)
    Send("{0}")
@@ -65,122 +41,159 @@ Func IsBuyGoHomeItem()
 EndFunc
 
 Func BuyItemManaAndFood($level, $noMana, $noFood)
-   Send("{TAB}")
-   Sleep(300)
-   MouseClickDrag($MOUSE_CLICK_LEFT, 996, 226, 996, 372)
-   Sleep(100)
-   MouseClick($MOUSE_CLICK_LEFT, 996, 325)
-   Sleep(200)
-   MouseClick($MOUSE_CLICK_LEFT, 920, 310, 2)
-   Sleep(3000)
-   Send("{ESC}")
-   Local $firstPos = [242, 248]
-   Local $offsize = ($level - 60)*2
-   Local $basePx = PixelGetColor(115, 171)
-   While True
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 490, 390)
-	  If $basePx <> PixelGetColor(115, 171) Then
-		 ExitLoop
+   If WinExists($WindowGame) Then
+	  If Not WinActive($WindowGame) Then
+		 WinActivate($WindowGame)
+		 Sleep(500)
 	  EndIf
-   WEnd
-   $basePx = PixelGetColor(74, 247)
-   While True
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 178, 264)
-	  If $basePx <> PixelGetColor(74, 247) Then
-		 ExitLoop
-	  EndIf
-   WEnd
-   ; Buy mana
-   $basePx = PixelGetColor(519, 340)
-   While True
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize ,$firstPos[1])
-	  If $basePx <> PixelGetColor(519, 340) Then
-		 ExitLoop
-	  EndIf
-   WEnd
-   Send("" & $noMana)
-   $basePx = PixelGetColor(316, 200)
-   MouseClick($MOUSE_CLICK_LEFT, 520, 365)
-   If $basePx = PixelGetColor(316, 200) Then
-	  MouseClick($MOUSE_CLICK_LEFT, 520, 450)
-   EndIf
-   Sleep(500)
+	  If WinActive($WindowGame) Then
+		 Send("{TAB}")
+		 Sleep(300)
+		 MouseClickDrag($MOUSE_CLICK_LEFT, 996, 226, 996, 372)
+		 Sleep(100)
+		 MouseClick($MOUSE_CLICK_LEFT, 996, 325)
+		 Sleep(200)
+		 MouseClick($MOUSE_CLICK_LEFT, 920, 310, 2)
+		 Sleep(1000)
+		 Send("{ESC}")
+		 Sleep(1000)
+		 Local $pointer = [511, 326]
+		 Moving($pointer, 100)
 
-   ; Buy food
-   $basePx = PixelGetColor(519, 340)
-   While True
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize , $firstPos[1] + 40)
-	  If $basePx <> PixelGetColor(519, 340) Then
-		 ExitLoop
+		 Local $firstPos = [242, 248]
+		 Local $offsize = ($level - 60)*2
+		 Local $basePx = PixelGetColor(115, 171)
+		 While True
+			Sleep(100)
+			MouseClick($MOUSE_CLICK_LEFT, 490, 390)
+			If $basePx <> PixelGetColor(115, 171) Then
+			   ExitLoop
+			EndIf
+		 WEnd
+		 $basePx = PixelGetColor(74, 247)
+		 While True
+			Sleep(100)
+			MouseClick($MOUSE_CLICK_LEFT, 178, 264)
+			If $basePx <> PixelGetColor(74, 247) Then
+			   ExitLoop
+			EndIf
+		 WEnd
+		 ; Buy mana
+		 $basePx = PixelGetColor(519, 340)
+		 While True
+			Sleep(100)
+			MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize ,$firstPos[1])
+			If $basePx <> PixelGetColor(519, 340) Then
+			   ExitLoop
+			EndIf
+		 WEnd
+		 Send("" & $noMana)
+		 $basePx = PixelGetColor(316, 200)
+		 MouseClick($MOUSE_CLICK_LEFT, 520, 365)
+		 If $basePx = PixelGetColor(316, 200) Then
+			MouseClick($MOUSE_CLICK_LEFT, 520, 450)
+		 EndIf
+		 Sleep(500)
+
+		 ; Buy food
+		 $basePx = PixelGetColor(519, 340)
+		 While True
+			Sleep(100)
+			MouseClick($MOUSE_CLICK_LEFT, $firstPos[0] + $offsize , $firstPos[1] + 40)
+			If $basePx <> PixelGetColor(519, 340) Then
+			   ExitLoop
+			EndIf
+		 WEnd
+		 Send("" & $noFood)
+		 $basePx = PixelGetColor(316, 200)
+		 MouseClick($MOUSE_CLICK_LEFT, 520, 365)
+		 If $basePx = PixelGetColor(316, 200) Then
+			MouseClick($MOUSE_CLICK_LEFT, 520, 450)
+		 EndIf
+		 Send("{ESC}")
+		 Sleep(1000)
+	  Else
+		 Local $msg = StringFormat("%s - %s", "buy_items", "Can not active window game")
+		 _FileWriteLog($LOG_FILE, $msg)
 	  EndIf
-   WEnd
-   Send("" & $noFood)
-   $basePx = PixelGetColor(316, 200)
-   MouseClick($MOUSE_CLICK_LEFT, 520, 365)
-   If $basePx = PixelGetColor(316, 200) Then
-	  MouseClick($MOUSE_CLICK_LEFT, 520, 450)
+   Else
+	  Local $msg = StringFormat("%s - %s", "buy_items", "Not found window game")
+	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
 
-   Send("{ESC}")
-   Sleep(500)
 EndFunc
 
 Func BuyItemGoHome($no)
-   Local $basePx = PixelGetColor(172, 45)
-   Send("{TAB}")
-   While True
-	  If $basePx <> PixelGetColor(172, 45) Then
-		 ExitLoop
+   If WinExists($WindowGame) Then
+	  If Not WinActive($WindowGame) Then
+		 WinActivate($WindowGame)
+		 Sleep(500)
 	  EndIf
-	  Sleep(300)
-   WEnd
-   MouseClick($MOUSE_CLICK_LEFT, 82, 80)
-   Sleep(500)
-   MouseClick($MOUSE_CLICK_LEFT, 778, 431)
-   Sleep(500)
-   MouseClick($MOUSE_CLICK_LEFT, 930,330, 2)
-   Sleep(1000)
-   Send("{ESC}")
-   Sleep(1000)
-   Local $pointer = [511, 326]
-   Moving($pointer, 100)
-
-   Local $basePx = PixelGetColor(209, 140)
-   While True
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 500, 400)
-	  If $basePx <> PixelGetColor(209, 140) Then
-		 ExitLoop
+	  If WinActive($WindowGame) Then
+		 If IsBuyGoHomeItem() Then
+			Local $msg = StringFormat("%s - %s", "buy_items", "Go buy go home items")
+			_FileWriteLog($LOG_FILE, $msg)
+			; Go to NPC
+			Local $basePx = PixelGetColor(172, 45)
+			Send("{TAB}")
+			While True
+			   If $basePx <> PixelGetColor(172, 45) Then
+				  ExitLoop
+			   EndIf
+			   Sleep(300)
+			WEnd
+			MouseClick($MOUSE_CLICK_LEFT, 82, 80)
+			Sleep(500)
+			MouseClick($MOUSE_CLICK_LEFT, 778, 431)
+			Sleep(500)
+			MouseClick($MOUSE_CLICK_LEFT, 930,330, 2)
+			Sleep(1000)
+			Send("{ESC}")
+			Sleep(1000)
+			Local $pointer = [511, 326]
+			Moving($pointer, 100)
+			; Buy items
+			Local $basePx = PixelGetColor(209, 140)
+			While True
+			   Sleep(100)
+			   MouseClick($MOUSE_CLICK_LEFT, 500, 400)
+			   If $basePx <> PixelGetColor(209, 140) Then
+				  ExitLoop
+			   EndIf
+			WEnd
+			$basePx = PixelGetColor(77, 268)
+			While True
+			   Sleep(100)
+			   MouseClick($MOUSE_CLICK_LEFT, 160,240)
+			   If $basePx <> PixelGetColor(77, 268) Then
+				  ExitLoop
+			   EndIf
+			WEnd
+			$basePx = PixelGetColor(502, 334)
+			While True
+			   Sleep(100)
+			   MouseClick($MOUSE_CLICK_LEFT, 170,250)
+			   If $basePx <> PixelGetColor(502, 334) Then
+				  ExitLoop
+			   EndIf
+			WEnd
+			Send($no)
+			$basePx = PixelGetColor(316, 200)
+			MouseClick($MOUSE_CLICK_LEFT, 520, 365)
+			If $basePx = PixelGetColor(316, 200) Then
+			   MouseClick($MOUSE_CLICK_LEFT, 520, 450)
+			EndIf
+			Send("{ESC}")
+		 EndIf
+		 Sleep(1000)
+	  Else
+		 Local $msg = StringFormat("%s - %s", "buy_items", "Can not active window game")
+		 _FileWriteLog($LOG_FILE, $msg)
 	  EndIf
-   WEnd
-   $basePx = PixelGetColor(77, 268)
-   While True
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 160,240)
-	  If $basePx <> PixelGetColor(77, 268) Then
-		 ExitLoop
-	  EndIf
-   WEnd
-   $basePx = PixelGetColor(502, 334)
-   While True
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 170,250)
-	  If $basePx <> PixelGetColor(502, 334) Then
-		 ExitLoop
-	  EndIf
-   WEnd
-   Send($no)
-   $basePx = PixelGetColor(316, 200)
-   MouseClick($MOUSE_CLICK_LEFT, 520, 365)
-   If $basePx = PixelGetColor(316, 200) Then
-	  MouseClick($MOUSE_CLICK_LEFT, 520, 450)
+   Else
+	  Local $msg = StringFormat("%s - %s", "buy_items", "Not found window game")
+	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
-   Send("{ESC}")
-   Sleep(300)
 EndFunc
 
 Func Moving($pointerPos, $offset)

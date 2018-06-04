@@ -332,11 +332,12 @@ Func BuildUI()
 
 			Local $featuresObj = ObjCreate("Scripting.Dictionary")
 
+			; Basic obj
 			Local $basicObj = ObjCreate("Scripting.Dictionary")
 			$basicObj.Add("level", GUICtrlRead($comboLevel))
 			$basicObj.Add("noGoHome", GUICtrlRead($cbNoBackHomeItem))
 			$basicObj.Add("noMana", GUICtrlRead($cbNoManaItem))
-			$basicObj.Add("notFood", GUICtrlRead($cbNoFoodItem))
+			$basicObj.Add("noFood", GUICtrlRead($cbNoFoodItem))
 			If GUICtrlRead($cbSellItem) = $GUI_CHECKED Then
 			   $basicObj.Add("sellItem", True)
 			Else
@@ -359,6 +360,7 @@ Func BuildUI()
 
 			Local $tvpFeature = ObjCreate("Scripting.Dictionary")
 			$tvpFeature.Add("Basic", $basicObj)
+			$tvpFeature.Add("BuyMana", False)
 			$tvpFeature.Add("Scheduler", $tvpSchedule)
 			If GUICtrlRead($tvpReceiveAward) = $GUI_CHECKED Then
 			   Local $tvpFuncs = ['AssignPrevention', 'GetActiveAward']
@@ -378,6 +380,7 @@ Func BuildUI()
 			; Feature BC
 			Local $bcFeature = ObjCreate("Scripting.Dictionary")
 			$bcFeature.Add("Basic", $basicObj)
+			$bcFeature.Add("BuyMana", False)
 			Local $bcInWeek = [$bc1, $bc2, $bc3, $bc4, $bc5, $bc6, $bc7]
 			Local $bcSchedule = GetFeatureScheduler($bcInWeek)
 			$bcFeature.Add("Scheduler", $bcSchedule)
@@ -401,6 +404,7 @@ Func BuildUI()
 			; Feature Ngu truc dam
 			Local $ntdFeature = ObjCreate("Scripting.Dictionary")
 			$ntdFeature.Add("Basic", $basicObj)
+			$ntdFeature.Add("BuyMana", False)
 			Local $ntdInWeek = [$ntd1, $ntd2, $ntd3, $ntd4, $ntd5, $ntd6, $ntd7]
 			Local $ntdSchedule = GetFeatureScheduler($ntdInWeek)
 			$ntdFeature.Add("Scheduler", $ntdSchedule)
@@ -423,6 +427,7 @@ Func BuildUI()
 			; Feature NhanMonQuan
 			Local $nmqFeature = ObjCreate("Scripting.Dictionary")
 			$nmqFeature.Add("Basic", $basicObj)
+			$nmqFeature.Add("BuyMana", True)
 			Local $nmqInWeek = [$nmq1, $nmq2, $nmq3, $nmq4, $nmq5, $nmq6, $nmq7]
 			Local $nmqSchedule = GetFeatureScheduler($nmqInWeek)
 			$nmqFeature.Add("Scheduler", $nmqSchedule)
@@ -528,7 +533,11 @@ Func RunFeature($featuresObj)
 			   If $basicObj.Item("sellItem") Then
 				  SellItems()
 			   EndIf
-			   BuyItems($basicObj.Item("level"), $basicObj.Item("noGoHome"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
+			   BuyItemGoHome($basicObj.Item("noGoHome"))
+			   If $featureObj.Item("BuyMana") Then
+				  BuyItemManaAndFood($basicObj.Item("level"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
+			   EndIf
+
 			   If $basicObj.Item("useItem") Then
 				  UseItems()
 			   EndIf
