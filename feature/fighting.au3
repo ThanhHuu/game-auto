@@ -95,6 +95,8 @@ Func StartFighting()
 
 	  Sleep(1000)
 	  If Not TurnOnFighting() Then
+		 Send("m")
+		 Sleep(1000)
 		 ExitLoop
 	  EndIf
 	  Sleep(5000)
