@@ -12,8 +12,9 @@
 #include-once
 #RequireAdmin
 #include <Date.au3>
+#include <File.au3>
 
-
+Opt("PixelCoordMode", 2)
 Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
 DllCall("User32.dll","bool","SetProcessDPIAware")
