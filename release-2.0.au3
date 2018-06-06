@@ -476,9 +476,9 @@ Func GetFeatureScheduler($dateInWeek)
    Return $scheduler
 EndFunc
 
-Func GetIgnoreAccount($featureName)
+Func GetIgnoreAccount($featureName, $level)
    Local $ignoreAccountObj = ObjCreate("Scripting.Dictionary")
-   Local $ignoreAcc = $featureName & ".ig"
+   Local $ignoreAcc = $featureName & "_" & $level & ".ig"
    If Not FileExists($ignoreAcc) Then
 	  _FileCreate($ignoreAcc)
    Else
@@ -510,7 +510,7 @@ Func RunFeature($featuresObj)
 			ContinueLoop
 		 EndIf
 		 Local $basicObj = $featureObj.Item("Basic")
-		 Local $ignoreAccountObj = GetIgnoreAccount($featureName)
+		 Local $ignoreAccountObj = GetIgnoreAccount($featureName, $basicObj.Item("level"))
 		 For $i = 1 To $accountFiles[0]
 			Local $accountFile = $accountFiles[$i]
 			Local $accounts = ParseAccounts($accountFile)
@@ -522,9 +522,10 @@ Func RunFeature($featuresObj)
 				  _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", $msg))
 				  ContinueLoop
 			   EndIf
+			   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", StringFormat("Run feature %s for %s", $featureName, $character)))
 			   Local $currentY = $FIRST_Y
 			   AddAccount($usr, $DEFAULT_PWD, $character)
-			   Login($currentY)
+			   Login($currentY, $character)
 			   TryLuckyCard()
 			   TryLuckyRound()
 			   If $basicObj.Item("setting") Then
@@ -549,7 +550,7 @@ Func RunFeature($featuresObj)
 			   If $featureObj.Item("Logout") Then
 				  Logout($currentY)
 			   EndIf
-			   FileWriteLine($featureName & ".ig", $character)
+			   FileWriteLine($featureName & "_" & $basicObj.Item("level") & ".ig", $character)
 			   If _NowCalcDate() > $startDate Then
 				  ExitLoop
 			   EndIf
@@ -561,7 +562,7 @@ Func RunFeature($featuresObj)
 		 If _NowCalcDate() > $startDate Then
 			ExitLoop
 		 EndIf
-		 FileMove($featureName & ".ig", $featureName & ".done")
+		 FileMove($featureName & "_" & $basicObj.Item("level") & ".ig", $featureName & "_" & $basicObj.Item("level") & ".done")
 	  Next
 	  While True
 		 Sleep(60000)

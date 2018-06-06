@@ -25,3 +25,5 @@
 #include"use_items.au3"
 #include"sell_items.au3"
 #include"fighting.au3"
+#include"utils.au3"
+#include"duty.au3"

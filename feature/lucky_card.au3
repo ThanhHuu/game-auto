@@ -25,6 +25,7 @@
 #include <AutoItConstants.au3>
 #include <File.au3>
 #include <Date.au3>
+#include "utils.au3"
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)

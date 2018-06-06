@@ -15,6 +15,7 @@
 #include <File.au3>
 #include <Date.au3>
 #include "setting.au3"
+#include "utils.au3"
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
@@ -23,88 +24,66 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
+;Fighting()
 Func Fighting()
-   If WinExists($WindowGame) Then
-	  If Not WinActive($WindowGame) Then
-		 WinActivate($WindowGame)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WindowGame) Then
-		 Local $basePx = PixelGetColor(172, 45)
-		 Send("{TAB}")
-		 While True
-			If $basePx <> PixelGetColor(172, 45) Then
-			   ExitLoop
-			EndIf
-			Sleep(300)
-		 WEnd
-		 MouseClick($MOUSE_CLICK_LEFT, 82, 80)
-		 Sleep(1000)
-		 MouseClick($MOUSE_CLICK_LEFT, 778, 431)
-		 Sleep(1000)
-		 MouseClickDrag($MOUSE_CLICK_LEFT,998,228, 998, 320)
-		 Sleep(200)
-		 MouseClick($MOUSE_CLICK_LEFT, 998, 420)
-		 Sleep(200)
-		 MouseClick($MOUSE_CLICK_LEFT, 903, 420, 2)
-		 Sleep(2000)
-		 Send("{ESC}")
-		 Local $pointer = [511, 326]
-		 Moving($pointer, 100)
-
-		 $basePx = PixelGetColor(286, 387)
-		 While True
-			Sleep(100)
-			MouseClick($MOUSE_CLICK_LEFT, 505, 400)
-			If $basePx <> PixelGetColor(286, 387) Then
-			   ExitLoop
-			EndIf
-		 WEnd
-		 MouseClick($MOUSE_CLICK_LEFT, 231, 288)
-		 Sleep(200)
-		 MouseClick($MOUSE_CLICK_LEFT, 165, 270)
-		 Sleep(200)
-		 StartFighting()
-		 Sleep(1000)
+   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+	  OpenDuongChauMap(1000)
+	  MouseClickDrag($MOUSE_CLICK_LEFT,998,228, 998, 320)
+	  Sleep(100)
+	  Local $npcPos = [903, 420]
+	  MovingToNpc($npcPos)
+	  Local $fightingPopUpPos = [286, 387]
+	  Local $npcClickPos = [505, 400]
+	  If ClickNpcWithinTimeOut($fightingPopUpPos, $npcClickPos, 2000) Then
+		 Local $fightingPos1 = [35, 409]
+		 Local $fightingPos2 = [708, 439]
+		 Local $fightingPos3 = [545, 540]
+		 Local $goFightingPos = [231, 288]
+		 If ClickChangeMapWithinTimeOut($fightingPos1, $fightingPos2, $fightingPos3, $goFightingPos, 10000) Then
+			StartFighting()
+		 Else
+			_FileWriteLog($LOG_FILE, StringFormat("%s - %s", "fighting", "Seem like that nhanmonquan is done"))
+			Local $basePos = [181, 141]
+			Local $clickPos = [171, 271]
+			ClickNpcWithinTimeOut($basePos, $clickPos, 1000)
+		 EndIf
 	  Else
-		 Local $msg = StringFormat("%s - %s", "buy_items", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "fighting", "Error click nhanmonquan"))
 	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "buy_items", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
 EndFunc
 
+;StartFighting()
 Func StartFighting()
-   Sleep(10000)
    MouseClick($MOUSE_CLICK_LEFT, 975, 305)
-   Sleep(1000)
-   MouseClick($MOUSE_CLICK_LEFT, 168, 270)
-   Local $count = 0
-   While True
-	  $count += 1
-	  If $count = 50 Then
-		 $count = 0
-		 Send("{TAB}")
+   Sleep(2000)
+   Local $basePos = [212, 140]
+   Local $clickPos = [168, 270]
+   If ClickNpcWithinTimeOut($basePos, $clickPos, 1000) Then
+	  Local $count = 0
+	  While True
+		 $count += 1
+		 If $count = 50 Then
+			$count = 0
+			Local $mapPos = [44, 50]
+			If PressKeyWithinTimeOut($mapPos, "{TAB}", 1000) Then
+			   Local $centerPos = [397, 405]
+			   MovingToNpc($centerPos)
+			EndIf
+		 EndIf
 		 Sleep(1000)
-		 MouseClick($MOUSE_CLICK_LEFT, 397, 405, 2)
-		 Sleep(500)
-		 Send("{ESC}")
-	  EndIf
-
-	  Sleep(1000)
-	  If Not TurnOnFighting() Then
-		 Send("m")
-		 Sleep(1000)
-		 ExitLoop
-	  EndIf
-	  Sleep(5000)
-	  MouseClick($MOUSE_CLICK_LEFT, 935, 444)
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 832, 528)
-	  Sleep(200)
-   WEnd
+		 If Not TurnOnFighting() Then
+			Send("m")
+			Sleep(1000)
+			ExitLoop
+		 EndIf
+		 Sleep(5000)
+		 MouseClick($MOUSE_CLICK_LEFT, 935, 444)
+		 Sleep(100)
+		 MouseClick($MOUSE_CLICK_LEFT, 832, 528)
+		 Sleep(200)
+	  WEnd
+   EndIf
 EndFunc
 
 

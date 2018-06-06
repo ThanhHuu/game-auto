@@ -58,7 +58,7 @@ Func WaitingMoving($offset)
 	  Local $preRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
 	  Local $preBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
 	  Local $preLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
-	  Sleep(3000)
+	  Sleep(2000)
 	  Local $nextTopPx = PixelGetColor($pointerX - $offset,$pointerY - $offset)
 	  Local $nextRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
 	  Local $nextBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
@@ -82,3 +82,170 @@ Func ClickNpc($winPos, $npcPos)
    WEnd
 EndFunc
 
+Func ClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
+   Local $basePx = PixelGetColor($winPos[0], $winPos[1])
+   MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1])
+   Local $maxLoop = $timeOut/100
+   For $i = 0 To $maxLoop
+	  Sleep(100)
+	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
+		 Return True
+	  EndIf
+   Next
+   Local $msg = StringFormat("Click [%d, %d] fail after %d ms", $npcPos[0], $npcPos[1], $timeOut)
+   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+   Return False
+EndFunc
+
+Func PressKeyWithinTimeOut($winPos, $key, $timeOut)
+   Local $basePx = PixelGetColor($winPos[0], $winPos[1])
+   Send($key)
+   Local $maxLoop = $timeOut/100
+   For $i = 0 To $maxLoop
+	  Sleep(100)
+	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
+		 Return True
+	  EndIf
+   Next
+   Local $msg = StringFormat("Press %s fail after %d ms", $key, $timeOut)
+   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+   Return False
+EndFunc
+
+Func ActiveWindowWithinTimeOut($win, $timeOut)
+   If WinExists($win) Then
+	  If WinActive($win) Then
+		 Return True
+	  Else
+		 WinActivate($win)
+		 Local $maxLoop = $timeOut/100
+		 For $i = 0 To $maxLoop
+			Sleep(100)
+			If WinActive($win) Then
+			   Return True
+			EndIf
+		 Next
+		 Local $msg = StringFormat("Cannot active %s after %d ms", $win, $timeOut)
+		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+		 Return False
+	  EndIf
+   Else
+	  Local $msg = StringFormat("%s is not exists", $win)
+	  _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+	  Return False
+   EndIf
+EndFunc
+
+Func ClickChangeMapWithinTimeOut($mapPos1, $mapPos2, $mapPos3, $npcPos, $timeOut)
+   Local $basePx1 = PixelGetColor($mapPos1[0], $mapPos1[1])
+   Local $basePx2 = PixelGetColor($mapPos2[0], $mapPos2[1])
+   Local $basePx3 = PixelGetColor($mapPos3[0], $mapPos3[1])
+   MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1])
+   Local $maxLoop = $timeOut/1000
+   For $i = 0 To $maxLoop
+	  If $basePx1 <> PixelGetColor($mapPos1[0], $mapPos1[1]) And $basePx2 <> PixelGetColor($mapPos2[0], $mapPos2[1]) And $basePx3 <> PixelGetColor($mapPos3[0], $mapPos3[1]) Then
+		 Return True
+	  EndIf
+	  Sleep(1000)
+   Next
+   Local $msg = StringFormat("Clicked [%d, %d] but not change map after %d", $npcPos[0], $npcPos[1], $timeOut)
+   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+   Return False
+EndFunc
+
+Func AssistantAward()
+   Local $assistantWinPos = [260, 141]
+   Local $clickPos = [765, 370]
+   If ClickNpcWithinTimeOut($assistantWinPos, $clickPos, 1000) Then
+	  Local $awardWinPos = [938, 435]
+	  $clickPos[0] = 469
+	  $clickPos[1] = 591
+	  If ClickNpcWithinTimeOut($awardWinPos, $clickPos, 1000) Then
+		 Local $awardItemsWinPos = [1001, 212]
+		 $clickPos[0] = 858
+		 $clickPos[1] = 535
+		 If ClickNpcWithinTimeOut($awardItemsWinPos, $clickPos, 1000) Then
+			ClickNpcWithinTimeOut($awardItemsWinPos, $awardItemsWinPos, 1000)
+		 EndIf
+	  EndIf
+	  PressKeyWithinTimeOut($assistantWinPos, "{ESC}", 1000)
+   EndIf
+EndFunc
+
+Func AssistantFeature($featurePos)
+   Local $assistantWinPos = [260, 141]
+   Local $clickPos = [765, 370]
+   ; Click dieu doi
+   If ClickNpcWithinTimeOut($assistantWinPos, $clickPos, 1000) Then
+	  ; Click chon tinh nang
+	  If ClickNpcWithinTimeOut($featurePos, $featurePos, 1000) Then
+		 Local $confirmWinPos = [577, 298]
+		 $clickPos[0] = 468
+		 $clickPos[1] = 594
+		 ; Click dieu doi thuong
+		 If ClickNpcWithinTimeOut($confirmWinPos, $clickPos, 1000) Then
+			Local $acceptPos = [511, 467]
+			; Click xac nhan
+			ClickNpcWithinTimeOut($confirmWinPos, $acceptPos, 1000)
+		 EndIf
+	  EndIf
+	  ; Press ESC
+	  PressKeyWithinTimeOut($assistantWinPos, "{ESC}", 1000)
+   EndIf
+EndFunc
+
+Func AssistantFeatureWithinLevel($featurePos, $level)
+   Local $assistantWinPos = [260, 141]
+   Local $clickPos = [765, 370]
+   ; Click dieu doi
+   If ClickNpcWithinTimeOut($assistantWinPos, $clickPos, 1000) Then
+	  ; Click chon tinh nang
+	  If ClickNpcWithinTimeOut($featurePos, $featurePos, 1000) Then
+		 Local $chooseLevelWinPos = [258, 140]
+		 $clickPos[0] = 468
+		 $clickPos[1] = 594
+		 ; Click dieu doi thuong
+		 If ClickNpcWithinTimeOut($chooseLevelWinPos, $clickPos, 1000) Then
+			Local $clickLevel = [175, 295]
+			If $level >= 100 Then
+			   $clickLevel[1] = 355
+			ElseIf $level >= 80 Then
+			   $clickLevel[1] = 325
+			EndIf
+			; click choose level
+			ClickNpcWithinTimeOut($chooseLevelWinPos, $clickLevel, 1000)
+		 EndIf
+	  EndIf
+	  ; Press ESC
+	  PressKeyWithinTimeOut($assistantWinPos, "{ESC}", 1000)
+   EndIf
+EndFunc
+
+Func OpenDuongChauMap($timeOut)
+   Local $mapPos = [37, 47]
+   ; Press TAB
+   If PressKeyWithinTimeOut($mapPos, "{TAB}", $timeOut) Then
+	  Local $duongChauPos = [782, 432]
+	  Local $clickWordMap = [78, 78]
+	  ; click ban do the gioi
+	  If ClickNpcWithinTimeOut($duongChauPos, $clickWordMap, $timeOut) Then
+		 ; Click duong chau
+		 If ClickNpcWithinTimeOut($duongChauPos, $duongChauPos, $timeOut) Then
+			Return True
+		 EndIf
+		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", "Error click DuongChau"))
+		 Return False
+	  EndIf
+	  _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", "Error click BanDoTheGioi"))
+	  Return False
+   EndIf
+   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", "Error press Tab"))
+   Return False
+EndFunc
+
+Func MovingToNpc($npcPos)
+   MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1], 2)
+   Sleep(2000)
+   PressKeyWithinTimeOut($npcPos, "{ESC}", 1000)
+   WaitingMoving(100)
+EndFunc

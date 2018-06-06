@@ -13,7 +13,7 @@
 #RequireAdmin
 #include <Date.au3>
 #include <File.au3>
-
+#include "utils.au3"
 Opt("PixelCoordMode", 2)
 Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
@@ -25,28 +25,30 @@ Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 Dim $FIRST_Y = 35
 
-Func Login($currentY)
-   If WinExists($WINDOW_LOGIN) Then
-	  If Not WinActive($WINDOW_LOGIN) Then
-		 WinActivate($WINDOW_LOGIN)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WINDOW_LOGIN) Then
-		 MouseClick($MOUSE_CLICK_LEFT, 14, $currentY)
-		 While True
-			If WinExists($WINDOW_GAME) Then
-			   ExitLoop
-			EndIf
-			Sleep(2000)
-		 WEnd
-		 Sleep($WAIT_LOAD)
-		 WinActivate($WINDOW_GAME)
-	  Else
-		 Local $msg = StringFormat("%s - %s", "login", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
-	  EndIf
+Func Login($currentY, $character)
+   If LoggedIn($character) Then
+	  Local $msg = StringFormat("%s - %s", "login", StringFormat("%s loggedin", $character))
+	  _FileWriteLog($LOG_FILE, $msg)
    Else
-	  Local $msg = StringFormat("%s - %s", "login", "Not found window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+	  If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
+		 MouseClick($MOUSE_CLICK_LEFT, 14, $currentY)
+		 WaitingLogin($character)
+		 WinActivate($WINDOW_GAME)
+	  EndIf
    EndIf
+EndFunc
+
+Func WaitingLogin($character)
+   Local $windowCharacter = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & "]"
+   For $i = 0 To 20
+	  If WinExists($windowCharacter) Then
+		 ExitLoop
+	  EndIf
+	  Sleep(2000)
+   Next
+EndFunc
+
+Func LoggedIn($character)
+   Local $windowCharacter = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & "]"
+   Return WinExists($windowCharacter)
 EndFunc

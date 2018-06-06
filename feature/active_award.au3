@@ -25,34 +25,26 @@
 #include <AutoItConstants.au3>
 #include <File.au3>
 #include <Date.au3>
+#include "utils.au3"
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
+
+;GetActiveAward()
 Func GetActiveAward()
-   If WinExists($WindowGame) Then
-	  If Not WinActive($WindowGame) Then
-		 WinActivate($WindowGame)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WindowGame) Then
-		 Send("{F11}")
-		 Sleep(100)
+   If ActiveWindowWithinTimeOut($WindowGame, 1000) Then
+	  Local $eventWinPos = [247, 90]
+	  If PressKeyWithinTimeOut($eventWinPos, "{F11}", 1000) Then
 		 MouseClick($MOUSE_CLICK_LEFT, 560, 125)
 		 Sleep(100)
 		 For $i = 0 To 4
 			MouseClick($MOUSE_CLICK_LEFT, 260, 565)
 			Sleep(100)
 		 Next
-		 Send("{ESC}")
-	  Else
-		 Local $msg = StringFormat("%s - %s", "active_award", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 PressKeyWithinTimeOut($eventWinPos, "{ESC}", 1000)
 	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "active_award", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
 EndFunc
