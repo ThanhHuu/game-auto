@@ -476,9 +476,13 @@ Func GetFeatureScheduler($dateInWeek)
    Return $scheduler
 EndFunc
 
+Func BuildFeatureFile($featureName, $level)
+   Return $featureName & "_" & $level
+EndFunc
+
 Func GetIgnoreAccount($featureName, $level)
    Local $ignoreAccountObj = ObjCreate("Scripting.Dictionary")
-   Local $ignoreAcc = $featureName & "_" & $level & ".ig"
+   Local $ignoreAcc = BuildFeatureFile($featureName, $level) & ".ig"
    If Not FileExists($ignoreAcc) Then
 	  _FileCreate($ignoreAcc)
    Else
@@ -492,6 +496,45 @@ Func GetIgnoreAccount($featureName, $level)
    Return $ignoreAccountObj
 EndFunc
 
+Func RunFeatureForAccount($account, $featureObj)
+   Local $character = $account.Item("character")
+   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", StringFormat("Run for %s", $character)))
+   Local $currentY = $FIRST_Y
+   Local $usr = $account.Item("account")
+   AddAccount($usr, $DEFAULT_PWD, $character)
+   Login($currentY, $character)
+   TryLuckyCard()
+   TryLuckyRound()
+   Local $basicObj = $featureObj.Item("Basic")
+   If $basicObj.Item("setting") Then
+	  TurnOffGraphic()
+	  SetupFighting()
+   EndIf
+   ;Sell Item
+   If $basicObj.Item("sellItem") Then
+	  SellItems()
+   EndIf
+   ; Mua phu hoi thanh neu het
+   BuyItemGoHome($basicObj.Item("noGoHome"))
+   ; Mua mana and food
+   If $featureObj.Item("BuyMana") Then
+	  BuyItemManaAndFood($basicObj.Item("level"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
+   EndIf
+   ; Use item
+   If $basicObj.Item("useItem") Then
+	  UseItems()
+   EndIf
+   ; Run functions of feature
+   Local $functions = $featureObj.Item("Functions")
+   For $function In $functions
+	  Call($function, $basicObj.Item("level"))
+   Next
+   If $featureObj.Item("Logout") Then
+	  Logout($currentY)
+   EndIf
+
+EndFunc
+
 Func RunFeature($featuresObj)
    Local $startDate = _NowCalcDate()
    Local $isNewDate = False
@@ -503,53 +546,27 @@ Func RunFeature($featuresObj)
 		 $isNewDate = False
 	  EndIf
 	  For $featureName In $featuresObj.Keys
+		 _FileWriteLog($LOG_FILE, StringFormat("Run feature %s", $featureName))
 		 Local $featureObj = $featuresObj.Item($featureName)
-		 If FileExists($featureName & ".done") Then
+		 Local $basicObj = $featureObj.Item("Basic")
+		 If FileExists(BuildFeatureFile($featureName, $basicObj.Item("level")) & ".done") Then
 			Local $msg = StringFormat("Feature %s is done", $featureName)
 			_FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", $msg))
 			ContinueLoop
 		 EndIf
-		 Local $basicObj = $featureObj.Item("Basic")
 		 Local $ignoreAccountObj = GetIgnoreAccount($featureName, $basicObj.Item("level"))
 		 For $i = 1 To $accountFiles[0]
 			Local $accountFile = $accountFiles[$i]
 			Local $accounts = ParseAccounts($accountFile)
 			For $account In $accounts
-			   Local $usr = $account.Item("account")
 			   Local $character = $account.Item("character")
 			   If $ignoreAccountObj.Item($character) Then
+				  ; write log ignore
 				  Local $msg = StringFormat("Feature %s is done for account %s", $featureName, $character)
 				  _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", $msg))
 				  ContinueLoop
 			   EndIf
-			   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", StringFormat("Run feature %s for %s", $featureName, $character)))
-			   Local $currentY = $FIRST_Y
-			   AddAccount($usr, $DEFAULT_PWD, $character)
-			   Login($currentY, $character)
-			   TryLuckyCard()
-			   TryLuckyRound()
-			   If $basicObj.Item("setting") Then
-				  Setting()
-			   EndIf
-			   If $basicObj.Item("sellItem") Then
-				  SellItems()
-			   EndIf
-			   BuyItemGoHome($basicObj.Item("noGoHome"))
-			   If $featureObj.Item("BuyMana") Then
-				  BuyItemManaAndFood($basicObj.Item("level"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
-			   EndIf
-
-			   If $basicObj.Item("useItem") Then
-				  UseItems()
-			   EndIf
-
-			   Local $functions = $featureObj.Item("Functions")
-			   For $function In $functions
-				  Call($function, $basicObj.Item("level"))
-			   Next
-			   If $featureObj.Item("Logout") Then
-				  Logout($currentY)
-			   EndIf
+			   RunFeatureForAccount($account, $featureObj)
 			   FileWriteLine($featureName & "_" & $basicObj.Item("level") & ".ig", $character)
 			   If _NowCalcDate() > $startDate Then
 				  ExitLoop
@@ -562,7 +579,7 @@ Func RunFeature($featuresObj)
 		 If _NowCalcDate() > $startDate Then
 			ExitLoop
 		 EndIf
-		 FileMove($featureName & "_" & $basicObj.Item("level") & ".ig", $featureName & "_" & $basicObj.Item("level") & ".done")
+		 FileMove(BuildFeatureFile($featureName, $basicObj.Item("level")) & ".ig", BuildFeatureFile($featureName, $basicObj.Item("level")) & ".done")
 	  Next
 	  While True
 		 Sleep(60000)

@@ -14,6 +14,7 @@
 #include <AutoItConstants.au3>
 #include <File.au3>
 #include <Date.au3>
+#include "utils.au3"
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
@@ -25,110 +26,75 @@ Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Local $SETTING_BASE_PX = ""
 
-Func Setting()
-   If WinExists($WindowGame) Then
-	  If Not WinActive($WindowGame) Then
-		 WinActivate($WindowGame)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WindowGame) Then
-		 TurnOffGraphic()
-		 SetupFighting()
-	  Else
-		 Local $msg = StringFormat("%s - %s", "setting", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
-	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "setting", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
-   EndIf
-EndFunc
-
+;SetupFighting()
 Func SetupFighting()
-   Local $basePx = PixelGetColor(309, 518)
-   Send("^f")
-   While True
-	  if $basePx <> PixelGetColor(309, 518) Then
-		 ExitLoop
+   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+	  Local $fightSettingPopUpPos = [41, 148]
+	  If PressKeyWithinTimeOut($fightSettingPopUpPos, "^f", 1000) Then
+		 MouseClick($MOUSE_CLICK_LEFT, 295,298)
+		 Sleep(100)
+		 Local $useFoodPos = [41,344]
+		 CheckAnOptionFighting($useFoodPos)
+		 Local $getItemPos = [40,382]
+		 CheckAnOptionFighting($getItemPos)
+		 Local $useManaPos = [40,410]
+		 CheckAnOptionFighting($useManaPos)
+		 MouseClickDrag($MOUSE_CLICK_LEFT, 73,481,177, 481)
+		 Sleep(100)
+		 MouseClick($MOUSE_CLICK_LEFT, $fightSettingPopUpPos[0], $fightSettingPopUpPos[1])
+		 Sleep(100)
+		 PressKeyWithinTimeOut($fightSettingPopUpPos, "{ESC}", 1000)
 	  EndIf
-	  Sleep(300)
-   WEnd
-   MouseClick($MOUSE_CLICK_LEFT, 295,298)
-   Sleep(200)
-   If $SETTING_BASE_PX = "" Then
-	  MouseMove(40,360)
-	  Sleep(200)
-	  $SETTING_BASE_PX = Hex(PixelGetColor (40,360), 6)
    EndIf
-   MouseMove(41,344)
-   Sleep(200)
-   If Hex(PixelGetColor (41,344), 6) = $SETTING_BASE_PX Then
-	  MouseClick($MOUSE_CLICK_LEFT, 40, 341)
-	  Sleep(100)
-   EndIf
-   MouseMove(40,382)
-   Sleep(100)
-   If Hex(PixelGetColor (40,382), 6) = $SETTING_BASE_PX Then
-	  MouseClick($MOUSE_CLICK_LEFT, 41, 379)
-	  Sleep(100)
-   EndIf
-   MouseMove(40,410)
-   Sleep(100)
-   If Hex(PixelGetColor (40,410), 6) = $SETTING_BASE_PX Then
-	  MouseClick($MOUSE_CLICK_LEFT, 41, 411)
-	  Sleep(100)
-   EndIf
-
-   MouseClickDrag($MOUSE_CLICK_LEFT, 73,481,177, 481)
-   Sleep(100)
-   MouseClick($MOUSE_CLICK_LEFT, 292, 514)
-   Sleep(100)
-   Send("{ESC}")
-   Sleep(1000)
 EndFunc
 
+;TurnOffGraphic()
 Func TurnOffGraphic()
-   Local $basePx = PixelGetColor(505, 444)
-   While True
-	  Send("{ESC}")
-	  Sleep(300)
-	  If $basePx <> PixelGetColor(505, 444) Then
-		 ExitLoop
+   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+	  Local $basePos = [505, 444]
+	  If PressKeyWithinTimeOut($basePos, "{ESC}", 1000) Then
+		 Local $popUpPos = [250, 188]
+		 Local $clickSettingPos = [505, 315]
+		 If ClickNpcWithinTimeOut($popUpPos, $clickSettingPos, 1000) Then
+			MouseClick($MOUSE_CLICK_LEFT, 390, 225)
+			Sleep(100)
+			MouseClick($MOUSE_CLICK_LEFT, 309, 369)
+			Sleep(100)
+			PressKeyWithinTimeOut($popUpPos, "{ESC}", 1000)
+		 EndIf
 	  EndIf
-   WEnd
-   $basePx = PixelGetColor(261, 188)
-   While True
-	  Sleep(100)
-	  MouseClick($MOUSE_CLICK_LEFT, 505, 315)
-	  If $basePx <> PixelGetColor(261, 188) Then
-		 ExitLoop
-	  EndIf
-   WEnd
-   MouseClick($MOUSE_CLICK_LEFT, 390, 225)
-   Sleep(100)
-   MouseClick($MOUSE_CLICK_LEFT, 309, 369)
-   Sleep(100)
-   Send("{TAB}")
-   Send("{ESC}")
-   Sleep(1000)
+   EndIf
 EndFunc
 
+;TurnOnFighting()
 Func TurnOnFighting()
-   Send("^f")
-   Sleep(1000)
+   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+	  Local $fightSettingPopUpPos = [41, 148]
+	  If PressKeyWithinTimeOut($fightSettingPopUpPos, "^f", 1000) Then
+		 Local $enabelPos = [41,192]
+		 CheckAnOptionFighting($enabelPos)
+		 Sleep(500)
+		 Local $enabled = Hex(PixelGetColor (41,192), 6) <> $SETTING_BASE_PX
+		 PressKeyWithinTimeOut($fightSettingPopUpPos, "^f", 1000)
+		 Return $enabled
+	  EndIf
+   EndIf
+   Return False
+EndFunc
+
+Func CheckAnOptionFighting($optionPos)
+   ; Get default px uncheck
    If $SETTING_BASE_PX = "" Then
 	  MouseMove(40,360)
 	  Sleep(200)
 	  $SETTING_BASE_PX = Hex(PixelGetColor (40,360), 6)
    EndIf
-   MouseMove(41,192)
-   Sleep(100)
+
+   ; Check an option if current is uncheck
+   MouseMove($optionPos[0], $optionPos[1])
+   Sleep(200)
    If Hex(PixelGetColor (41,192), 6) = $SETTING_BASE_PX Then
 	  MouseClick($MOUSE_CLICK_LEFT, 40, 192)
 	  Sleep(100)
    EndIf
-   Local $enabled = Hex(PixelGetColor (41,192), 6) <> $SETTING_BASE_PX
-   Send("^f")
-   Sleep(500)
-   Return $enabled
 EndFunc

@@ -187,7 +187,7 @@ Func UnfollowDuty()
 	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
 EndFunc
-IsHasDailyDuty()
+;IsHasDailyDuty()
 Func IsHasDailyDuty()
    If WinExists($WINDOW_GAME) Then
 	  If Not WinActive($WINDOW_GAME) Then

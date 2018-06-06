@@ -34,42 +34,32 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
+;TryLuckyCard()
 Func TryLuckyCard()
-   If WinExists($WindowGame) Then
-	  If Not WinActive($WindowGame) Then
-		 WinActivate($WindowGame)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WindowGame) Then
-		 Local $basePx1 = PixelGetColor(384, 260)
-		 Local $basePx2 = PixelGetColor(620, 532)
-		 MouseClick($MOUSE_CLICK_LEFT, 450,590)
-		 Sleep(500)
-		 Local $firstY = 260;
-		 Local $currentX = 390;
-		 For $i = 0 To 2
-			MouseClick($MOUSE_CLICK_LEFT, $currentX ,$firstY)
-			Sleep(100)
-			$currentX += 115
-		 Next
-		 $currentX -= 115
-		 For $j = 0 To 2
-			MouseClick($MOUSE_CLICK_LEFT, $currentX ,$firstY)
-			Sleep(100)
-			$firstY += 130
-		 Next
-		 Send("{TAB}")
+   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+	  Local $luckyPos = [450,590]
+	  Local $count = 0
+	  For $i = 0 To 10
+		 Local $currentPx = PixelGetColor($luckyPos[0], $luckyPos[1])
 		 Sleep(100)
-		 Send("{ESC}")
-		 Sleep(100)
-		 MouseClick($MOUSE_CLICK_LEFT, 498, 497)
-		 Sleep(1000)
-	  Else
-		 Local $msg = StringFormat("%s - %s", "lucky_card", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 If $currentPx <> PixelGetColor($luckyPos[0], $luckyPos[1]) Then
+			$count += 1
+		 EndIf
+	  Next
+	  If $count > 4 Then
+		 Local $luckyPointerPos = [390,260]
+		 If ClickNpcWithinTimeOut($luckyPointerPos, $luckyPos, 1000) Then
+			For $i = 0 To 2
+			   ClickNpcWithinTimeOut($luckyPointerPos, $luckyPointerPos, 500)
+			   $luckyPointerPos[0] += 115
+			Next
+			$luckyPointerPos[0] -= 115
+			For $j = 0 To 2
+			   ClickNpcWithinTimeOut($luckyPointerPos, $luckyPointerPos, 500)
+			   $luckyPointerPos[1] += 130
+			Next
+			PressKeyWithinTimeOut($luckyPointerPos, "{ESC}", 1000)
+		 EndIf
 	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "lucky_card", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
    EndIf
 EndFunc
