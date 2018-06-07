@@ -19,7 +19,6 @@ Opt("WinTitleMatchMode", 4)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Local $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 

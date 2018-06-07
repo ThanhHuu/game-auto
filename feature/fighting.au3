@@ -21,7 +21,6 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 ;Fighting()
@@ -42,13 +41,13 @@ Func Fighting()
 		 If ClickChangeMapWithinTimeOut($fightingPos1, $fightingPos2, $fightingPos3, $goFightingPos, 10000) Then
 			StartFighting()
 		 Else
-			_FileWriteLog($LOG_FILE, StringFormat("%s - %s", "fighting", "Seem like that nhanmonquan is done"))
+			WriteLog("fighting", StringFormat("%s - %s", "fighting", "Seem like that nhanmonquan is done"))
 			Local $basePos = [181, 141]
 			Local $clickPos = [171, 271]
 			ClickNpcWithinTimeOut($basePos, $clickPos, 1000)
 		 EndIf
 	  Else
-		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "fighting", "Error click nhanmonquan"))
+		 WriteLog("fighting", StringFormat("%s - %s", "fighting", "Error click nhanmonquan"))
 	  EndIf
    EndIf
 EndFunc

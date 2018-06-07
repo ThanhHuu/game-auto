@@ -19,8 +19,6 @@ Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WAIT_LOAD = 5000;
-Local $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 Dim $FIRST_Y = 35
@@ -28,7 +26,7 @@ Dim $FIRST_Y = 35
 Func Login($currentY, $character)
    If LoggedIn($character) Then
 	  Local $msg = StringFormat("%s - %s", "login", StringFormat("%s loggedin", $character))
-	  _FileWriteLog($LOG_FILE, $msg)
+	  WriteLog("login", $msg)
    Else
 	  If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
 		 MouseClick($MOUSE_CLICK_LEFT, 14, $currentY)

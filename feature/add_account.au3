@@ -20,13 +20,12 @@ Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WAIT_LOAD = 5000;
-Local $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Func AddAccount($usr, $pwd, $character)
    If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
+	  WriteLog("add_account", StringFormat("Add account %s - %s",$usr, $character))
 	  For $i = 0 To 4
 		 MouseClick($MOUSE_CLICK_LEFT, 160, 260)
 		 Sleep(100)

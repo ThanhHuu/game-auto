@@ -20,8 +20,6 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-DIM $TIME_TO_STORE=20000
-DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Local $SETTING_BASE_PX = ""

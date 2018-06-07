@@ -20,8 +20,6 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-DIM $TIME_TO_STORE=20000
-DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Func IsBuyGoHomeItem()
@@ -37,6 +35,7 @@ EndFunc
 BuyItemManaAndFood(90, 10, 10)
 Func BuyItemManaAndFood($level, $noMana, $noFood)
    If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+	  WriteLog("buy_items", "Mua mana va thuc an")
 	  OpenDuongChauMap(1000)
 	  MouseClickDrag($MOUSE_CLICK_LEFT, 996, 226, 996, 372)
 	  Sleep(100)
@@ -47,7 +46,7 @@ Func BuyItemManaAndFood($level, $noMana, $noFood)
 	  If ClickNpcWithinTimeOut($askShopPos, $askShopClickPos, 2000) Then
 		 Local $shopPos = [74, 247]
 		 Local $openShopPos = [178, 264]
-		 If ClickNpcWithinTimeOut($shopPos, $openShopPos, 1000) Then
+		 If ClickNpcWithinTimeOut($shopPos, $openShopPos, 2000) Then
 			Local $firstPos = [242, 248]
 			Local $offsize = 0
 			If $level >= 100 Then
@@ -62,10 +61,10 @@ Func BuyItemManaAndFood($level, $noMana, $noFood)
 			Local $itemFoodPos = [242 + $offsize, 248 + 40]
 			BuyItem($itemFoodPos, $noFood)
 		 Else
-			_FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item", "Error click to open shop"))
+			WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click to open shop"))
 		 EndIf
 	  Else
-		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item", "Error click to tiemduoc"))
+		 WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click to tiemduoc"))
 	  EndIf
    EndIf
 EndFunc
@@ -74,6 +73,7 @@ EndFunc
 Func BuyItemGoHome($no)
    If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
 	  If IsBuyGoHomeItem() Then
+		 WriteLog("buy_item", "Mua phu hoi thanh")
 		 OpenDuongChauMap(1000)
 		 Local $npcPos = [930,330]
 		 MovingToNpc($npcPos)
@@ -86,10 +86,10 @@ Func BuyItemGoHome($no)
 			   Local $itemPos = [170,250]
 			   BuyItem($itemPos, $no)
 			Else
-			   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item", "Error click to open shop"))
+			   WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click to open shop"))
 			EndIf
 		 Else
-			_FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item", "Error click to tiemtaphoa"))
+			WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click to tiemtaphoa"))
 		 EndIf
 	  EndIf
    EndIf
@@ -104,7 +104,7 @@ Func BuyItem($itemPos, $no)
 	  Local $confirmBt2 = [520, 450]
 	  ClickNpcWithinTimeOut($confirmBt1, $confirmBt2, 100)
    Else
-	  _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "buy_item", "Error click item"))
+	  WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click item"))
    EndIf
 EndFunc
 

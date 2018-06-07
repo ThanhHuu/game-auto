@@ -26,9 +26,7 @@ Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 
-DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 DIM $DEFAULT_PWD = "Ngoc@nh91"
-Global $WAIT_LOAD = 15000
 
 Local $rowHeight = 20;
 Local $accountFiles
@@ -191,7 +189,7 @@ Func BuildTabCb($position)
 
    GUICtrlCreateLabel ("ThucAn", 300, $position + 3, 40, $rowHeight)
    $cbNoFoodItem = GUICtrlCreateCombo("", 350, $position, 40, $rowHeight)
-   GUICtrlSetData($cbNoFoodItem, "5|10|20|30|40|50|60", "20")
+   GUICtrlSetData($cbNoFoodItem, "1|5|10|20|30|40|50|60", "1")
 
    $position += 30
    $cbSellItem = GUICtrlCreateCheckbox ("SellItems", 30, $position, 60, $rowHeight)
@@ -498,7 +496,7 @@ EndFunc
 
 Func RunFeatureForAccount($account, $featureObj)
    Local $character = $account.Item("character")
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", StringFormat("Run for %s", $character)))
+   WriteLog("release-2.0", StringFormat("%s - %s", "release-2.0", StringFormat("Run for %s", $character)))
    Local $currentY = $FIRST_Y
    Local $usr = $account.Item("account")
    AddAccount($usr, $DEFAULT_PWD, $character)
@@ -540,18 +538,18 @@ Func RunFeature($featuresObj)
    Local $isNewDate = False
    While True
 	  If $isNewDate Then
-		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", "Reset all for new date"))
+		 WriteLog("release-2.0", StringFormat("%s - %s", "release-2.0", "Reset all for new date"))
 		 FileDelete("*.ig")
 		 FileDelete("*.done")
 		 $isNewDate = False
 	  EndIf
 	  For $featureName In $featuresObj.Keys
-		 _FileWriteLog($LOG_FILE, StringFormat("Run feature %s", $featureName))
+		 WriteLog("release-2.0", StringFormat("Run feature %s", $featureName))
 		 Local $featureObj = $featuresObj.Item($featureName)
 		 Local $basicObj = $featureObj.Item("Basic")
 		 If FileExists(BuildFeatureFile($featureName, $basicObj.Item("level")) & ".done") Then
 			Local $msg = StringFormat("Feature %s is done", $featureName)
-			_FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", $msg))
+			WriteLog("release-2.0", StringFormat("%s - %s", "release-2.0", $msg))
 			ContinueLoop
 		 EndIf
 		 Local $ignoreAccountObj = GetIgnoreAccount($featureName, $basicObj.Item("level"))
@@ -563,7 +561,7 @@ Func RunFeature($featuresObj)
 			   If $ignoreAccountObj.Item($character) Then
 				  ; write log ignore
 				  Local $msg = StringFormat("Feature %s is done for account %s", $featureName, $character)
-				  _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "release-2.0", $msg))
+				  WriteLog("release-2.0", StringFormat("%s - %s", "release-2.0", $msg))
 				  ContinueLoop
 			   EndIf
 			   RunFeatureForAccount($account, $featureObj)

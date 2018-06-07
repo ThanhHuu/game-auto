@@ -19,12 +19,12 @@ Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 ;AssignStory(89)
 Func AssignStory($level)
    If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+	  WriteLog("Assistant", StringFormat("Dieu doi %s", "BiCanh"))
 	  Local $goHomeItemPos = [205, 138]
 	  ; Chon ve noi o
 	  If PressKeyWithinTimeOut($goHomeItemPos, "{0}", 2000) Then

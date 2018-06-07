@@ -18,34 +18,22 @@ Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
-Local $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
+
 Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Func PressMap()
-   If WinExists($WINDOW_GAME) Then
-	  If Not WinActive($WINDOW_GAME) Then
-		 WinActivate($WINDOW_GAME)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WINDOW_GAME) Then
-		 Local $basePx = PixelGetColor(27, 48)
-		 Local $count = 0;
-		 Local $maxLoop = 30
-		 Send("{TAB}")
-		 While $count  < $maxLoop
-			$count += 1
-			Sleep(100)
-			If $basePx <> PixelGetColor(27, 48) Then
-			   ExitLoop
-			EndIf
-		 WEnd
-	  Else
-		 Local $msg = StringFormat("%s - %s", "duty", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
-	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "duty", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
+   If ActiveWindowWithinTimeOut($WINDOW_GAME, 1000) Then
+	  Local $basePx = PixelGetColor(27, 48)
+	  Local $count = 0;
+	  Local $maxLoop = 30
+	  Send("{TAB}")
+	  While $count  < $maxLoop
+		 $count += 1
+		 Sleep(100)
+		 If $basePx <> PixelGetColor(27, 48) Then
+			ExitLoop
+		 EndIf
+	  WEnd
    EndIf
 EndFunc
 
@@ -92,8 +80,7 @@ Func ClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
 		 Return True
 	  EndIf
    Next
-   Local $msg = StringFormat("Click [%d, %d] fail after %d ms", $npcPos[0], $npcPos[1], $timeOut)
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+   WriteLog("utils", StringFormat("Click [%d, %d] timeout after %d ms", $npcPos[0], $npcPos[1], $timeOut))
    Return False
 EndFunc
 
@@ -107,8 +94,7 @@ Func PressKeyWithinTimeOut($winPos, $key, $timeOut)
 		 Return True
 	  EndIf
    Next
-   Local $msg = StringFormat("Press %s fail after %d ms", $key, $timeOut)
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+   WriteLog("utils", StringFormat("Press %s timeout after %d ms", $key, $timeOut))
    Return False
 EndFunc
 
@@ -125,13 +111,11 @@ Func ActiveWindowWithinTimeOut($win, $timeOut)
 			   Return True
 			EndIf
 		 Next
-		 Local $msg = StringFormat("Cannot active %s after %d ms", $win, $timeOut)
-		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+		 WriteLog("utils", StringFormat("Cannot active %s after %d ms", $win, $timeOut))
 		 Return False
 	  EndIf
    Else
-	  Local $msg = StringFormat("%s is not exists", $win)
-	  _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+	  WriteLog("utils",StringFormat("%s is not exists", $win))
 	  Return False
    EndIf
 EndFunc
@@ -148,8 +132,7 @@ Func ClickChangeMapWithinTimeOut($mapPos1, $mapPos2, $mapPos3, $npcPos, $timeOut
 	  EndIf
 	  Sleep(1000)
    Next
-   Local $msg = StringFormat("Clicked [%d, %d] but not change map after %d", $npcPos[0], $npcPos[1], $timeOut)
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", $msg))
+   WriteLog("utils", StringFormat("Clicked [%d, %d] but not change map after %d", $npcPos[0], $npcPos[1], $timeOut))
    Return False
 EndFunc
 
@@ -233,13 +216,13 @@ Func OpenDuongChauMap($timeOut)
 		 If ClickNpcWithinTimeOut($duongChauPos, $duongChauPos, $timeOut) Then
 			Return True
 		 EndIf
-		 _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", "Error click DuongChau"))
+		 WriteLog("utils", StringFormat("%s - %s", "utils", "Error click DuongChau"))
 		 Return False
 	  EndIf
-	  _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", "Error click BanDoTheGioi"))
+	  WriteLog("utils", StringFormat("%s - %s", "utils", "Error click BanDoTheGioi"))
 	  Return False
    EndIf
-   _FileWriteLog($LOG_FILE, StringFormat("%s - %s", "utils", "Error press Tab"))
+   WriteLog("utils", StringFormat("%s - %s", "utils", "Error press Tab"))
    Return False
 EndFunc
 
@@ -248,4 +231,9 @@ Func MovingToNpc($npcPos)
    Sleep(2000)
    PressKeyWithinTimeOut($npcPos, "{ESC}", 1000)
    WaitingMoving(100)
+EndFunc
+
+Func WriteLog($caller, $msg)
+   Local $logFile = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
+   _FileWriteLog($logFile, StringFormat("%s - %s", $caller, $msg))
 EndFunc

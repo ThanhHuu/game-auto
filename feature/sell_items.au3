@@ -14,12 +14,12 @@
 #include <AutoItConstants.au3>
 #include <File.au3>
 #include <Date.au3>
+#include "utils.au3"
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 DIM $ITEM_CELL_WIDTH = 37
 DIM $ITEM_CELL_HEIGHT = 40
@@ -49,11 +49,11 @@ Func SellItems()
 		 Sleep(1000)
 	  Else
 		 Local $msg = StringFormat("%s - %s", "sell_items", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 WriteLog("sell_item", $msg)
 	  EndIf
    Else
 	  Local $msg = StringFormat("%s - %s", "sell_items", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
+	  WriteLog("sell_item", $msg)
    EndIf
 EndFunc
 

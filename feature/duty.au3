@@ -20,8 +20,6 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-
-Local $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 ;SkipDuty()
@@ -66,11 +64,11 @@ Func SkipDuty()
 		 CloseDuty()
 	  Else
 		 Local $msg = StringFormat("%s - %s", "duty", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 WriteLog("duty", $msg)
 	  EndIf
    Else
 	  Local $msg = StringFormat("%s - %s", "duty", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
+	  WriteLog("duty", $msg)
    EndIf
 EndFunc
 
@@ -130,11 +128,11 @@ Func FollowDuty()
 		 CloseDuty()
 	  Else
 		 Local $msg = StringFormat("%s - %s", "duty", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 WriteLog("duty", $msg)
 	  EndIf
    Else
 	  Local $msg = StringFormat("%s - %s", "duty", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
+	  WriteLog("duty", $msg)
    EndIf
 EndFunc
 
@@ -180,11 +178,11 @@ Func UnfollowDuty()
 
 	  Else
 		 Local $msg = StringFormat("%s - %s", "duty", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 WriteLog("duty", $msg)
 	  EndIf
    Else
 	  Local $msg = StringFormat("%s - %s", "duty", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
+	  WriteLog("duty", $msg)
    EndIf
 EndFunc
 ;IsHasDailyDuty()
@@ -226,10 +224,10 @@ Func IsHasDailyDuty()
 		 Next
 	  Else
 		 Local $msg = StringFormat("%s - %s", "duty", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 WriteLog("duty", $msg)
 	  EndIf
    Else
 	  Local $msg = StringFormat("%s - %s", "duty", "Not found window game")
-	  _FileWriteLog($LOG_FILE, $msg)
+	  WriteLog("duty", $msg)
    EndIf
 EndFunc

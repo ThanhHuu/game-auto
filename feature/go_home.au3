@@ -14,11 +14,12 @@
 #include <AutoItConstants.au3>
 #include <File.au3>
 #include <Date.au3>
+#include "utils.au3"
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-DIM $LOG_FILE = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
+
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 Func GoHome()
    If WinExists($WindowGame) Then
@@ -36,10 +37,10 @@ Func GoHome()
 		 Send("{ESC}")
 	  Else
 		 Local $msg = StringFormat("%s - %s", "go_home", "Can not active window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 WriteLog("go_home", $msg)
 	  EndIf
    Else
 	  Local $msg = StringFormat("%s - %s", "go_home", "Not found window game")
-		 _FileWriteLog($LOG_FILE, $msg)
+		 WriteLog("go_home", $msg)
    EndIf
 EndFunc
