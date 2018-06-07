@@ -33,33 +33,28 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
-;TryLuckyCard()
+TryLuckyCard()
 Func TryLuckyCard()
    If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
-	  Sleep(1000)
 	  Local $luckyPos = [450,590]
-	  Local $count = 0
-	  For $i = 0 To 10
-		 Local $currentPx = PixelGetColor($luckyPos[0], $luckyPos[1])
-		 Sleep(100)
-		 If $currentPx <> PixelGetColor($luckyPos[0], $luckyPos[1]) Then
-			$count += 1
-		 EndIf
-	  Next
-	  If $count >= 0 Then
+	  Local $px1 = PixelGetColor(370, 29), $px2 = PixelGetColor(400, 29), $px3 = PixelGetColor(430, 29)
+	  MouseClick($MOUSE_CLICK_LEFT, $luckyPos[0], $luckyPos[1])
+	  Sleep(1000)
+	  If $px1 = PixelGetColor(370, 29) And $px2 = PixelGetColor(400, 29) And $px3 = PixelGetColor(430, 29) Then
 		 Local $luckyPointerPos = [390,260]
-		 If ClickNpcWithinTimeOut($luckyPointerPos, $luckyPos, 1000) Then
-			For $i = 0 To 2
-			   ClickNpcWithinTimeOut($luckyPointerPos, $luckyPointerPos, 500)
-			   $luckyPointerPos[0] += 115
-			Next
-			$luckyPointerPos[0] -= 115
-			For $j = 0 To 2
-			   ClickNpcWithinTimeOut($luckyPointerPos, $luckyPointerPos, 500)
-			   $luckyPointerPos[1] += 130
-			Next
-			PressKeyWithinTimeOut($luckyPointerPos, "{ESC}", 1000)
-		 EndIf
+		 For $i = 0 To 2
+			ClickNpcWithinTimeOut($luckyPointerPos, $luckyPointerPos, 500)
+			$luckyPointerPos[0] += 115
+		 Next
+		 $luckyPointerPos[0] -= 115
+		 For $j = 0 To 2
+			ClickNpcWithinTimeOut($luckyPointerPos, $luckyPointerPos, 500)
+			$luckyPointerPos[1] += 130
+		 Next
+		 Local $closePos = [711, 103]
+		 ClickNpcWithinTimeOut($luckyPointerPos, $closePos, 500)
+		 Local $onlineExpPos = [484, 364]
+		 PressKeyWithinTimeOut($onlineExpPos, "{ESC}", 1000)
 	  EndIf
    EndIf
 EndFunc
