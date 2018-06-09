@@ -32,7 +32,7 @@ Func IsBuyGoHomeItem()
    EndIf
 EndFunc
 
-BuyItemManaAndFood(90, 10, 10)
+;BuyItemManaAndFood(90, 10, 10)
 Func BuyItemManaAndFood($level, $noMana, $noFood)
    If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
 	  WriteLog("buy_items", "Mua mana va thuc an")

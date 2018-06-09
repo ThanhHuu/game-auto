@@ -24,15 +24,12 @@ Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 ;SkipDuty()
 Func SkipDuty()
-   If WinExists($WINDOW_GAME) Then
-	  If Not WinActive($WINDOW_GAME) Then
-		 WinActivate($WINDOW_GAME)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WINDOW_GAME) Then
-		 OpenDuty()
+   If ActiveWindowWithinTimeOut($WINDOW_GAME, 2000) Then
+	  Local $dutyPopPos = [508, 620]
+	  If PressKeyWithinTimeOut($dutyPopPos, "{F4}", 1000) Then
 		 For $i = 0 To 2
-			MouseClick($MOUSE_CLICK_LEFT, 627, 621)
+			Local $skipBtPos = [627, 621]
+			MouseClick($MOUSE_CLICK_LEFT, $skipBtPos[0], $skipBtPos[1])
 			Sleep(100)
 			; Start remove for each
 			Local $count = 0
@@ -40,76 +37,36 @@ Func SkipDuty()
 			Local $lastRow = 590
 			While $lastRow > 210 And $count < 50
 			   $count += 1
-			   Local $currentPx = PixelGetColor(340, $lastRow)
-			   Local $nextPx = PixelGetColor(340, $lastRow + $offset)
-			   MouseClick($MOUSE_CLICK_LEFT, 326, $lastRow)
-			   Sleep(100)
-			   ; skip pointer duty
-			   If $currentPx <> PixelGetColor(340, $lastRow) Then
-				  MouseClick($MOUSE_CLICK_LEFT, 627, 621)
-				  Sleep(100)
+			   Local $currentPos = [340, $lastRow]
+			   Local $nextPos = [$currentPos[0], $currentPos[1] + $offset]
+			   Local $nextPx = PixelGetColor($nextPos[0], $nextPos[1])
+			   If ClickNpcWithinTimeOut($currentPos, $currentPos, 500) Then
+				  ; skip pointer duty
+				  If Not ClickNpcWithinTimeOut($currentPos, $skipBtPos, 200) Then
+					 $lastRow -= $offset
+				  EndIf
+				  If $nextPx <> PixelGetColor($nextPos[0], $nextPos[1]) Then
+					 ClickNpcWithinTimeOut($nextPos, $currentPos, 200)
+				  EndIf
+			   Else
+				  $lastRow -= $offset
 			   EndIf
-			   If $nextPx <> PixelGetColor(340, $lastRow + $offset) Then
-				  MouseClick($MOUSE_CLICK_LEFT, 326, $lastRow)
-			   EndIf
-			   $lastRow -= $offset
 			WEnd
-			Local $lastPx = PixelGetColor(340, 590)
-			MouseClick($MOUSE_CLICK_LEFT, 326, 590)
-			Sleep(100)
-			If $lastPx = PixelGetColor(340, 590) Then
+			Local $lastPx = [340, 590]
+			If Not ClickNpcWithinTimeOut($lastPx, $lastPx, 200) Then
 			   ExitLoop
 			EndIf
 		 Next
-		 CloseDuty()
-	  Else
-		 Local $msg = StringFormat("%s - %s", "duty", "Can not active window game")
-		 WriteLog("duty", $msg)
+		 PressKeyWithinTimeOut($dutyPopPos, "{F4}", 1000)
 	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "duty", "Not found window game")
-	  WriteLog("duty", $msg)
    EndIf
-EndFunc
-
-Func OpenDuty()
-   Local $basePx = PixelGetColor(508, 620)
-   Local $maxCount = 10
-   Local $count = 0
-   Send("{F4}")
-   While $count < $maxCount
-	  Sleep(100)
-	  If $basePx <> PixelGetColor(508, 620) Then
-		 ExitLoop
-	  EndIf
-   WEnd
-   Sleep(1000)
-EndFunc
-
-Func CloseDuty()
-   Local $basePx = PixelGetColor(508, 620)
-   Local $maxCount = 10
-   Local $count = 0
-   Send("{TAB}")
-   Send("{ESC}")
-   While $count < $maxCount
-	  Sleep(100)
-	  If $basePx <> PixelGetColor(508, 620) Then
-		 ExitLoop
-	  EndIf
-   WEnd
-   Sleep(1000)
 EndFunc
 
 ;FollowDuty()
 Func FollowDuty()
-   If WinExists($WINDOW_GAME) Then
-	  If Not WinActive($WINDOW_GAME) Then
-		 WinActivate($WINDOW_GAME)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WINDOW_GAME) Then
-		 OpenDuty()
+   If ActiveWindowWithinTimeOut($WINDOW_GAME, 2000) Then
+	  Local $dutyPopPos = [508, 620]
+	  If PressKeyWithinTimeOut($dutyPopPos, "{F4}", 1000) Then
 		 Local $count = 0
 		 Local $offset = 20
 		 Local $currentPointer = 590
@@ -125,109 +82,94 @@ Func FollowDuty()
 			EndIf
 			$currentPointer -= $offset
 		 WEnd
-		 CloseDuty()
-	  Else
-		 Local $msg = StringFormat("%s - %s", "duty", "Can not active window game")
-		 WriteLog("duty", $msg)
+		 PressKeyWithinTimeOut($dutyPopPos, "{F4}", 1000)
 	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "duty", "Not found window game")
-	  WriteLog("duty", $msg)
    EndIf
 EndFunc
 
 ;UnfollowDuty()
 Func UnfollowDuty()
-   If WinExists($WINDOW_GAME) Then
-	  If Not WinActive($WINDOW_GAME) Then
-		 WinActivate($WINDOW_GAME)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WINDOW_GAME) Then
-		 Local $count = 0
-		 Local $offset = 10
-		 Local $dutyPx = PixelGetColor(512, 622)
+   If ActiveWindowWithinTimeOut($WINDOW_GAME, 2000) Then
+	  Local $dutyPopPos = [508, 620]
+	  Local $checkPos1 = [551, 672]
+	  Local $checkPos2 = [651, 693]
+	  Local $checkPos3 = [85, 458]
+	  Local $count = 0
+	  Local $offset = 10
+	  Local $dutyPx = PixelGetColor(512, 622)
 
-		 Local $topDutyIcon = 255
-		 Local $basePx = PixelGetColor(919, 296)
-		 MouseMove(945, 255)
-		 Sleep(300)
-		 If $basePx = PixelGetColor(919, 296) Then
-			$topDutyIcon = 350
-		 EndIf
-		 While $count < 10
-			$count += 1
-			MouseClick($MOUSE_CLICK_LEFT, 945, $topDutyIcon)
-			Sleep(100)
+	  Local $topDutyIcon = [945, 255]
+	  Local $basePx = PixelGetColor(919, 296)
+	  If IsMovedPosition($topDutyIcon, $checkPos1, $checkPos2, $checkPos3) Then
+		 $topDutyIcon[1] = 350
+	  ElseIf $dutyPx = PixelGetColor(512, 622) Then
+		 $topDutyIcon[1] = 350
+	  EndIf
+	  While $count < 5
+		 $count += 1
+		 If IsMovedPosition($topDutyIcon, $checkPos1, $checkPos2, $checkPos3) Then
+			ExitLoop
+		 ElseIf $dutyPx <> PixelGetColor(512, 622) Then
 			; follow pointer duty
-			If $dutyPx <> PixelGetColor(512, 622) Then
-			   MouseClick($MOUSE_CLICK_LEFT, 257, 618)
-			   Sleep(500)
-			   CloseDuty()
-			EndIf
-			; Re check top
-			$basePx = PixelGetColor(919, 296)
-			MouseMove(945, 255)
-			Sleep(300)
-			If $basePx <> PixelGetColor(919, 296) Then
-			   $topDutyIcon = 255
-			Else
-			   ExitLoop
-			EndIf
-		 WEnd
-
-	  Else
-		 Local $msg = StringFormat("%s - %s", "duty", "Can not active window game")
-		 WriteLog("duty", $msg)
-	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "duty", "Not found window game")
-	  WriteLog("duty", $msg)
+			MouseClick($MOUSE_CLICK_LEFT, 257, 618)
+			Sleep(100)
+			PressKeyWithinTimeOut($dutyPopPos, "{F4}", 1000)
+		 EndIf
+		 $topDutyIcon[1] = 255
+	  WEnd
    EndIf
 EndFunc
-;IsHasDailyDuty()
+
+;MsgBox(0,"", IsHasDailyDuty())
 Func IsHasDailyDuty()
-   If WinExists($WINDOW_GAME) Then
-	  If Not WinActive($WINDOW_GAME) Then
-		 WinActivate($WINDOW_GAME)
-		 Sleep(500)
-	  EndIf
-	  If WinActive($WINDOW_GAME) Then
-		 PressMap()
-		 MouseClick($MOUSE_CLICK_LEFT, 72, 75)
+   If ActiveWindowWithinTimeOut($WINDOW_GAME, 2000) Then
+	  Local $dutyPopPos = [508, 620]
+	  Local $topDutyIcon = [945, 255]
+	  If PressKeyWithinTimeOut($dutyPopPos, "{F4}", 1000) Then
+		 MouseClick($MOUSE_CLICK_LEFT, 274, 176)
 		 Sleep(100)
-		 MouseClick($MOUSE_CLICK_LEFT, 777, 434)
-		 Sleep(100)
-		 MouseClickDrag($MOUSE_CLICK_LEFT, 998, 236, 998, 430)
-		 Sleep(100)
-		 MouseClick($MOUSE_CLICK_LEFT, 923, 242, 2)
-		 Sleep(1500)
-		 PressMap()
-		 WaitingMoving(100)
-		 Local $winPos = [250, 536]
-		 Local $npcPos = [517, 388]
-		 ClickNpc($winPos, $npcPos)
-		 Local $offset = 30, $basePx1 = PixelGetColor(800, 430), $basePx2=PixelGetColor($winPos[0],$winPos[1]), $lastRow=540
-		 For $i = 0 To 10
-			MouseClick($MOUSE_CLICK_LEFT, 165, $lastRow)
-			$lastRow -= $offset
-			If $basePx1 = PixelGetColor(800, 430) Then
-			   For $j = 0 To 20
-				  Sleep(100)
-				  If $basePx2<>PixelGetColor($winPos[0],$winPos[1]) Then
-					 ExitLoop
+		 Local $firstPos = [280, 210]
+		 Local $secondPos = [280, 235]
+		 Local $thirdPos = [280, 260]
+		 Local $fourPos = [280, 285]
+		 Local $fifthPos = [280, 310]
+		 Local $sixPos = [280, 335]
+		 If ClickNpcWithinTimeOut($secondPos, $firstPos, 500) Then
+			If ClickNpcWithinTimeOut($thirdPos, $secondPos, 500) Then
+			   If ClickNpcWithinTimeOut($fourPos, $thirdPos, 500) Then
+				  If ClickNpcWithinTimeOut($fifthPos, $fourPos, 500) Then
+					 If ClickNpcWithinTimeOut($fourPos, $thirdPos, 500) Then
+						$fifthPos[1] = 305
+						$sixPos[1] = 330
+						If ClickNpcWithinTimeOut($sixPos, $fifthPos, 500) Then
+						   $fourPos[1] = 280
+						   MouseClick($MOUSE_CLICK_LEFT, $fourPos[0], $fourPos[1])
+						   Sleep(100)
+						   MouseClick($MOUSE_CLICK_LEFT, 257, 618)
+						   Sleep(100)
+						   Local $checkPos = [919, 296]
+						   Local $result = IsChangeWhenMouseHover($topDutyIcon, $checkPos)
+						   If Not $result Then
+							  MouseClick($MOUSE_CLICK_LEFT, 257, 618)
+							  Sleep(100)
+						   EndIf
+						   PressKeyWithinTimeOut($dutyPopPos, "{F4}", 1000)
+						   Return $result
+						Else
+						   MouseClick($MOUSE_CLICK_LEFT, 257, 618)
+						   Sleep(100)
+						   PressKeyWithinTimeOut($dutyPopPos, "{F4}", 1000)
+						   Return True
+						EndIf
+					 EndIf
 				  Else
-					 ExitLoop
+					 Return False
 				  EndIf
-			   Next
+			   EndIf
 			EndIf
-		 Next
-	  Else
-		 Local $msg = StringFormat("%s - %s", "duty", "Can not active window game")
-		 WriteLog("duty", $msg)
+		 EndIf
+		 PressKeyWithinTimeOut($dutyPopPos, "{F4}", 1000)
 	  EndIf
-   Else
-	  Local $msg = StringFormat("%s - %s", "duty", "Not found window game")
-	  WriteLog("duty", $msg)
    EndIf
+   Return False
 EndFunc

@@ -46,7 +46,7 @@ Func WaitingMoving($offset)
 	  Local $preRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
 	  Local $preBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
 	  Local $preLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
-	  Sleep(2000)
+	  Sleep(3000)
 	  Local $nextTopPx = PixelGetColor($pointerX - $offset,$pointerY - $offset)
 	  Local $nextRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
 	  Local $nextBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
@@ -98,7 +98,20 @@ Func PressKeyWithinTimeOut($winPos, $key, $timeOut)
    Return False
 EndFunc
 
+Func KillDumpProcess($timeOut)
+   Local $maxLoop = $timeOut/100
+   For $i = 0 To $maxLoop
+	  If ProcessExists("DumpReportX86.exe") Then
+		 ProcessClose("DumpReportX86.exe")
+		 Sleep(100)
+	  Else
+		 ExitLoop
+	  EndIf
+   Next
+EndFunc
+
 Func ActiveWindowWithinTimeOut($win, $timeOut)
+   KillDumpProcess($timeOut)
    If WinExists($win) Then
 	  If WinActive($win) Then
 		 Return True
@@ -114,9 +127,6 @@ Func ActiveWindowWithinTimeOut($win, $timeOut)
 		 WriteLog("utils", StringFormat("Cannot active %s after %d ms", $win, $timeOut))
 		 Return False
 	  EndIf
-   Else
-	  WriteLog("utils",StringFormat("%s is not exists", $win))
-	  Return False
    EndIf
 EndFunc
 
@@ -236,4 +246,24 @@ EndFunc
 Func WriteLog($caller, $msg)
    Local $logFile = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
    _FileWriteLog($logFile, StringFormat("%s - %s", $caller, $msg))
+EndFunc
+
+Func IsMovedPosition($clickPos, $checkingPos1, $checkingPos2, $checkingPos3)
+   Local $px1 = PixelGetColor($checkingPos1[0], $checkingPos1[1])
+   Local $px2 = PixelGetColor($checkingPos2[0], $checkingPos2[1])
+   Local $px3 = PixelGetColor($checkingPos3[0], $checkingPos3[1])
+   MouseClick($MOUSE_CLICK_LEFT, $clickPos[0], $clickPos[1])
+   Sleep(1000)
+   If $px1 <> PixelGetColor($checkingPos1[0], $checkingPos1[1]) And $px2 <> PixelGetColor($checkingPos2[0], $checkingPos2[1]) And $px3 <> PixelGetColor($checkingPos3[0], $checkingPos3[1]) Then
+	  Return True
+   Else
+	  Return False
+   EndIf
+EndFunc
+
+Func IsChangeWhenMouseHover($hoverPos, $checkPos)
+   Local $px = PixelGetColor($checkPos[0], $checkPos[1])
+   MouseMove($hoverPos[0], $hoverPos[1])
+   Sleep(1000)
+   Return $px <> PixelGetColor($checkPos[0], $checkPos[1])
 EndFunc
