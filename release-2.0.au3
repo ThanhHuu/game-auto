@@ -517,6 +517,7 @@ Func RunFeatureForAccount($account, $featureObj)
 	  If $utilObj.Item("useItem") Then
 		 UseItems()
 	  EndIf
+	  $featureObj.Remove("Util")
    EndIf
    ; Run functions of feature
    Local $functions = $featureObj.Item("Functions")
