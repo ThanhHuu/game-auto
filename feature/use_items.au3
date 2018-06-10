@@ -74,7 +74,7 @@ Func OpenUseBag($bagPos)
 		 $currentY += 20
 		 MouseClick($MOUSE_CLICK_LEFT, $endX, $currentY)
 		 Sleep(500)
-		 If PixelGetColor($endX, $midY) <> $midPx Then
+		 If PixelGetColor($endX, $midY) <> $midPx And ($currentY - $midY) > 40 Then
 			ExitLoop
 		 Else
 			MouseClick($MOUSE_CLICK_LEFT, $endX, $currentY)
