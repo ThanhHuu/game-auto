@@ -100,9 +100,11 @@ Func BuyItem($itemPos, $no)
    If ClickNpcWithinTimeOut($itemPopUpPos, $itemPos, 500) Then
 	  Send($no)
 	  Local $confirmBt1 = [520, 365]
-	  ClickNpcWithinTimeOut($confirmBt1, $confirmBt1, 100)
+	  ClickNpcWithinTimeOut($confirmBt1, $confirmBt1, 500)
 	  Local $confirmBt2 = [520, 450]
-	  ClickNpcWithinTimeOut($confirmBt1, $confirmBt2, 100)
+	  ClickNpcWithinTimeOut($confirmBt1, $confirmBt2, 500)
+	  PressKeyWithinTimeOut($itemPopUpPos, "{TAB}", 1000)
+	  PressKeyWithinTimeOut($itemPopUpPos, "{ESC}", 1000)
    Else
 	  WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click item"))
    EndIf
