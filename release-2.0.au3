@@ -495,15 +495,6 @@ Func RunFeatureForAccount($account, $featureObj)
    Local $index = 0
    AddAccount($usr, $DEFAULT_PWD, $character)
    Login($index, $character)
-   TryLuckyCard()
-   TryLuckyRound()
-   ; Basic task
-   Local $basicObj = $featureObj.Item("Basic")
-   BuyItemGoHome($basicObj.Item("noGoHome"))
-   If $featureObj.Item("BuyMana") Then
-	  BuyItemManaAndFood($basicObj.Item("level"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
-   EndIf
-
    ; Util task
    If $featureObj.Exists("Util") Then
 	  Local $utilObj = $featureObj.Item("Util")
@@ -519,6 +510,15 @@ Func RunFeatureForAccount($account, $featureObj)
 	  EndIf
 	  $featureObj.Remove("Util")
    EndIf
+   TryLuckyCard()
+   TryLuckyRound()
+   ; Basic task
+   Local $basicObj = $featureObj.Item("Basic")
+   BuyItemGoHome($basicObj.Item("noGoHome"))
+   If $featureObj.Item("BuyMana") Then
+	  BuyItemManaAndFood($basicObj.Item("level"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
+   EndIf
+
    ; Run functions of feature
    Local $functions = $featureObj.Item("Functions")
    For $function In $functions
