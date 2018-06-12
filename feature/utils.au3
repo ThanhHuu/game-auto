@@ -57,6 +57,27 @@ Func WaitingMoving($offset)
    WEnd
 EndFunc
 
+Func WaitingMovingWithinTimeOut($offset, $timeOut)
+   Local $pointerPos = WinGetClientSize($WINDOW_GAME)
+   Local $pointerX = $pointerPos[0]/2
+   Local $pointerY = $pointerPos[1]/2
+   Local $maxCount = $timeOut/3000
+   For $i = 0 To $maxCount
+	  Local $preTopPx = PixelGetColor($pointerX - $offset, $pointerY - $offset)
+	  Local $preRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
+	  Local $preBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
+	  Local $preLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
+	  Sleep(3000)
+	  Local $nextTopPx = PixelGetColor($pointerX - $offset,$pointerY - $offset)
+	  Local $nextRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
+	  Local $nextBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
+	  Local $nextLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
+	  If $preTopPx = $nextTopPx And $preRightPx = $nextRightPx And $preBottomtPx = $nextBottomtPx And $preLeftPx = $nextLeftPx Then
+		 ExitLoop
+	  EndIf
+   Next
+EndFunc
+
 Func ClickNpc($winPos, $npcPos)
    Local $basePx = PixelGetColor($winPos[0], $winPos[1])
    MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1])
@@ -241,6 +262,13 @@ Func MovingToNpc($npcPos)
    Sleep(2000)
    PressKeyWithinTimeOut($npcPos, "{ESC}", 1000)
    WaitingMoving(100)
+EndFunc
+
+Func MovingToNpcWithinTimeOut($npcPos, $timeOut)
+   MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1], 2)
+   Sleep(2000)
+   PressKeyWithinTimeOut($npcPos, "{ESC}", 1000)
+   WaitingMovingWithinTimeOut(100, $timeOut)
 EndFunc
 
 Func WriteLog($caller, $msg)

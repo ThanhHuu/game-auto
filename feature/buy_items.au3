@@ -43,7 +43,7 @@ Func BuyItemManaAndFood($level, $noMana, $noFood)
 	  MovingToNpc($npcPos)
 	  Local $askShopPos = [115, 171]
 	  Local $askShopClickPos = [490, 390]
-	  If ClickNpcWithinTimeOut($askShopPos, $askShopClickPos, 2000) Then
+	  If ClickNpcWithinTimeOut($askShopPos, $askShopClickPos, 5000) Then
 		 Local $shopPos = [74, 247]
 		 Local $openShopPos = [178, 264]
 		 If ClickNpcWithinTimeOut($shopPos, $openShopPos, 2000) Then
@@ -79,10 +79,10 @@ Func BuyItemGoHome($no)
 		 MovingToNpc($npcPos)
 		 Local $askShopPos = [209, 140]
 		 Local $askShopClickPos = [500, 400]
-		 If ClickNpcWithinTimeOut($askShopPos, $askShopClickPos, 2000) Then
+		 If ClickNpcWithinTimeOut($askShopPos, $askShopClickPos, 5000) Then
 			Local $shopPos = [77, 268]
 			Local $openShopPos = [160,240]
-			If ClickNpcWithinTimeOut($shopPos, $openShopPos, 1000) Then
+			If ClickNpcWithinTimeOut($shopPos, $openShopPos, 2000) Then
 			   Local $itemPos = [170,250]
 			   BuyItem($itemPos, $no)
 			Else
@@ -97,7 +97,7 @@ EndFunc
 
 Func BuyItem($itemPos, $no)
    Local $itemPopUpPos = [502, 334]
-   If ClickNpcWithinTimeOut($itemPopUpPos, $itemPos, 500) Then
+   If ClickNpcWithinTimeOut($itemPopUpPos, $itemPos, 5000) Then
 	  Send($no)
 	  Local $confirmBt1 = [520, 365]
 	  ClickNpcWithinTimeOut($confirmBt1, $confirmBt1, 500)

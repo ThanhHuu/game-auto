@@ -67,7 +67,7 @@ Func StartFighting()
 			Local $mapPos = [44, 50]
 			If PressKeyWithinTimeOut($mapPos, "{TAB}", 1000) Then
 			   Local $centerPos = [397, 405]
-			   MovingToNpc($centerPos)
+			   MovingToNpcWithinTimeOut($centerPos, 15000)
 			EndIf
 		 EndIf
 		 Sleep(1000)
