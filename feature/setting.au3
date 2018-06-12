@@ -50,7 +50,10 @@ EndFunc
 ;TurnOffGraphic()
 Func TurnOffGraphic()
    If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
-	  Local $basePos = [508, 369]
+	  Local $basePos = [508, 268]
+	  PressKeyWithinTimeOut($basePos, "{TAB}", 500)
+	  PressKeyWithinTimeOut($basePos, "{ESC}", 500)
+	  Sleep(2000)
 	  For $i = 0 To 1
 		 If PressKeyWithinTimeOut($basePos, "{ESC}", 3000) Then
 			WriteLog("setting", "Turnoff graphic")
@@ -58,14 +61,16 @@ Func TurnOffGraphic()
 			Local $clickSettingPos = [505, 315]
 			If ClickNpcWithinTimeOut($popUpPos, $clickSettingPos, 2000) Then
 			   MouseClick($MOUSE_CLICK_LEFT, 390, 225)
-			   Sleep(100)
+			   Sleep(200)
 			   MouseClick($MOUSE_CLICK_LEFT, 309, 369)
-			   Sleep(100)
+			   Sleep(200)
+			   WriteLog("setting", "Done turnoff graphic")
 			EndIf
-			PressKeyWithinTimeOut($popUpPos, "{ESC}", 1000)
 			ExitLoop
 		 EndIf
 	  Next
+	  PressKeyWithinTimeOut($popUpPos, "{TAB}", 500)
+	  PressKeyWithinTimeOut($popUpPos, "{ESC}", 500)
    EndIf
 EndFunc
 
