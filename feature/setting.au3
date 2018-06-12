@@ -28,7 +28,8 @@ Local $SETTING_BASE_PX = ""
 Func SetupFighting()
    If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
 	  Local $fightSettingPopUpPos = [41, 148]
-	  If PressKeyWithinTimeOut($fightSettingPopUpPos, "^f", 1000) Then
+	  If PressKeyWithinTimeOut($fightSettingPopUpPos, "^f", 3000) Then
+		 WriteLog("setting", "Setting fighting")
 		 MouseClick($MOUSE_CLICK_LEFT, 295,298)
 		 Sleep(100)
 		 Local $useFoodPos = [41,344]
@@ -49,19 +50,19 @@ EndFunc
 ;TurnOffGraphic()
 Func TurnOffGraphic()
    If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
-	  Local $basePos = [508, 270]
+	  Local $basePos = [508, 369]
 	  For $i = 0 To 1
-		 If PressKeyWithinTimeOut($basePos, "{ESC}", 1000) Then
+		 If PressKeyWithinTimeOut($basePos, "{ESC}", 3000) Then
 			WriteLog("setting", "Turnoff graphic")
 			Local $popUpPos = [250, 188]
 			Local $clickSettingPos = [505, 315]
-			If ClickNpcWithinTimeOut($popUpPos, $clickSettingPos, 1000) Then
+			If ClickNpcWithinTimeOut($popUpPos, $clickSettingPos, 2000) Then
 			   MouseClick($MOUSE_CLICK_LEFT, 390, 225)
 			   Sleep(100)
 			   MouseClick($MOUSE_CLICK_LEFT, 309, 369)
 			   Sleep(100)
-			   PressKeyWithinTimeOut($popUpPos, "{ESC}", 1000)
 			EndIf
+			PressKeyWithinTimeOut($popUpPos, "{ESC}", 1000)
 			ExitLoop
 		 EndIf
 	  Next
