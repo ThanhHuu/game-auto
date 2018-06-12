@@ -21,14 +21,16 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
+Local $FIRST_Y = 35
 
-Func Logout($currentY)
+Func Logout($index)
    If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
 	  If WinExists("Thông báo") Then
 		 ControlClick("Thông báo", "", "CLASS:Button;INSTANCE:1")
 	  EndIf
 	  Local $maxLoop = 5
 	  ; Click thoat game
+	  Local $currentY = $FIRST_Y + $index*17
 	  Local $basePx = PixelGetColor(50, $currentY + 15)
 	  Local $count = 0
 	  While $count < $maxLoop

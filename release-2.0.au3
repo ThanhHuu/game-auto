@@ -491,10 +491,10 @@ EndFunc
 Func RunFeatureForAccount($account, $featureObj)
    Local $character = $account.Item("character")
    WriteLog("release-2.0", StringFormat("%s - %s", "release-2.0", StringFormat("Run for %s", $character)))
-   Local $currentY = $FIRST_Y
    Local $usr = $account.Item("account")
+   Local $index = 0
    AddAccount($usr, $DEFAULT_PWD, $character)
-   Login($currentY, $character)
+   Login($index, $character)
    TryLuckyCard()
    TryLuckyRound()
    ; Basic task
@@ -525,7 +525,7 @@ Func RunFeatureForAccount($account, $featureObj)
 	  Call($function, $basicObj.Item("level"))
    Next
    If $featureObj.Item("Logout") Then
-	  Logout($currentY)
+	  Logout($index)
    EndIf
 
 EndFunc
