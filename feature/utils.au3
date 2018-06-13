@@ -19,10 +19,11 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
+Local $allowDebug = True
 
-Func PressMap()
-   If ActiveWindowWithinTimeOut($WINDOW_GAME, 1000) Then
+Func PressMap($character)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  Local $basePx = PixelGetColor(27, 48)
 	  Local $count = 0;
 	  Local $maxLoop = 30
@@ -37,28 +38,9 @@ Func PressMap()
    EndIf
 EndFunc
 
-Func WaitingMoving($offset)
-   Local $pointerPos = WinGetClientSize($WINDOW_GAME)
-   Local $pointerX = $pointerPos[0]/2
-   Local $pointerY = $pointerPos[1]/2
-   While True
-	  Local $preTopPx = PixelGetColor($pointerX - $offset, $pointerY - $offset)
-	  Local $preRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
-	  Local $preBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
-	  Local $preLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
-	  Sleep(3000)
-	  Local $nextTopPx = PixelGetColor($pointerX - $offset,$pointerY - $offset)
-	  Local $nextRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
-	  Local $nextBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
-	  Local $nextLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
-	  If $preTopPx = $nextTopPx And $preRightPx = $nextRightPx And $preBottomtPx = $nextBottomtPx And $preLeftPx = $nextLeftPx Then
-		 ExitLoop
-	  EndIf
-   WEnd
-EndFunc
-
-Func WaitingMovingWithinTimeOut($offset, $timeOut)
-   Local $pointerPos = WinGetClientSize($WINDOW_GAME)
+Func WaitingMovingWithinTimeOut($character, $offset, $timeOut)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   Local $pointerPos = WinGetClientSize($winTitle)
    Local $pointerX = $pointerPos[0]/2
    Local $pointerY = $pointerPos[1]/2
    Local $maxCount = $timeOut/3000
@@ -73,22 +55,12 @@ Func WaitingMovingWithinTimeOut($offset, $timeOut)
 	  Local $nextBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
 	  Local $nextLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
 	  If $preTopPx = $nextTopPx And $preRightPx = $nextRightPx And $preBottomtPx = $nextBottomtPx And $preLeftPx = $nextLeftPx Then
-		 ExitLoop
+		 WriteLogDebug("utils", StringFormat("%s moved to specific point", $character))
+		 Return
 	  EndIf
    Next
-EndFunc
-
-Func ClickNpc($winPos, $npcPos)
-   Local $basePx = PixelGetColor($winPos[0], $winPos[1])
-   MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1])
-   Local $count = 0, $maxCount = 20
-   While $count < $maxCount
-	  $count += 1
-	  Sleep(100)
-	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
-		 ExitLoop
-	  EndIf
-   WEnd
+   WriteLogDebug("utils", StringFormat("Timeout moving %s to specific point", $character))
+   Return False
 EndFunc
 
 Func ClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
@@ -98,10 +70,11 @@ Func ClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
    For $i = 0 To $maxLoop
 	  Sleep(100)
 	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
+		 WriteLogDebug("utils", StringFormat("Clicked [%d, %d]", $npcPos[0], $npcPos[1]))
 		 Return True
 	  EndIf
    Next
-   WriteLog("utils", StringFormat("Click [%d, %d] timeout after %d ms", $npcPos[0], $npcPos[1], $timeOut))
+   WriteLogDebug("utils", StringFormat("Timeout clicking [%d, %d] after %d ms", $npcPos[0], $npcPos[1], $timeOut))
    Return False
 EndFunc
 
@@ -112,10 +85,11 @@ Func PressKeyWithinTimeOut($winPos, $key, $timeOut)
    For $i = 0 To $maxLoop
 	  Sleep(100)
 	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
+		 WriteLogDebug("utils", StringFormat("Pressed %s", $key, $timeOut))
 		 Return True
 	  EndIf
    Next
-   WriteLog("utils", StringFormat("Press %s timeout after %d ms", $key, $timeOut))
+   WriteLogDebug("utils", StringFormat("Timeout press %s after %d ms", $key, $timeOut))
    Return False
 EndFunc
 
@@ -142,13 +116,16 @@ Func ActiveWindowWithinTimeOut($win, $timeOut)
 		 For $i = 0 To $maxLoop
 			Sleep(100)
 			If WinActive($win) Then
+			   WriteLogDebug("utils", StringFormat("Actived window %s", $win))
 			   Return True
 			EndIf
 		 Next
-		 WriteLog("utils", StringFormat("Cannot active %s after %d ms", $win, $timeOut))
+		 WriteLogDebug("utils", StringFormat("Timeout activation window %s after %d ms", $win, $timeOut))
 		 Return False
 	  EndIf
    EndIf
+   WriteLogDebug("utils", StringFormat("Not found window %s", $win))
+   Return False
 EndFunc
 
 Func ClickChangeMapWithinTimeOut($mapPos1, $mapPos2, $mapPos3, $npcPos, $timeOut)
@@ -158,12 +135,13 @@ Func ClickChangeMapWithinTimeOut($mapPos1, $mapPos2, $mapPos3, $npcPos, $timeOut
    MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1])
    Local $maxLoop = $timeOut/1000
    For $i = 0 To $maxLoop
+	  Sleep(1000)
 	  If $basePx1 <> PixelGetColor($mapPos1[0], $mapPos1[1]) And $basePx2 <> PixelGetColor($mapPos2[0], $mapPos2[1]) And $basePx3 <> PixelGetColor($mapPos3[0], $mapPos3[1]) Then
+		 WriteLogDebug("utils", StringFormat("Changed map when clicking [%d, %d]", $npcPos[0], $npcPos[1]))
 		 Return True
 	  EndIf
-	  Sleep(1000)
    Next
-   WriteLog("utils", StringFormat("Clicked [%d, %d] but not change map after %d", $npcPos[0], $npcPos[1], $timeOut))
+   WriteLogDebug("utils", StringFormat("Timeout changing map when clicking [%d, %d] after %d", $npcPos[0], $npcPos[1], $timeOut))
    Return False
 EndFunc
 
@@ -247,33 +225,29 @@ Func OpenDuongChauMap($timeOut)
 		 If ClickNpcWithinTimeOut($duongChauPos, $duongChauPos, $timeOut) Then
 			Return True
 		 EndIf
-		 WriteLog("utils", StringFormat("%s - %s", "utils", "Error click DuongChau"))
-		 Return False
 	  EndIf
-	  WriteLog("utils", StringFormat("%s - %s", "utils", "Error click BanDoTheGioi"))
-	  Return False
    EndIf
-   WriteLog("utils", StringFormat("%s - %s", "utils", "Error press Tab"))
    Return False
 EndFunc
 
-Func MovingToNpc($npcPos)
+Func MovingToNpcWithinTimeOut($character, $npcPos, $timeOut)
    MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1], 2)
    Sleep(2000)
    PressKeyWithinTimeOut($npcPos, "{ESC}", 1000)
-   WaitingMoving(100)
-EndFunc
-
-Func MovingToNpcWithinTimeOut($npcPos, $timeOut)
-   MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1], 2)
-   Sleep(2000)
-   PressKeyWithinTimeOut($npcPos, "{ESC}", 1000)
-   WaitingMovingWithinTimeOut(100, $timeOut)
+   WaitingMovingWithinTimeOut($character, 100, $timeOut)
+   Sleep(5000)
 EndFunc
 
 Func WriteLog($caller, $msg)
    Local $logFile = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
    _FileWriteLog($logFile, StringFormat("%s - %s", $caller, $msg))
+EndFunc
+
+Func WriteLogDebug($caller, $msg)
+   If $allowDebug Then
+	  Local $logFile = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
+	  _FileWriteLog($logFile, StringFormat("%s- DEBUG - %s", $caller, $msg))
+   EndIf
 EndFunc
 
 Func IsMovedPosition($clickPos, $checkingPos1, $checkingPos2, $checkingPos3)
@@ -283,8 +257,10 @@ Func IsMovedPosition($clickPos, $checkingPos1, $checkingPos2, $checkingPos3)
    MouseClick($MOUSE_CLICK_LEFT, $clickPos[0], $clickPos[1])
    Sleep(1000)
    If $px1 <> PixelGetColor($checkingPos1[0], $checkingPos1[1]) And $px2 <> PixelGetColor($checkingPos2[0], $checkingPos2[1]) And $px3 <> PixelGetColor($checkingPos3[0], $checkingPos3[1]) Then
+	  WriteLogDebug("utils", StringFormat("Moved after click [%d, %d]", $clickPos[0], $clickPos[1]))
 	  Return True
    Else
+	  WriteLogDebug("utils", StringFormat("Did not move after click [%d, %d]", $clickPos[0], $clickPos[1]))
 	  Return False
    EndIf
 EndFunc

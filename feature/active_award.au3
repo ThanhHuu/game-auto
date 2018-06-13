@@ -30,11 +30,10 @@ Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
-
 ;GetActiveAward()
-Func GetActiveAward()
-   If ActiveWindowWithinTimeOut($WindowGame, 1000) Then
+Func GetActiveAward($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  WriteLog("active_award", "Nhan thuong soi noi")
 	  Local $eventWinPos = [247, 90]
 	  If PressKeyWithinTimeOut($eventWinPos, "{F11}", 1000) Then
@@ -47,4 +46,5 @@ Func GetActiveAward()
 		 PressKeyWithinTimeOut($eventWinPos, "{ESC}", 1000)
 	  EndIf
    EndIf
+   Return True
 EndFunc

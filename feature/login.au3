@@ -25,8 +25,7 @@ Local $FIRST_Y = 35
 
 Func Login($index, $character)
    If LoggedIn($character) Then
-	  Local $msg = StringFormat("%s - %s", "login", StringFormat("%s loggedin", $character))
-	  WriteLog("login", $msg)
+	  WriteLogDebug("login", StringFormat("%s loggedin", $character))
    Else
 	  If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
 		 MouseClick($MOUSE_CLICK_LEFT, 14, $FIRST_Y + $index*17)

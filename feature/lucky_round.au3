@@ -31,17 +31,16 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
-
-;TryLuckyRound()
-Func TryLuckyRound()
-   If ActiveWindowWithinTimeOut($WindowGame, 1000) Then
-	  WriteLog("lucky_round", "Run cau phuc")
+;TryLuckyRound("ChuLamDoiA")
+Func TryLuckyRound($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  Local $luckyRoundPos = [788, 164]
 	  If PressKeyWithinTimeOut($luckyRoundPos, "j", 2000) Then
 		 Local $winPos = [682, 181]
 		 Local $npcPos = [820,420]
 		 If ClickNpcWithinTimeOut($winPos, $npcPos, 1000) Then
+			WriteLog("lucky_round", "Run CauPhuc")
 			Local $beforePx = PixelGetColor(688, 524)
 			For $i = 0 To 4
 			   MouseClick($MOUSE_CLICK_LEFT, 415,370, 2)

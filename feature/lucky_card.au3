@@ -31,11 +31,10 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
-
-; TryLuckyCard()
-Func TryLuckyCard()
-   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+;TryLuckyCard("ChuLamDoiB")
+Func TryLuckyCard($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  WriteLog("lucky_card", "Run lat the may man")
 	  Local $luckyPos = [450,590]
 	  MouseClick($MOUSE_CLICK_LEFT, $luckyPos[0], $luckyPos[1])

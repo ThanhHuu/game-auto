@@ -20,27 +20,31 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
-
 Func IsBuyGoHomeItem()
    Local $basePx = [222, 496]
    If PressKeyWithinTimeOut($basePx, "{0}", 1000) Then
 	  PressKeyWithinTimeOut($basePx, "{ESC}", 1000)
+	  WriteLogDebug("buy_items", "We don't need buy PhuHoiThanh")
 	  Return False
    Else
+	  WriteLogDebug("buy_items", "We need buy PhuHoiThanh")
 	  Return True
    EndIf
 EndFunc
 
 ;BuyItemManaAndFood(90, 10, 10)
-Func BuyItemManaAndFood($level, $noMana, $noFood)
-   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
-	  WriteLog("buy_items", "Mua mana va thuc an")
+Func BuyItemManaAndFood($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   Local $level = $basicObj.Item("level")
+   Local $noMana = $basicObj.Item("noMana")
+   Local $noFood = $basicObj.Item("noFood")
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
+	  WriteLog("buy_items", "Go buy food and mana")
 	  OpenDuongChauMap(1000)
 	  MouseClickDrag($MOUSE_CLICK_LEFT, 996, 226, 996, 372)
 	  Sleep(100)
 	  Local $npcPos = [920, 310]
-	  MovingToNpc($npcPos)
+	  MovingToNpcWithinTimeOut($character, $npcPos, 60000)
 	  Local $askShopPos = [115, 171]
 	  Local $askShopClickPos = [490, 390]
 	  If ClickNpcWithinTimeOut($askShopPos, $askShopClickPos, 5000) Then
@@ -67,16 +71,19 @@ Func BuyItemManaAndFood($level, $noMana, $noFood)
 		 WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click to tiemduoc"))
 	  EndIf
    EndIf
+   Return True
 EndFunc
 
 ;BuyItemGoHome(10)
-Func BuyItemGoHome($no)
-   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+Func BuyItemGoHome($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   Local $no = $basicObj.Item("noGoHome")
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
+	  WriteLog("buy_item", "Go buy PhuHoiThanh")
 	  If IsBuyGoHomeItem() Then
-		 WriteLog("buy_item", "Mua phu hoi thanh")
 		 OpenDuongChauMap(1000)
 		 Local $npcPos = [930,330]
-		 MovingToNpc($npcPos)
+		 MovingToNpcWithinTimeOut($character, $npcPos, 60000)
 		 Local $askShopPos = [209, 140]
 		 Local $askShopClickPos = [500, 400]
 		 If ClickNpcWithinTimeOut($askShopPos, $askShopClickPos, 5000) Then
@@ -85,14 +92,11 @@ Func BuyItemGoHome($no)
 			If ClickNpcWithinTimeOut($shopPos, $openShopPos, 2000) Then
 			   Local $itemPos = [170,250]
 			   BuyItem($itemPos, $no)
-			Else
-			   WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click to open shop"))
 			EndIf
-		 Else
-			WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click to tiemtaphoa"))
 		 EndIf
 	  EndIf
    EndIf
+   Return True
 EndFunc
 
 Func BuyItem($itemPos, $no)
@@ -106,7 +110,7 @@ Func BuyItem($itemPos, $no)
 	  PressKeyWithinTimeOut($itemPopUpPos, "{TAB}", 1000)
 	  PressKeyWithinTimeOut($itemPopUpPos, "{ESC}", 1000)
    Else
-	  WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click item"))
+	  WriteLogDebug("buy_item", StringFormat("Error click item [%d, %d]", $itemPos[0], $itemPos[1]))
    EndIf
 EndFunc
 

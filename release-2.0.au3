@@ -50,7 +50,7 @@ EndFunc
 
 
 Local $tvp1, $tvp2, $tvp3, $tvp4, $tvp5, $tvp6, $tvp7
-Local $tvpLogoutWhenDone, $tvpReceiveAward
+Local $tvpLogoutWhenDone
 Func BuildTabTvp($position)
    $tvpTab = GUICtrlCreateTabItem("ThuVePhai")
    $tvp1 = GUICtrlCreateCheckbox (_DateDayOfWeek (1), 30, $position, 90, $rowHeight)
@@ -62,8 +62,6 @@ Func BuildTabTvp($position)
    $position+= 20
    $tvp2 = GUICtrlCreateCheckbox (_DateDayOfWeek (2), 30, $position, 90, $rowHeight)
    GUICtrlSetState($tvp2, $GUI_DISABLE + $GUI_CHECKED)
-   $tvpReceiveAward = GUICtrlCreateCheckbox("Receive Actitive Award", 150, $position + 10, 150, $rowHeight)
-   GUICtrlSetState($tvpReceiveAward, $GUI_CHECKED)
 
    $position+= 20
    $tvp3 = GUICtrlCreateCheckbox (_DateDayOfWeek (3), 30, $position, 90, $rowHeight)
@@ -89,7 +87,6 @@ EndFunc
 
 Local $bc1, $bc2, $bc3, $bc4, $bc5, $bc6, $bc7
 Local $bcNo
-Local $bcReceiveAward
 Local $bcLogoutWhenDone
 Func BuildTabBc($position)
    GUICtrlCreateTabItem("BiCanh")
@@ -109,8 +106,6 @@ Func BuildTabBc($position)
    $position+= 20
    $bc3 = GUICtrlCreateCheckbox (_DateDayOfWeek (3), 30, $position, 90, $rowHeight)
    GUICtrlSetState($bc3, $GUI_CHECKED)
-   $bcReceiveAward = GUICtrlCreateCheckbox("Receive Actitive Award", 150, $position + 10, 150, $rowHeight)
-   GUICtrlSetState($bcReceiveAward, $GUI_CHECKED)
 
    $position+= 20
    $bc4 = GUICtrlCreateCheckbox (_DateDayOfWeek (4), 30, $position, 90, $rowHeight)
@@ -132,7 +127,6 @@ EndFunc
 
 Local $ntd1, $ntd2, $ntd3, $ntd4, $ntd5, $ntd6, $ntd7
 Local $ntdNo
-Local $ntdReceiveAward
 Local $ntdLogoutWhenDone
 Func BuildTabNtd($position)
    GUICtrlCreateTabItem("NguTrucDam")
@@ -151,8 +145,6 @@ Func BuildTabNtd($position)
    $position += 20
    $ntd3 = GUICtrlCreateCheckbox (_DateDayOfWeek (3), 30, $position, 90, $rowHeight)
    GUICtrlSetState($ntd3, $GUI_CHECKED)
-   $ntdReceiveAward = GUICtrlCreateCheckbox("Receive Actitive Award", 150, $position + 10, 150, $rowHeight)
-   GUICtrlSetState($ntdReceiveAward,$GUI_CHECKED)
 
    $position += 20
    $ntd4 = GUICtrlCreateCheckbox (_DateDayOfWeek (4), 30, $position, 90, $rowHeight)
@@ -181,7 +173,7 @@ Func BuildTabCb($position)
 
    GUICtrlCreateLabel ("Phu", 110, $position + 3, 30, $rowHeight)
    $cbNoBackHomeItem = GUICtrlCreateCombo("", 140, $position, 40, $rowHeight)
-   GUICtrlSetData($cbNoBackHomeItem, "10|20|30|40|50|60", "20")
+   GUICtrlSetData($cbNoBackHomeItem, "10|20|30|40|50|60", "30")
 
    GUICtrlCreateLabel ("Mau", 210, $position + 3, 30, $rowHeight)
    $cbNoManaItem = GUICtrlCreateCombo("", 240, $position, 40, $rowHeight)
@@ -260,13 +252,11 @@ Func BuildUI()
    ; View for row 4
    Local $featureTab = GUICtrlCreateTab(20, 105, 400, 180)
    Local $buttonRun = GUICtrlCreateButton("Run", 340, 300, 80, $rowHeight)
-   Local $buttonStop = GUICtrlCreateButton("Stop", 250, 300, 80, $rowHeight)
    Local $countDown = GUICtrlCreateLabel("ds", 30, 290, 40, 40)
    GUICtrlSetState($countDown, $GUI_HIDE )
    GUICtrlSetColor($countDown, $COLOR_RED)
    GUICtrlSetFont($countDown, 20, $FW_MEDIUM)
    GUICtrlSetState($buttonRun, $GUI_DISABLE)
-   GUICtrlSetState($buttonStop, $GUI_DISABLE)
 
    BuildTabCb(145)
    BuildTabTvp(140)
@@ -324,7 +314,6 @@ Func BuildUI()
 			$stop = False
 			GUICtrlSetState($buttonRun, $GUI_DISABLE)
 			GUICtrlSetState($buton1, $GUI_DISABLE)
-			GUICtrlSetState($buttonStop, $GUI_ENABLE)
 
 			$WAIT_LOAD = GUICtrlRead($cbLoadingTime) * 1000
 
@@ -340,72 +329,42 @@ Func BuildUI()
 			Local $utilObj = ObjCreate("Scripting.Dictionary")
 			If GUICtrlRead($cbSellItem) = $GUI_CHECKED Then
 			   $utilObj.Add("sellItem", True)
-			Else
-			   $utilObj.Add("sellItem", False)
 			EndIf
 			If GUICtrlRead($cbUseItem) = $GUI_CHECKED Then
 			   $utilObj.Add("useItem", True)
-			Else
-			   $utilObj.Add("useItem", False)
-			EndIf
-			If GUICtrlRead($cbSetting) = $GUI_CHECKED Then
-			   $utilObj.Add("setting", True)
-			Else
-			   $utilObj.Add("setting", False)
 			EndIf
 
 			; Feature NhanMonQuan
 			Local $nmqFeature = ObjCreate("Scripting.Dictionary")
-			$nmqFeature.Add("Basic", $basicObj)
-			$nmqFeature.Add("BuyMana", True)
 			Local $nmqInWeek = [$nmq1, $nmq2, $nmq3, $nmq4, $nmq5, $nmq6, $nmq7]
 			Local $nmqSchedule = GetFeatureScheduler($nmqInWeek)
 			$nmqFeature.Add("Scheduler", $nmqSchedule)
-			Local $nmqFuncs = ['Fighting']
-			$nmqFeature.Add("Functions", $nmqFuncs)
-			If GUICtrlRead($nmqLogoutWhenDone) = $GUI_CHECKED Then
-			   $nmqFeature.Add("Logout", True)
-			EndIf
+			Local $nmqRequireTask = ['TurnOffGraphic', 'SetupFighting' , 'TryLuckyCard', 'TryLuckyRound', 'BuyItemManaAndFood', 'EnterFightingMap', 'StartFighting']
+			$nmqFeature.Add("RequireTasks", $nmqRequireTask)
+			Local $nmqMainTask = ['ContinueFighting']
 			$featuresObj.Add("NhanMonQuan", $nmqFeature)
 
 			; Feature thu ve phai
+			Local $tvpFeature = ObjCreate("Scripting.Dictionary")
 			Local $tvpInWeek = [$tvp1, $tvp2, $tvp3, $tvp4, $tvp5, $tvp6, $tvp7]
 			Local $tvpSchedule = GetFeatureScheduler($tvpInWeek)
-
-			Local $tvpFeature = ObjCreate("Scripting.Dictionary")
-			$tvpFeature.Add("Basic", $basicObj)
-			$tvpFeature.Add("BuyMana", False)
 			$tvpFeature.Add("Scheduler", $tvpSchedule)
-			If GUICtrlRead($tvpReceiveAward) = $GUI_CHECKED Then
-			   Local $tvpFuncs = ['AssignPrevention', 'GetActiveAward']
-			   $tvpFeature.Add("Functions", $tvpFuncs)
-			Else
-			  Local $tvpFuncs = ['AssignPrevention']
-			   $tvpFeature.Add("Functions", $tvpFuncs)
-			EndIf
-			If GUICtrlRead($tvpLogoutWhenDone) = $GUI_CHECKED Then
-			   $tvpFeature.Add("Logout", True)
-			EndIf
+			Local $tvpRequireTask = [ 'TryLuckyCard', 'TurnOffGraphic','TryLuckyRound', 'BuyItemGoHome']
+			$tvpFeature.Add("RequireTasks", $tvpRequireTask)
+			Local $tvpMainTask = ['AssignPrevention', 'GetActiveAward']
+			$tvpFeature.Add("MainTasks", $tvpMainTask)
 			$featuresObj.Add("ThuVePhai", $tvpFeature)
 
 
-			; Feature BC
+			; Feature Bi Canh
 			Local $bcFeature = ObjCreate("Scripting.Dictionary")
-			$bcFeature.Add("Basic", $basicObj)
-			$bcFeature.Add("BuyMana", False)
 			Local $bcInWeek = [$bc1, $bc2, $bc3, $bc4, $bc5, $bc6, $bc7]
 			Local $bcSchedule = GetFeatureScheduler($bcInWeek)
 			$bcFeature.Add("Scheduler", $bcSchedule)
-			If GUICtrlRead($bcReceiveAward) = $GUI_CHECKED Then
-			   Local $bcFuncs = ['AssignStory', 'GetActiveAward']
-			   $bcFeature.Add("Functions", $bcFuncs)
-			Else
-			   Local $bcFuncs = ['AssignStory']
-			   $bcFeature.Add("Functions", $bcFuncs)
-			EndIf
-			If GUICtrlRead($bcLogoutWhenDone) = $GUI_CHECKED Then
-			   $bcFeature.Add("Logout", True)
-			EndIf
+			Local $bcRequireTask = [ 'TryLuckyCard', 'TurnOffGraphic','TryLuckyRound', 'BuyItemGoHome']
+			$bcFeature.Add("RequireTasks", $bcRequireTask)
+			Local $bcMainTask = ['AssignStory', 'GetActiveAward']
+			$bcFeature.Add("MainTasks", $bcMainTask)
 			For $i = 1 To GUICtrlRead($bcNo)
 			   $featuresObj.Add("BiCanh" & $i, $bcFeature)
 			Next
@@ -413,21 +372,13 @@ Func BuildUI()
 
 			; Feature Ngu truc dam
 			Local $ntdFeature = ObjCreate("Scripting.Dictionary")
-			$ntdFeature.Add("Basic", $basicObj)
-			$ntdFeature.Add("BuyMana", False)
 			Local $ntdInWeek = [$ntd1, $ntd2, $ntd3, $ntd4, $ntd5, $ntd6, $ntd7]
 			Local $ntdSchedule = GetFeatureScheduler($ntdInWeek)
 			$ntdFeature.Add("Scheduler", $ntdSchedule)
-			If GUICtrlRead($ntdReceiveAward) = $GUI_CHECKED Then
-			   Local $ntdFuncs = ['AssignChallenge', 'GetActiveAward']
-			   $ntdFeature.Add("Functions", $ntdFuncs)
-			Else
-			   Local $ntdFuncs = ['AssignChallenge']
-			   $ntdFeature.Add("Functions", $ntdFuncs)
-			EndIf
-			If GUICtrlRead($ntdLogoutWhenDone) = $GUI_CHECKED Then
-			   $ntdFeature.Add("Logout", True)
-			EndIf
+			Local $ntdRequireTask = [ 'TryLuckyCard', 'TurnOffGraphic','TryLuckyRound', 'BuyItemGoHome']
+			$ntdFeature.Add("RequireTasks", $ntdRequireTask)
+			Local $ntdMainTask = ['AssignChallenge', 'GetActiveAward']
+			$ntdFeature.Add("MainTasks", $ntdMainTask)
 			For $j = 1 To GUICtrlRead($ntdNo)
 			   $featuresObj.Add("NguTrucDam" & $j, $ntdFeature)
 			Next
@@ -443,15 +394,9 @@ Func BuildUI()
 			   GUICtrlSetState($countDown, $GUI_HIDE )
 			   $count -= 1
 			WEnd
-			RunFeature($featuresObj, $utilObj)
-		 Case $buttonStop
-			$stop = True
-			GUICtrlSetState($buttonRun, $GUI_ENABLE)
-			GUICtrlSetState($buton1, $GUI_ENABLE)
-			GUICtrlSetState($buttonStop, $GUI_DISABLE)
+			RunFeature($featuresObj, $basicObj, $utilObj)
 	  EndSwitch
    WEnd
-
    GUIDelete($hGUI)
 EndFunc
 
@@ -488,71 +433,34 @@ Func GetIgnoreAccount($featureName, $level)
    Return $ignoreAccountObj
 EndFunc
 
-Func RunFeatureForAccount($account, $featureObj)
-   Local $character = $account.Item("character")
-   WriteLog("release-2.0", StringFormat("%s - %s", "release-2.0", StringFormat("Run for %s", $character)))
-   Local $usr = $account.Item("account")
-   Local $index = 0
-   AddAccount($usr, $DEFAULT_PWD, $character)
-   Login($index, $character)
-   ; Util task
-   If $featureObj.Exists("Util") Then
-	  Local $utilObj = $featureObj.Item("Util")
-	  If $utilObj.Item("setting") Then
-		 TurnOffGraphic()
-		 SetupFighting()
-	  EndIf
-	  If $utilObj.Item("sellItem") Then
-		 SellItems()
-	  EndIf
-	  If $utilObj.Item("useItem") Then
-		 UseItems()
-	  EndIf
-	  $featureObj.Remove("Util")
+Func IsIngoredFeature($featureName, $scheduler, $basicObj)
+   If Not $scheduler.Item(_DateDayOfWeek(@WDAY)) Then
+	  Return True
    EndIf
-   TryLuckyCard()
-   TryLuckyRound()
-   ; Basic task
-   Local $basicObj = $featureObj.Item("Basic")
-   BuyItemGoHome($basicObj.Item("noGoHome"))
-   If $featureObj.Item("BuyMana") Then
-	  BuyItemManaAndFood($basicObj.Item("level"), $basicObj.Item("noMana"), $basicObj.Item("noFood"))
+   If FileExists(BuildFeatureFile($featureName, $basicObj.Item("level")) & ".done") Then
+	  Return True
    EndIf
-
-   ; Run functions of feature
-   Local $functions = $featureObj.Item("Functions")
-   For $function In $functions
-	  Call($function, $basicObj.Item("level"))
-   Next
-   If $featureObj.Item("Logout") Then
-	  Logout($index)
-   EndIf
-
+   Return False
 EndFunc
 
-Func RunFeature($featuresObj, $utilObj)
+Func RunFeature($featuresObj, $basicObj, $utilObj)
    Local $startDate = _NowCalcDate()
    Local $isNewDate = False
    While True
 	  If $isNewDate Then
-		 WriteLog("release-2.0", StringFormat("%s - %s", "release-2.0", "Reset all for new date"))
+		 WriteLog("release-2.0", "Reset all for new date")
 		 FileDelete("*.ig")
 		 FileDelete("*.done")
 		 $isNewDate = False
 	  EndIf
 	  Local $addedUtil = False
 	  For $featureName In $featuresObj.Keys
-		 WriteLog("release-2.0", StringFormat("Run feature %s", $featureName))
 		 Local $featureObj = $featuresObj.Item($featureName)
-		 Local $basicObj = $featureObj.Item("Basic")
-		 If Not $featureObj.Item("Scheduler").Item(_DateDayOfWeek(@WDAY)) Then
-			WriteLog("release-2.0", StringFormat("Feature %s is disable on %s", $featureName, _DateDayOfWeek(@WDAY)))
+		 If IsIngoredFeature($featureName, $featureObj.Item("Scheduler"), $basicObj) Then
+			WriteLog("release-2.0", StringFormat("Ignore feature %s", $featureName))
 			ContinueLoop
 		 EndIf
-		 If FileExists(BuildFeatureFile($featureName, $basicObj.Item("level")) & ".done") Then
-			WriteLog("release-2.0", StringFormat("Feature %s is done", $featureName))
-			ContinueLoop
-		 EndIf
+		 WriteLog("release-2.0", StringFormat("Run feature %s", $featureName))
 		 If Not $addedUtil Then
 			WriteLog("release-2.0", StringFormat("Add Util to %s", $featureName))
 			$featureObj.Add("Util", $utilObj)
@@ -562,15 +470,42 @@ Func RunFeature($featuresObj, $utilObj)
 		 For $i = 1 To $accountFiles[0]
 			Local $accountFile = $accountFiles[$i]
 			Local $accounts = ParseAccounts($accountFile)
+			Local $index = 0
 			For $account In $accounts
 			   Local $character = $account.Item("character")
 			   If $ignoreAccountObj.Item($character) Then
 				  ; write log ignore
-				  Local $msg = StringFormat("Feature %s is done for account %s", $featureName, $character)
-				  WriteLog("release-2.0", StringFormat("%s - %s", "release-2.0", $msg))
+				  WriteLog("release-2.0", StringFormat("Feature %s is ignored for account %s", $featureName, $character))
 				  ContinueLoop
 			   EndIf
-			   RunFeatureForAccount($account, $featureObj)
+			   ; Enter Game
+			   Local $character = $account.Item("character")
+			   Local $usr = $account.Item("account")
+			   AddAccount($usr, $DEFAULT_PWD, $character)
+			   Login($index, $character)
+			   Sleep(10000)
+			   ; Run util task
+			   If $utilObj.Exists("useItem") Then
+				  UseItems($character, $basicObj)
+			   EndIf
+			   ; Run require task
+			   For $requireTask In $featureObj.Item("RequireTasks")
+				  WriteLog("release", StringFormat("Run task %s", $requireTask))
+				  Call($requireTask, $character, $basicObj)
+			   Next
+
+			   ; Run main task
+			   Local $done = True
+			   For $mainTask In $featureObj.Item("MainTasks")
+				  WriteLog("release", StringFormat("Run task %s", $mainTask))
+				  $done = $done And Call($mainTask, $character, $basicObj)
+			   Next
+			   If $done Then
+				  Logout($index)
+			   Else
+				  $index += 1
+			   EndIf
+
 			   FileWriteLine($featureName & "_" & $basicObj.Item("level") & ".ig", $character)
 			   If _NowCalcDate() > $startDate Then
 				  ExitLoop

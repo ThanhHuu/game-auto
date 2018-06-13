@@ -20,16 +20,17 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 DIM $ITEM_CELL_WIDTH = 37
 DIM $ITEM_CELL_HEIGHT = 40
 
 ;UseItems()
-Func UseItems()
-   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+Func UseItems($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  Local $bagPos = [796, 362]
-	  Local $cellPointer = OpenUseBag($bagPos)
+	  Local $cellPointer = OpenUseBag($character, $bagPos)
 	  If $cellPointer <> False Then
+		 WriteLog("use_items", StringFormat("Using item with cellPointer [%d, %d]", $cellPointer[0], $cellPointer[1]))
 		 Local $countUseCell = $cellPointer[2]/2
 		 Local $close1 = [710, 115]
 		 Local $basePx1 = PixelGetColor(557, 485)
@@ -49,9 +50,11 @@ Func UseItems()
 		 PressKeyWithinTimeOut($bagPos, "{ESC}", 1000)
 	  EndIf
    EndIf
+   Return True
 EndFunc
 
-Func OpenUseBag($bagPos)
+Func OpenUseBag($character, $bagPos)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
    Local $offExpPos = [909, 706]
    Local $offExpPopUpPos = [260, 201]
    If ClickNpcWithinTimeOut($offExpPopUpPos, $offExpPos, 1000) Then
@@ -60,8 +63,8 @@ Func OpenUseBag($bagPos)
    Local $assistantDonePos = [887, 688]
    ClickNpcWithinTimeOut($assistantDonePos, $assistantDonePos, 100)
    If PressKeyWithinTimeOut($bagPos, "b", 1000) Then
-	  Local $y = WinGetClientSize($WindowGame)[1]
-	  Local $x = WinGetClientSize($WindowGame)[0]
+	  Local $y = WinGetClientSize($winTitle)[1]
+	  Local $x = WinGetClientSize($winTitle)[0]
 	  Local $midY = $y/2
 	  Local $endX = $x - 80
 	  MouseMove($endX, $midY)

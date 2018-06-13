@@ -20,13 +20,13 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
-
 Local $SETTING_BASE_PX = ""
 
-;SetupFighting()
-Func SetupFighting()
-   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+;SetupFighting("ChuLamDoiA")
+;SetupFighting("ChuLamDoiB")
+Func SetupFighting($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  Local $fightSettingPopUpPos = [41, 148]
 	  If PressKeyWithinTimeOut($fightSettingPopUpPos, "^f", 3000) Then
 		 WriteLog("setting", "Setting fighting")
@@ -45,26 +45,53 @@ Func SetupFighting()
 		 PressKeyWithinTimeOut($fightSettingPopUpPos, "{ESC}", 1000)
 	  EndIf
    EndIf
+   Return True
 EndFunc
 
-;TurnOffGraphic()
-Func TurnOffGraphic()
-   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+;TurnOffGraphic("ChuLamDoiA")
+;TurnOffGraphic("ChuLamDoiB")
+Func TurnOffGraphic($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  Local $basePos = [508, 268]
 	  PressKeyWithinTimeOut($basePos, "{TAB}", 500)
 	  PressKeyWithinTimeOut($basePos, "{ESC}", 500)
 	  Sleep(2000)
 	  For $i = 0 To 1
 		 If PressKeyWithinTimeOut($basePos, "{ESC}", 3000) Then
-			WriteLog("setting", "Turnoff graphic")
 			Local $popUpPos = [250, 188]
 			Local $clickSettingPos = [505, 315]
 			If ClickNpcWithinTimeOut($popUpPos, $clickSettingPos, 2000) Then
+			   WriteLog("setting", "Turnoff graphic")
 			   MouseClick($MOUSE_CLICK_LEFT, 390, 225)
 			   Sleep(200)
-			   MouseClick($MOUSE_CLICK_LEFT, 309, 369)
+			   MouseClick($MOUSE_CLICK_LEFT, 340, 370)
 			   Sleep(200)
-			   WriteLog("setting", "Done turnoff graphic")
+			   Local $advanceBtPos = [439, 526]
+			   Local $advanceOptPos = [339, 527]
+			   If ClickNpcWithinTimeOut($advanceBtPos, $advanceOptPos, 2000) Then
+				  If ClickNpcWithinTimeOut($advanceBtPos, $advanceBtPos, 2000) Then
+					 MouseClick($MOUSE_CLICK_LEFT, 334, 270)
+					 MouseClick($MOUSE_CLICK_LEFT, 531, 270)
+					 MouseClick($MOUSE_CLICK_LEFT, 705, 270)
+
+					 MouseClick($MOUSE_CLICK_LEFT, 320, 350)
+					 MouseClick($MOUSE_CLICK_LEFT, 500, 350)
+					 MouseClick($MOUSE_CLICK_LEFT, 665, 350)
+
+					 MouseClick($MOUSE_CLICK_LEFT, 351, 430)
+					 MouseClick($MOUSE_CLICK_LEFT, 351, 460)
+					 MouseClick($MOUSE_CLICK_LEFT, 351, 490)
+					 MouseClick($MOUSE_CLICK_LEFT, 351, 520)
+
+					 MouseClick($MOUSE_CLICK_LEFT, 550, 430)
+					 MouseClick($MOUSE_CLICK_LEFT, 550, 460)
+					 MouseClick($MOUSE_CLICK_LEFT, 550, 490)
+
+					 Local $btConfirmPos = [569, 570]
+					 ClickNpcWithinTimeOut($btConfirmPos, $btConfirmPos, 2000)
+				  EndIf
+			   EndIf
 			EndIf
 			ExitLoop
 		 EndIf
@@ -72,11 +99,14 @@ Func TurnOffGraphic()
 	  PressKeyWithinTimeOut($popUpPos, "{TAB}", 500)
 	  PressKeyWithinTimeOut($popUpPos, "{ESC}", 500)
    EndIf
+   Return True
 EndFunc
 
-;TurnOnFighting()
-Func TurnOnFighting()
-   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+;TurnOnFighting("ChuLamDoiA")
+;TurnOnFighting("ChuLamDoiB")
+Func TurnOnFighting($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  Local $fightSettingPopUpPos = [41, 148]
 	  If PressKeyWithinTimeOut($fightSettingPopUpPos, "^f", 1000) Then
 		 Local $enabelPos = [41,192]

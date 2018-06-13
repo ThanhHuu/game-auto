@@ -21,16 +21,39 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
+;StartFighting()
+Func StartFighting($character, $basicObj)
+   WriteLogDebug("fighting", StringFormat("Start fighting in NhanMonQuan for %s", $character))
+   MouseClick($MOUSE_CLICK_LEFT, 975, 305)
+   Sleep(2000)
+   Local $basePos = [212, 140]
+   Local $clickPos = [168, 270]
+   If ClickNpcWithinTimeOut($basePos, $clickPos, 1000) Then
+	  TurnOnFighting($character, $basicObj)
+   EndIf
+   Return True
+EndFunc
 
-;Fighting()
-Func Fighting()
-   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+Func MoveBackCenterMap($character, $basicObj)
+   WriteLogDebug("fighting", StringFormat("Move to center map in NhanMonQuan for %s", $character))
+   Local $mapPos = [44, 50]
+   If PressKeyWithinTimeOut($mapPos, "{TAB}", 1000) Then
+	  Local $centerPos = [397, 405]
+	  MovingToNpcWithinTimeOut($character, $centerPos, 15000)
+   EndIf
+   Return True
+EndFunc
+
+;MsgBox(0,"", EnterFightingMap("ChuLamDoiA"))
+Func EnterFightingMap($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
+	  WriteLogDebug("fighting", StringFormat("Go to NhanMonQuan for %s", $character))
 	  OpenDuongChauMap(1000)
 	  MouseClickDrag($MOUSE_CLICK_LEFT,998,228, 998, 320)
 	  Sleep(100)
 	  Local $npcPos = [903, 420]
-	  MovingToNpc($npcPos)
+	  MovingToNpcWithinTimeOut($character, $npcPos, 60000)
 	  Local $fightingPopUpPos = [286, 387]
 	  Local $npcClickPos = [505, 400]
 	  If ClickNpcWithinTimeOut($fightingPopUpPos, $npcClickPos, 2000) Then
@@ -39,50 +62,31 @@ Func Fighting()
 		 Local $fightingPos3 = [545, 540]
 		 Local $goFightingPos = [231, 288]
 		 If ClickChangeMapWithinTimeOut($fightingPos1, $fightingPos2, $fightingPos3, $goFightingPos, 10000) Then
-			StartFighting()
+			Return True
 		 Else
-			WriteLog("fighting", StringFormat("%s - %s", "fighting", "Seem like that nhanmonquan is done"))
+			WriteLogDebug("fighting", StringFormat("Seem like nhanmonquan done for %s", $character))
 			Local $basePos = [181, 141]
 			Local $clickPos = [171, 271]
 			ClickNpcWithinTimeOut($basePos, $clickPos, 1000)
 		 EndIf
-	  Else
-		 WriteLog("fighting", StringFormat("%s - %s", "fighting", "Error click nhanmonquan"))
 	  EndIf
    EndIf
+   Return False
 EndFunc
 
-;StartFighting()
-Func StartFighting()
-   MouseClick($MOUSE_CLICK_LEFT, 975, 305)
-   Sleep(2000)
-   Local $basePos = [212, 140]
-   Local $clickPos = [168, 270]
-   If ClickNpcWithinTimeOut($basePos, $clickPos, 1000) Then
-	  Local $count = 0
-	  While True
-		 $count += 1
-		 If $count = 50 Then
-			$count = 0
-			Local $mapPos = [44, 50]
-			If PressKeyWithinTimeOut($mapPos, "{TAB}", 1000) Then
-			   Local $centerPos = [397, 405]
-			   MovingToNpcWithinTimeOut($centerPos, 15000)
-			EndIf
-		 EndIf
-		 Sleep(1000)
-		 If Not TurnOnFighting() Then
-			Send("m")
-			Sleep(1000)
-			ExitLoop
-		 EndIf
-		 Sleep(5000)
-		 MouseClick($MOUSE_CLICK_LEFT, 935, 444)
-		 Sleep(100)
-		 MouseClick($MOUSE_CLICK_LEFT, 832, 528)
-		 Sleep(200)
-	  WEnd
+;MsgBox(0,"", ContinueFighting("ChuLamDoiA"))
+Func ContinueFighting($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
+	  MouseClick($MOUSE_CLICK_LEFT, 935, 444)
+	  Sleep(500)
+	  MouseClick($MOUSE_CLICK_LEFT, 832, 528)
+	  Sleep(500)
+	  If TurnOnFighting($character, $basicObj) Then
+		 WriteLogDebug("fighting", StringFormat("Continue nhanmonquan for %s", $character))
+		 Return True
+	  EndIf
    EndIf
+   WriteLog("fighting", StringFormat("Done NhanMonQuan for %s", $character))
+   Return False
 EndFunc
-
-

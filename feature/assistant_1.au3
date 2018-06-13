@@ -19,15 +19,14 @@ Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Dim $WindowGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
-
-;AssignPrevention()
-Func AssignPrevention()
-   If ActiveWindowWithinTimeOut($WindowGame, 2000) Then
+;AssignPrevention("ChuLamDoiA")
+Func AssignPrevention($character, $basicObj)
+   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  WriteLog("Assistant", StringFormat("Dieu doi %s", "ThuVePhai"))
 	  Local $goHomeItemPos = [205, 138]
 	  ; Chon ve noi o
-	  If PressKeyWithinTimeOut($goHomeItemPos, "{0}", 2000) Then
+	  If PressKeyWithinTimeOut($goHomeItemPos, "{0}", 5000) Then
 		 Local $assistantHomePos1 = [262, 246]
 		 Local $assistantHomePos2 = [776, 446]
 		 Local $assistantHomePos3 = [553, 628]
@@ -39,4 +38,5 @@ Func AssignPrevention()
 		 EndIf
 	  EndIf
    EndIf
+   Return True
 EndFunc
