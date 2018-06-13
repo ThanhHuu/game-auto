@@ -29,20 +29,27 @@ Func Login($index, $character)
    Else
 	  If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
 		 MouseClick($MOUSE_CLICK_LEFT, 14, $FIRST_Y + $index*17)
-		 WaitingLogin($character)
-		 WinActivate($WINDOW_GAME)
+		 WriteLogDebug("login", StringFormat("Login for %s", $character))
+		 If WaitingLogin($character) Then
+			WinActivate($WINDOW_GAME)
+			Return True
+		 Else
+			Logout($index)
+			Return False
+		 EndIf
 	  EndIf
    EndIf
 EndFunc
 
 Func WaitingLogin($character)
    Local $windowCharacter = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & "]"
-   For $i = 0 To 20
+   For $i = 0 To 25
 	  If WinExists($windowCharacter) Then
-		 ExitLoop
+		 Return True
 	  EndIf
 	  Sleep(2000)
    Next
+   Return False
 EndFunc
 
 Func LoggedIn($character)

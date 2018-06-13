@@ -93,11 +93,10 @@ Func TurnOffGraphic($character, $basicObj)
 				  EndIf
 			   EndIf
 			EndIf
+			PressKeyWithinTimeOut($popUpPos, "{ESC}", 500)
 			ExitLoop
 		 EndIf
 	  Next
-	  PressKeyWithinTimeOut($popUpPos, "{TAB}", 500)
-	  PressKeyWithinTimeOut($popUpPos, "{ESC}", 500)
    EndIf
    Return True
 EndFunc

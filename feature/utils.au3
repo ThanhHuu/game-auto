@@ -160,6 +160,7 @@ Func AssistantAward()
 			ClickNpcWithinTimeOut($awardItemsWinPos, $awardItemsWinPos, 1000)
 		 EndIf
 	  EndIf
+	  PressKeyWithinTimeOut($assistantWinPos, "{TAB}", 1000)
 	  PressKeyWithinTimeOut($assistantWinPos, "{ESC}", 1000)
    EndIf
 EndFunc
@@ -182,6 +183,7 @@ Func AssistantFeature($featurePos)
 		 EndIf
 	  EndIf
 	  ; Press ESC
+	  PressKeyWithinTimeOut($assistantWinPos, "{TAB}", 1000)
 	  PressKeyWithinTimeOut($assistantWinPos, "{ESC}", 1000)
    EndIf
 EndFunc
@@ -209,6 +211,7 @@ Func AssistantFeatureWithinLevel($featurePos, $level)
 		 EndIf
 	  EndIf
 	  ; Press ESC
+	  PressKeyWithinTimeOut($assistantWinPos, "{TAB}", 1000)
 	  PressKeyWithinTimeOut($assistantWinPos, "{ESC}", 1000)
    EndIf
 EndFunc

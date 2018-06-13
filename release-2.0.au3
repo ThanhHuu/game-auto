@@ -194,7 +194,7 @@ Func BuildTabCb($position)
 EndFunc
 
 Local $nmq1, $nmq2, $nmq3, $nmq4, $nmq5, $nmq6, $nmq7
-Local $nmqLogoutWhenDone
+Local $nmqLogoutWhenDone, $nmqParallel, $nmqLimitParallel
 Func BuildTabNmq($position)
    GUICtrlCreateTabItem("NhanMonQuan")
    $nmq1 = GUICtrlCreateCheckbox (_DateDayOfWeek (1), 30, $position, 90, $rowHeight)
@@ -207,9 +207,15 @@ Func BuildTabNmq($position)
    $nmq2 = GUICtrlCreateCheckbox (_DateDayOfWeek (2), 30, $position, 90, $rowHeight)
    GUICtrlSetState($nmq2, $GUI_UNCHECKED)
 
+   $nmqParallel = GUICtrlCreateCheckbox ("Parallel", 150, $position + 10, 60, $rowHeight)
+
    $position+= 20
    $nmq3 = GUICtrlCreateCheckbox (_DateDayOfWeek (3), 30, $position, 90, $rowHeight)
    GUICtrlSetState($nmq3, $GUI_DISABLE + $GUI_UNCHECKED)
+
+   GUICtrlCreateLabel("Limit parallel", 150, $position + 15, 90, $rowHeight)
+   $nmqLimitParallel = GUICtrlCreateCombo("", 250, $position + 10, 30, $rowHeight)
+   GUICtrlSetData($nmqLimitParallel, "2|3|4|5", "2")
 
    $position+= 20
    $nmq4 = GUICtrlCreateCheckbox (_DateDayOfWeek (4), 30, $position, 90, $rowHeight)
@@ -339,9 +345,13 @@ Func BuildUI()
 			Local $nmqInWeek = [$nmq1, $nmq2, $nmq3, $nmq4, $nmq5, $nmq6, $nmq7]
 			Local $nmqSchedule = GetFeatureScheduler($nmqInWeek)
 			$nmqFeature.Add("Scheduler", $nmqSchedule)
-			Local $nmqRequireTask = ['TurnOffGraphic', 'SetupFighting' , 'TryLuckyCard', 'TryLuckyRound', 'BuyItemManaAndFood', 'EnterFightingMap', 'StartFighting']
+			Local $nmqRequireTask = ['TryLuckyCard', 'TurnOffGraphic', 'SetupFighting' , 'TryLuckyRound', 'BuyItemManaAndFood', 'EnterFightingMap', 'StartFighting']
 			$nmqFeature.Add("RequireTasks", $nmqRequireTask)
 			Local $nmqMainTask = ['ContinueFighting']
+			$nmqFeature.Add("MainTasks", $nmqMainTask)
+			If GUICtrlRead($nmqParallel) = $GUI_CHECKED Then
+			   $nmqFeature.Add("parallel", GUICtrlRead($nmqLimitParallel))
+			EndIf
 			$featuresObj.Add("NhanMonQuan", $nmqFeature)
 
 			; Feature thu ve phai
@@ -455,6 +465,7 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 	  EndIf
 	  Local $addedUtil = False
 	  For $featureName In $featuresObj.Keys
+		 Local $index = 0
 		 Local $featureObj = $featuresObj.Item($featureName)
 		 If IsIngoredFeature($featureName, $featureObj.Item("Scheduler"), $basicObj) Then
 			WriteLog("release-2.0", StringFormat("Ignore feature %s", $featureName))
@@ -467,10 +478,11 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 			$addedUtil = True
 		 EndIf
 		 Local $ignoreAccountObj = GetIgnoreAccount($featureName, $basicObj.Item("level"))
+		 Local $charactersObj = ObjCreate("Scripting.Dictionary")
 		 For $i = 1 To $accountFiles[0]
 			Local $accountFile = $accountFiles[$i]
 			Local $accounts = ParseAccounts($accountFile)
-			Local $index = 0
+
 			For $account In $accounts
 			   Local $character = $account.Item("character")
 			   If $ignoreAccountObj.Item($character) Then
@@ -482,7 +494,10 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 			   Local $character = $account.Item("character")
 			   Local $usr = $account.Item("account")
 			   AddAccount($usr, $DEFAULT_PWD, $character)
-			   Login($index, $character)
+			   If Not Login($index, $character) Then
+				  WriteLog("release", StringFormat("Skip %s because login fail", $character))
+				  ContinueLoop
+			   EndIf
 			   Sleep(10000)
 			   ; Run util task
 			   If $utilObj.Exists("useItem") Then
@@ -493,20 +508,28 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 				  WriteLog("release", StringFormat("Run task %s", $requireTask))
 				  Call($requireTask, $character, $basicObj)
 			   Next
-
 			   ; Run main task
-			   Local $done = True
-			   For $mainTask In $featureObj.Item("MainTasks")
-				  WriteLog("release", StringFormat("Run task %s", $mainTask))
-				  $done = $done And Call($mainTask, $character, $basicObj)
-			   Next
-			   If $done Then
-				  Logout($index)
-			   Else
+			   If $featureObj.Exists("parallel") Then
+				  Local $characterObj = ObjCreate("Scripting.Dictionary")
+				  $characterObj.Add("index", $index)
+				  $characterObj.Add("featureName", $featureName)
+				  $characterObj.Add("featureObj", $featureObj)
+				  $charactersObj.Add($character, $characterObj)
+				  $index = ParallelRunning($basicObj, $charactersObj, False)
 				  $index += 1
+			   Else
+				  For $mainTask In $featureObj.Item("MainTasks")
+					 WriteLog("release", StringFormat("Run task %s", $mainTask))
+					 While True
+						Local $done = Call($mainTask, $character, $basicObj)
+						If $done Then
+						   ExitLoop
+						EndIf
+					 WEnd
+				  Next
+				  Logout($index)
+				  FileWriteLine($featureName & "_" & $basicObj.Item("level") & ".ig", $character)
 			   EndIf
-
-			   FileWriteLine($featureName & "_" & $basicObj.Item("level") & ".ig", $character)
 			   If _NowCalcDate() > $startDate Then
 				  ExitLoop
 			   EndIf
@@ -515,6 +538,9 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 			   ExitLoop
 			EndIf
 		 Next
+		 If $charactersObj.Count() > 0 Then
+			ParallelRunning($basicObj, $charactersObj, True)
+		 EndIf
 		 If _NowCalcDate() > $startDate Then
 			ExitLoop
 		 EndIf
@@ -529,4 +555,56 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 		 EndIf
 	  WEnd
    WEnd
+EndFunc
+
+Func ParallelRunning($basicObj, $charactersObj, $finalRunning)
+   Local $index = 0
+   While True
+	  For $character in $charactersObj.Keys
+		 Local $featureObj = $charactersObj.Item($character).Item("featureObj")
+		 Local $done = True
+		 $index = $charactersObj.Item($character).Item("index")
+		 For $mainTask In $featureObj.Item("MainTasks")
+			WriteLogDebug("release", StringFormat("Run task %s for %s", $mainTask, $character))
+			$done = Call($mainTask, $character, $basicObj)
+		 Next
+		 If $done Then
+			$index = DoneCharacterInParallel($character, $charactersObj, $basicObj)
+			ExitLoop
+		 EndIf
+		 Sleep(1000)
+	  Next
+	  If $finalRunning Then
+		 If $charactersObj.Count() = 0 Then
+			$index = 0
+			WriteLogDebug("release", "Done all characters in parallel")
+			ExitLoop
+		 Else
+			WriteLogDebug("release", StringFormat("Still exit %d in parallel characters", $charactersObj.Count()))
+			ContinueLoop
+		 EndIf
+	  ElseIf $charactersObj.Count() < $featureObj.Item("parallel") Then
+		 WriteLogDebug("release", StringFormat("Exit parallel to add one more for index %d", $index))
+		 ExitLoop
+	  EndIf
+   WEnd
+   Return $index
+EndFunc
+
+Func DoneCharacterInParallel($character, $charactersObj, $basicObj)
+   Local $index = $charactersObj.Item($character).Item("index")
+   Local $featureName = $charactersObj.Item($character).Item("featureName")
+   WriteLogDebug("release", StringFormat("Done feature %s for %s", $featureName, $character))
+   $charactersObj.Remove($character)
+   Logout($index)
+   FileWriteLine($featureName & "_" & $basicObj.Item("level") & ".ig", $character)
+   For $characterObj in $charactersObj.Items
+	  Local $oldIndex = $characterObj.Item("index")
+	  If $oldIndex > 0 Then
+		 $characterObj.Remove("index")
+		 $characterObj.Add("index", $oldIndex - 1)
+	  EndIf
+	  $index = $characterObj.Item("index")
+   Next
+   Return $index
 EndFunc

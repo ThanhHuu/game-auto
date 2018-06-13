@@ -52,6 +52,7 @@ Func TryLuckyRound($character, $basicObj)
 			MouseClick($MOUSE_CLICK_LEFT, 715,525)
 			Sleep(100)
 		 EndIf
+		 PressKeyWithinTimeOut($luckyRoundPos, "{TAB}", 1000)
 		 PressKeyWithinTimeOut($luckyRoundPos, "{ESC}", 1000)
 	  EndIf
    EndIf

@@ -64,6 +64,9 @@ Func BuyItemManaAndFood($character, $basicObj)
 			; Buy food
 			Local $itemFoodPos = [242 + $offsize, 248 + 40]
 			BuyItem($itemFoodPos, $noFood)
+
+			PressKeyWithinTimeOut($shopPos, "{TAB}", 1000)
+			PressKeyWithinTimeOut($shopPos, "{ESC}", 1000)
 		 Else
 			WriteLog("buy_item", StringFormat("%s - %s", "buy_item", "Error click to open shop"))
 		 EndIf
@@ -92,6 +95,9 @@ Func BuyItemGoHome($character, $basicObj)
 			If ClickNpcWithinTimeOut($shopPos, $openShopPos, 2000) Then
 			   Local $itemPos = [170,250]
 			   BuyItem($itemPos, $no)
+
+			   PressKeyWithinTimeOut($shopPos, "{TAB}", 1000)
+			   PressKeyWithinTimeOut($shopPos, "{ESC}", 1000)
 			EndIf
 		 EndIf
 	  EndIf
@@ -107,8 +113,6 @@ Func BuyItem($itemPos, $no)
 	  ClickNpcWithinTimeOut($confirmBt1, $confirmBt1, 500)
 	  Local $confirmBt2 = [520, 450]
 	  ClickNpcWithinTimeOut($confirmBt1, $confirmBt2, 500)
-	  PressKeyWithinTimeOut($itemPopUpPos, "{TAB}", 1000)
-	  PressKeyWithinTimeOut($itemPopUpPos, "{ESC}", 1000)
    Else
 	  WriteLogDebug("buy_item", StringFormat("Error click item [%d, %d]", $itemPos[0], $itemPos[1]))
    EndIf

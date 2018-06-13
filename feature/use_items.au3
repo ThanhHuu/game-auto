@@ -58,6 +58,7 @@ Func OpenUseBag($character, $bagPos)
    Local $offExpPos = [909, 706]
    Local $offExpPopUpPos = [260, 201]
    If ClickNpcWithinTimeOut($offExpPopUpPos, $offExpPos, 1000) Then
+	  PressKeyWithinTimeOut($offExpPopUpPos, "{TAB}", 200)
 	  PressKeyWithinTimeOut($offExpPopUpPos, "{ESC}", 200)
    EndIf
    Local $assistantDonePos = [887, 688]

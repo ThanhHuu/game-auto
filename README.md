@@ -1,2 +1,2 @@
 # game-auto
-This is release using for guest host (virtual machine)
+Release 2.0.5 Support Run NhanMonQuan parallel

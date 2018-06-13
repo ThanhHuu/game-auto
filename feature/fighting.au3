@@ -21,6 +21,8 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
+Local $fightingCounter = ObjCreate("Scripting.Dictionary")
+
 ;StartFighting()
 Func StartFighting($character, $basicObj)
    WriteLogDebug("fighting", StringFormat("Start fighting in NhanMonQuan for %s", $character))
@@ -39,7 +41,7 @@ Func MoveBackCenterMap($character, $basicObj)
    Local $mapPos = [44, 50]
    If PressKeyWithinTimeOut($mapPos, "{TAB}", 1000) Then
 	  Local $centerPos = [397, 405]
-	  MovingToNpcWithinTimeOut($character, $centerPos, 15000)
+	  MovingToNpcWithinTimeOut($character, $centerPos, 10000)
    EndIf
    Return True
 EndFunc
@@ -82,11 +84,29 @@ Func ContinueFighting($character, $basicObj)
 	  Sleep(500)
 	  MouseClick($MOUSE_CLICK_LEFT, 832, 528)
 	  Sleep(500)
+	  If IsNeedMoveBackCenter($character) Then
+		 WriteLogDebug("fighting", StringFormat("Back center map nhanmonquan for %s", $character))
+		 MoveBackCenterMap($character, $basicObj)
+	  EndIf
 	  If TurnOnFighting($character, $basicObj) Then
-		 WriteLogDebug("fighting", StringFormat("Continue nhanmonquan for %s", $character))
-		 Return True
+		 Return False
 	  EndIf
    EndIf
    WriteLog("fighting", StringFormat("Done NhanMonQuan for %s", $character))
-   Return False
+   $fightingCounter.Remove($character)
+   Return True
+EndFunc
+
+Func IsNeedMoveBackCenter($character)
+   Local $currentCount = 0
+   If $fightingCounter.Exists($character) Then
+	  $currentCount = $fightingCounter.Item($character)
+	  $fightingCounter.Remove($character)
+   EndIf
+   Local $result = $currentCount > 30
+   if $currentCount > 30 Then
+	  $currentCount = 0
+   EndIf
+   $fightingCounter.Add($character, $currentCount + 1)
+   Return $result
 EndFunc
