@@ -22,7 +22,6 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 Func AssignTransporter($character, $basicObj)
    Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
    If ActiveWindowWithinTimeOut($winTitle, 3000) Then
-	  WriteLog("Assistant", StringFormat("Dieu doi %s", "VanTieu"))
 	  Local $goHomeItemPos = [205, 138]
 	  ; Chon ve noi o
 	  If PressKeyWithinTimeOut($goHomeItemPos, "{0}", 5000) Then
@@ -31,6 +30,7 @@ Func AssignTransporter($character, $basicObj)
 		 Local $assistantHomePos3 = [553, 628]
 		 Local $goAssistantHomePos = [160,325]
 		 If ClickChangeMapWithinTimeOut($assistantHomePos1, $assistantHomePos2, $assistantHomePos3, $goAssistantHomePos, 10000) Then
+			WriteLog("Assistant", StringFormat("Dieu doi %s", "VanTieu"))
 			AssistantAward()
 			Local $featurePos = [570, 375]
 			AssistantFeature($featurePos)

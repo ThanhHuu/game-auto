@@ -538,7 +538,7 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 			   ExitLoop
 			EndIf
 		 Next
-		 If $charactersObj.Count() > 0 Then
+		 If $featureObj.Exists("parallel") And $charactersObj.Count() > 0 Then
 			ParallelRunning($basicObj, $charactersObj, True)
 		 EndIf
 		 If _NowCalcDate() > $startDate Then

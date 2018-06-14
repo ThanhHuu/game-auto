@@ -23,7 +23,6 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 Func AssignPrevention($character, $basicObj)
    Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
    If ActiveWindowWithinTimeOut($winTitle, 3000) Then
-	  WriteLog("Assistant", StringFormat("Dieu doi %s", "ThuVePhai"))
 	  Local $goHomeItemPos = [205, 138]
 	  ; Chon ve noi o
 	  If PressKeyWithinTimeOut($goHomeItemPos, "{0}", 5000) Then
@@ -32,6 +31,7 @@ Func AssignPrevention($character, $basicObj)
 		 Local $assistantHomePos3 = [553, 628]
 		 Local $goAssistantHomePos = [160,325]
 		 If ClickChangeMapWithinTimeOut($assistantHomePos1, $assistantHomePos2, $assistantHomePos3, $goAssistantHomePos, 10000) Then
+			WriteLog("Assistant", StringFormat("Dieu doi %s", "ThuVePhai"))
 			AssistantAward()
 			Local $featurePos = [365, 495]
 			AssistantFeature($featurePos)

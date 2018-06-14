@@ -103,8 +103,8 @@ Func IsNeedMoveBackCenter($character)
 	  $currentCount = $fightingCounter.Item($character)
 	  $fightingCounter.Remove($character)
    EndIf
-   Local $result = $currentCount > 30
-   if $currentCount > 30 Then
+   Local $result = $currentCount > 20
+   if $currentCount > 20 Then
 	  $currentCount = 0
    EndIf
    $fightingCounter.Add($character, $currentCount + 1)

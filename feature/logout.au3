@@ -20,11 +20,10 @@ Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
-Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 Local $FIRST_Y = 35
 
 Func Logout($index)
-   If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
+   If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 60000) Then
 	  If WinExists("Thông báo") Then
 		 ControlClick("Thông báo", "", "CLASS:Button;INSTANCE:1")
 	  EndIf
@@ -48,12 +47,13 @@ Func Logout($index)
 		 Sleep(100)
 		 $count += 1
 		 If $basePx <> PixelGetColor(50, $currentY + 15) Then
+			WriteLogDebug("logout", StringFormat("Clicked exit game at index %d", $index))
 			ExitLoop
 		 EndIf
 	  WEnd
 	  ProcessClose("ClientX86.exe")
 	  Sleep(500)
-		 ; click xoa khoi danh sach
+	  ; click xoa khoi danh sach
 	  $basePx = PixelGetColor(50, $currentY + 60)
 	  $count = 0
 	  While $count < $maxLoop
@@ -61,6 +61,7 @@ Func Logout($index)
 		 Sleep(100)
 		 $count += 1
 		 If $basePx <> PixelGetColor(50, $currentY + 60) Then
+			WriteLogDebug("logout", StringFormat("Clicked remove game at index %d", $index))
 			ExitLoop
 		 EndIf
 	  WEnd
