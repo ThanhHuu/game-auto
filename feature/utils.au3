@@ -14,12 +14,14 @@
 #include <AutoItConstants.au3>
 #include <File.au3>
 #include <Date.au3>
+#include <GuiListView.au3>
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 Local $allowDebug = True
+Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 
 Func PressMap($character)
    Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
@@ -75,6 +77,21 @@ Func ClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
 	  EndIf
    Next
    WriteLogDebug("utils", StringFormat("Timeout clicking [%d, %d] after %d ms", $npcPos[0], $npcPos[1], $timeOut))
+   Return False
+EndFunc
+
+Func RightClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
+   Local $basePx = PixelGetColor($winPos[0], $winPos[1])
+   MouseClick($MOUSE_CLICK_RIGHT, $npcPos[0], $npcPos[1])
+   Local $maxLoop = $timeOut/100
+   For $i = 0 To $maxLoop
+	  Sleep(100)
+	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
+		 WriteLogDebug("utils", StringFormat("Right clicked [%d, %d]", $npcPos[0], $npcPos[1]))
+		 Return True
+	  EndIf
+   Next
+   WriteLogDebug("utils", StringFormat("Timeout right clicking [%d, %d] after %d ms", $npcPos[0], $npcPos[1], $timeOut))
    Return False
 EndFunc
 
@@ -273,4 +290,24 @@ Func IsChangeWhenMouseHover($hoverPos, $checkPos)
    MouseMove($hoverPos[0], $hoverPos[1])
    Sleep(1000)
    Return $px <> PixelGetColor($checkPos[0], $checkPos[1])
+EndFunc
+
+Func FindIndex($character)
+   If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 10000) Then
+	  Local $listView = ControlGetHandle($WINDOW_LOGIN, "", "[CLASS:SysListView32;INSTANCE:1]")
+	  Local $count = 0
+	  While $count < 5
+		 If _GUICtrlListView_GetItemCount($listView) = 0 Then
+			Exit
+		 EndIf
+		 Local $itemInfo = _GUICtrlListView_GetItem($listView, $count, 1)
+		 If StringStripWS($itemInfo[3], $STR_STRIPLEADING + $STR_STRIPTRAILING) = $character Then
+			WriteLogDebug("add_account", StringFormat("Find out %s at index %d", $character, $count))
+			Return $count
+		 EndIf
+		 $count += 1
+	  WEnd
+   EndIf
+   WriteLogDebug("add_account", StringFormat("Not found %s after over %d index", $character, $count))
+   Exit
 EndFunc

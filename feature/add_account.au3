@@ -21,7 +21,6 @@ Opt("WinTitleMatchMode", 4)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
-Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 
 Func AddAccount($usr, $pwd, $character)
    If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then

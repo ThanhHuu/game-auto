@@ -22,59 +22,38 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Local $FIRST_Y = 35
 
-Func Logout($index)
+Func Logout($character)
    If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 60000) Then
+	  Local $index = FindIndex($character)
 	  If WinExists("Thông báo") Then
 		 ControlClick("Thông báo", "", "CLASS:Button;INSTANCE:1")
 	  EndIf
 	  Local $maxLoop = 5
 	  ; Click thoat game
 	  Local $currentY = $FIRST_Y + $index*17
-	  Local $basePx = PixelGetColor(50, $currentY + 15)
-	  Local $count = 0
-	  While $count < $maxLoop
-		 MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)
-		 Sleep(100)
-		 $count += 1
-		 If $basePx <> PixelGetColor(50, $currentY + 15) Then
-			ExitLoop
-		 EndIf
-	  WEnd
-	  Sleep(300)
-	  $count = 0
-	  While $count < $maxLoop
-		 MouseClick($MOUSE_CLICK_LEFT, 50, $currentY + 15)
-		 Sleep(100)
-		 $count += 1
-		 If $basePx <> PixelGetColor(50, $currentY + 15) Then
+	  Local $indexPos = [14,$currentY]
+	  Local $popupPos =[50, $currentY+15]
+	  if RightClickNpcWithinTimeOut($popupPos, $indexPos, 5000) Then
+		 If ClickNpcWithinTimeOut($popupPos, $popupPos, 5000) Then
 			WriteLogDebug("logout", StringFormat("Clicked exit game at index %d", $index))
-			ExitLoop
+			ProcessClose("ClientX86.exe")
+			Sleep(1000)
+			If RightClickNpcWithinTimeOut($popupPos, $indexPos, 5000) Then
+			   Local $removePos = [50, $currentY + 55]
+			   If ClickNpcWithinTimeOut($popupPos, $removePos, 5000) Then
+				  WriteLogDebug("logout", StringFormat("Clicked remove game at index %d", $index))
+				  For $i = 0 To 50
+					 If WinExists("[TITLE:Xác nhận;CLASS:#32770]") Then
+						ExitLoop
+					 EndIf
+				  Next
+				  ControlClick("[TITLE:Xác nhận;CLASS:#32770]","", "[CLASS:Button;INSTANCE:1]")
+				  WriteLogDebug("logout", StringFormat("Clicked confirm removing game at index %d", $index))
+				  Return True
+			   EndIf
+			EndIf
 		 EndIf
-	  WEnd
-	  ProcessClose("ClientX86.exe")
-	  Sleep(500)
-	  ; click xoa khoi danh sach
-	  $basePx = PixelGetColor(50, $currentY + 60)
-	  $count = 0
-	  While $count < $maxLoop
-		 MouseClick($MOUSE_CLICK_RIGHT , 14, $currentY)
-		 Sleep(100)
-		 $count += 1
-		 If $basePx <> PixelGetColor(50, $currentY + 60) Then
-			WriteLogDebug("logout", StringFormat("Clicked remove game at index %d", $index))
-			ExitLoop
-		 EndIf
-	  WEnd
-	  Sleep(300)
-	  $count = 0
-	  While $count < $maxLoop
-		 MouseClick($MOUSE_CLICK_LEFT, 50, $currentY + 60)
-		 Sleep(100)
-		 $count += 1
-		 If WinExists("[TITLE:Xác nhận;CLASS:#32770]") Then
-			ExitLoop
-		 EndIf
-	  WEnd
-	  ControlClick("[TITLE:Xác nhận;CLASS:#32770]","", "[CLASS:Button;INSTANCE:1]")
+	  EndIf
+	  Return False
    EndIf
 EndFunc

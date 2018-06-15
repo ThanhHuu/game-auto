@@ -14,24 +14,28 @@
 #include <Date.au3>
 #include <File.au3>
 #include "utils.au3"
+#include "logout.au3"
+
+
 Opt("PixelCoordMode", 2)
 Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
-Local $WINDOW_GAME = "[REGEXPTITLE:Ngạo Kiếm Vô Song II]"
 Local $FIRST_Y = 35
 
-Func Login($index, $character)
+Func Login($character)
    If LoggedIn($character) Then
 	  WriteLogDebug("login", StringFormat("%s loggedin", $character))
    Else
-	  If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
+	  If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 10000) Then
+		 Local $index = FindIndex($character)
 		 MouseClick($MOUSE_CLICK_LEFT, 14, $FIRST_Y + $index*17)
 		 WriteLogDebug("login", StringFormat("Login for %s", $character))
 		 If WaitingLogin($character) Then
-			WinActivate($WINDOW_GAME)
+			Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+			WinActivate($winTitle)
 			Return True
 		 Else
 			Logout($index)
