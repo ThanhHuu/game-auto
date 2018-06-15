@@ -68,7 +68,7 @@ Func LogoutAll()
    If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 60000) Then
 	  Local $listView = ControlGetHandle($WINDOW_LOGIN, "", "[CLASS:SysListView32;INSTANCE:1]")
 	  Local $total = _GUICtrlListView_GetItemCount($listView)
-	  If $total > 1 Then
+	  If $total > 0 Then
 		 For $i = $total To 1 Step -1
 			LogoutForIndex($i - 1)
 		 Next
