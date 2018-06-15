@@ -463,7 +463,7 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 		 FileDelete("*.done")
 		 $isNewDate = False
 	  EndIf
-	  Local $addedUtil = False
+	  Local $ranUtil = True
 	  For $featureName In $featuresObj.Keys
 		 Local $featureObj = $featuresObj.Item($featureName)
 		 If IsIngoredFeature($featureName, $featureObj.Item("Scheduler"), $basicObj) Then
@@ -471,11 +471,6 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 			ContinueLoop
 		 EndIf
 		 WriteLog("release-2.0", StringFormat("Run feature %s", $featureName))
-		 If Not $addedUtil Then
-			WriteLog("release-2.0", StringFormat("Add Util to %s", $featureName))
-			$featureObj.Add("Util", $utilObj)
-			$addedUtil = True
-		 EndIf
 		 Local $ignoreAccountObj = GetIgnoreAccount($featureName, $basicObj.Item("level"))
 		 Local $charactersObj = ObjCreate("Scripting.Dictionary")
 		 For $i = 1 To $accountFiles[0]
@@ -499,7 +494,7 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 			   EndIf
 			   Sleep(10000)
 			   ; Run util task
-			   If $utilObj.Exists("useItem") Then
+			   If $ranUtil And $utilObj.Exists("useItem") Then
 				  UseItems($character, $basicObj)
 			   EndIf
 			   ; Run require task
@@ -542,6 +537,7 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 			ExitLoop
 		 EndIf
 		 FileMove(BuildFeatureFile($featureName, $basicObj.Item("level")) & ".ig", BuildFeatureFile($featureName, $basicObj.Item("level")) & ".done")
+		 $ranUtil = False
 	  Next
 	  While True
 		 Sleep(60000)
