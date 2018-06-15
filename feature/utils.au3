@@ -302,12 +302,12 @@ Func FindIndex($character)
 		 EndIf
 		 Local $itemInfo = _GUICtrlListView_GetItem($listView, $count, 1)
 		 If StringStripWS($itemInfo[3], $STR_STRIPLEADING + $STR_STRIPTRAILING) = $character Then
-			WriteLogDebug("add_account", StringFormat("Find out %s at index %d", $character, $count))
+			WriteLogDebug("utils", StringFormat("Find out %s at index %d", $character, $count))
 			Return $count
 		 EndIf
 		 $count += 1
 	  WEnd
    EndIf
-   WriteLogDebug("add_account", StringFormat("Not found %s after over %d index", $character, $count))
+   WriteLogDebug("utils", StringFormat("Not found %s after over %d index", $character, $count))
    Exit
 EndFunc

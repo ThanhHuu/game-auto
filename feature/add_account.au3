@@ -43,7 +43,7 @@ Func AddAccount($usr, $pwd, $character)
 		 Sleep(100)
 		 If WinExists("[TITLE:Thông báo;CLASS:#32770]") Then
 			ControlClick("[TITLE:Thông báo;CLASS:#32770]", "", "[CLASS:Button;INSTANCE:1]")
-			Logout(34)
+			Logout($character)
 		 Else
 			ExitLoop
 		 EndIf

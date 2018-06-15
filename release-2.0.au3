@@ -465,6 +465,7 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 	  EndIf
 	  Local $ranUtil = True
 	  For $featureName In $featuresObj.Keys
+		 LogoutAll()
 		 Local $featureObj = $featuresObj.Item($featureName)
 		 If IsIngoredFeature($featureName, $featureObj.Item("Scheduler"), $basicObj) Then
 			WriteLog("release-2.0", StringFormat("Ignore feature %s", $featureName))

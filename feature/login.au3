@@ -38,7 +38,7 @@ Func Login($character)
 			WinActivate($winTitle)
 			Return True
 		 Else
-			Logout($index)
+			Logout($character)
 			Return False
 		 EndIf
 	  EndIf
