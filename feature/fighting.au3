@@ -93,7 +93,9 @@ Func ContinueFighting($character, $basicObj)
 	  EndIf
    EndIf
    WriteLog("fighting", StringFormat("Done NhanMonQuan for %s", $character))
-   $fightingCounter.Remove($character)
+   If $fightingCounter.Exists($character) Then
+	  $fightingCounter.Remove($character)
+   EndIf
    Return True
 EndFunc
 

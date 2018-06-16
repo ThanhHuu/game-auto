@@ -172,9 +172,15 @@ Func AssistantAward()
 	  If ClickNpcWithinTimeOut($awardWinPos, $clickPos, 1000) Then
 		 Local $awardItemsWinPos = [1001, 212]
 		 $clickPos[0] = 858
-		 $clickPos[1] = 535
+		 $clickPos[1] = 530
 		 If ClickNpcWithinTimeOut($awardItemsWinPos, $clickPos, 1000) Then
-			ClickNpcWithinTimeOut($awardItemsWinPos, $awardItemsWinPos, 1000)
+			If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
+			   If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
+				  Sleep(8000)
+				  MouseClick($MOUSE_CLICK_LEFT, $clickPos[0], $clickPos[1])
+			   EndIf
+			   ClickNpcWithinTimeOut($awardItemsWinPos, $awardItemsWinPos, 1000)
+			EndIf
 		 EndIf
 	  EndIf
 	  PressKeyWithinTimeOut($assistantWinPos, "{TAB}", 1000)

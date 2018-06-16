@@ -26,6 +26,7 @@ Local $FIRST_Y = 35
 Func Logout($character)
    If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 60000) Then
 	  Local $index = FindIndex($character)
+	  WriteLogDebug("logout", StringFormat("Logout for %s", $character))
 	  Return LogoutForIndex($index)
    EndIf
 EndFunc
@@ -40,25 +41,40 @@ Func LogoutForIndex($index)
 	  Local $currentY = $FIRST_Y + $index*17
 	  Local $indexPos = [14,$currentY]
 	  Local $popupPos =[50, $currentY+15]
+	  Local $listView = ControlGetHandle($WINDOW_LOGIN, "", "[CLASS:SysListView32;INSTANCE:1]")
+	  Local $info = _GUICtrlListView_GetItem($listView, $index, 1)
+	  Local $currentChar = $info[3]
 	  if RightClickNpcWithinTimeOut($popupPos, $indexPos, 5000) Then
-		 If ClickNpcWithinTimeOut($popupPos, $popupPos, 5000) Then
-			WriteLogDebug("logout", StringFormat("Clicked exit game at index %d", $index))
-			ProcessClose("ClientX86.exe")
-			Sleep(1000)
-			If RightClickNpcWithinTimeOut($popupPos, $indexPos, 5000) Then
-			   Local $removePos = [50, $currentY + 55]
-			   MouseClick($MOUSE_CLICK_LEFT, $removePos[0], $removePos[1])
-			   For $i = 0 To 50
-				  If WinExists("[TITLE:Xác nhận;CLASS:#32770]") Then
-					 WriteLogDebug("logout", StringFormat("Clicked remove game at index %d", $index))
-					 ControlClick("[TITLE:Xác nhận;CLASS:#32770]","", "[CLASS:Button;INSTANCE:1]")
-					 WriteLogDebug("logout", StringFormat("Clicked confirm removing game at index %d", $index))
-					 Return True
-				  EndIf
-			   Next
-
+		 MouseClick($MOUSE_CLICK_LEFT, $popupPos[0], $popupPos[1])
+		 For $j = 0 To 100
+			$info = _GUICtrlListView_GetItem($listView, $index, 2)
+			If StringStripWS($info[3], $STR_STRIPLEADING + $STR_STRIPTRAILING) = "OFFLINE" Then
+			   WriteLogDebug("logout", StringFormat("Exited game at index %d", $index))
+			   ProcessClose("ClientX86.exe")
+			   Sleep(1000)
+			   If RightClickNpcWithinTimeOut($popupPos, $indexPos, 5000) Then
+				  Local $removePos = [50, $currentY + 55]
+				  MouseClick($MOUSE_CLICK_LEFT, $removePos[0], $removePos[1])
+				  For $i = 0 To 100
+					 If WinExists("[TITLE:Xác nhận;CLASS:#32770]") Then
+						WriteLogDebug("logout", StringFormat("Clicked remove game at index %d", $index))
+						ControlClick("[TITLE:Xác nhận;CLASS:#32770]","", "[CLASS:Button;INSTANCE:1]")
+						For $c = 0 To 100
+						   $info = _GUICtrlListView_GetItem($listView, $index, 1)
+						   If StringStripWS($info[3], $STR_STRIPLEADING + $STR_STRIPTRAILING) <> $currentChar Then
+							  WriteLogDebug("logout", StringFormat("Removed character at index %d", $index))
+							  Return True
+						   EndIf
+						   Sleep(100)
+						Next
+					 EndIf
+					 Sleep(100)
+				  Next
+				  ExitLoop
+			   EndIf
 			EndIf
-		 EndIf
+			Sleep(100)
+		 Next
 	  EndIf
 	  Return False
    EndIf
