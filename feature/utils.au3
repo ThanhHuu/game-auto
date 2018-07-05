@@ -301,19 +301,17 @@ EndFunc
 Func FindIndex($character)
    If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 10000) Then
 	  Local $listView = ControlGetHandle($WINDOW_LOGIN, "", "[CLASS:SysListView32;INSTANCE:1]")
-	  Local $count = 0
-	  While $count < 5
+	  For $i = 0 To 5
 		 If _GUICtrlListView_GetItemCount($listView) = 0 Then
 			Exit
 		 EndIf
-		 Local $itemInfo = _GUICtrlListView_GetItem($listView, $count, 1)
+		 Local $itemInfo = _GUICtrlListView_GetItem($listView, $i, 1)
 		 If StringStripWS($itemInfo[3], $STR_STRIPLEADING + $STR_STRIPTRAILING) = $character Then
-			WriteLogDebug("utils", StringFormat("Find out %s at index %d", $character, $count))
-			Return $count
+			WriteLogDebug("utils", StringFormat("Find out %s at index %d", $character, $i))
+			Return $i
 		 EndIf
-		 $count += 1
-	  WEnd
+	  Next
    EndIf
-   WriteLogDebug("utils", StringFormat("Not found %s after over %d index", $character, $count))
-   Exit
+   WriteLogDebug("utils", StringFormat("Not found %s after over %d index", $character, 5))
+   Return -1
 EndFunc

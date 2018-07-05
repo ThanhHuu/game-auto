@@ -47,7 +47,7 @@ EndFunc
 
 Func WaitingLogin($character)
    Local $windowCharacter = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & "]"
-   For $i = 0 To 120
+   For $i = 0 To 80
 	  If WinExists($windowCharacter) Then
 		 Return True
 	  EndIf

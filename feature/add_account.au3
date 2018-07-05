@@ -15,6 +15,7 @@
 #include <File.au3>
 #include "logout.au3"
 #include "utils.au3"
+#include <GuiListView.au3>
 Opt("PixelCoordMode", 2)
 Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
@@ -42,11 +43,30 @@ Func AddAccount($usr, $pwd, $character)
 		 MouseClick($MOUSE_CLICK_LEFT, 260, 220)
 		 Sleep(100)
 		 If WinExists("[TITLE:Thông báo;CLASS:#32770]") Then
+			WriteLogDebug("add_account", StringFormat("Error adding account %s - %s",$usr, $character))
 			ControlClick("[TITLE:Thông báo;CLASS:#32770]", "", "[CLASS:Button;INSTANCE:1]")
 			Logout($character)
 		 Else
-			ExitLoop
+			If ExistsCharacter($character) Then
+			   WriteLogDebug("add_account", StringFormat("Added account %s - %s",$usr, $character))
+			   Return True
+			EndIf
 		 EndIf
+		 Sleep(3000)
 	  Next
+	  Return False
    EndIf
+EndFunc
+
+Func ExistsCharacter($character)
+   Local $listView = ControlGetHandle($WINDOW_LOGIN, "", "[CLASS:SysListView32;INSTANCE:1]")
+   Local $total = _GUICtrlListView_GetItemCount($listView)
+   For $i = 0 To $total - 1
+	  Local $nameItem = _GUICtrlListView_GetItem($listView, $i, 1)
+	  Local $name = StringStripWS($nameItem[3], $STR_STRIPLEADING + $STR_STRIPTRAILING)
+	  If $name = $character Then
+		 Return True
+	  EndIf
+   Next
+   Return False
 EndFunc

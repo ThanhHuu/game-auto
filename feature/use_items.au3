@@ -33,17 +33,15 @@ Func UseItems($character, $basicObj)
 		 WriteLog("use_items", StringFormat("Using item with cellPointer [%d, %d]", $cellPointer[0], $cellPointer[1]))
 		 Local $countUseCell = $cellPointer[2]/2
 		 Local $close1 = [710, 115]
-		 Local $basePx1 = PixelGetColor(557, 485)
+		 Local $basePx1 = PixelGetColor(667, 370)
 		 For $row = 0 To $countUseCell
 			Local $currentCellY = $cellPointer[1] + $row*$ITEM_CELL_HEIGHT
 			For $column = 0 To 8
 			   Local $currentCellX = $cellPointer[0] + $column*$ITEM_CELL_WIDTH
-			   MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY)
-			   If $basePx1 <> PixelGetColor(557, 485) Then
+			   MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 5)
+			   If $basePx1 <> PixelGetColor(667, 370) Then
 				  ClickNpcWithinTimeOut($close1, $close1, 1000)
 				  ContinueLoop
-			   Else
-				  MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 4)
 			   EndIf
 			Next
 		 Next
