@@ -54,34 +54,34 @@ Local $tvpLogoutWhenDone
 Func BuildTabTvp($position)
    $tvpTab = GUICtrlCreateTabItem("ThuVePhai")
    $tvp1 = GUICtrlCreateCheckbox (_DateDayOfWeek (1), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($tvp1, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($tvp1, $GUI_CHECKED)
 
    $tvpLogoutWhenDone = GUICtrlCreateCheckbox ("Logout When Done", 150, $position + 10, 120, $rowHeight)
-   GUICtrlSetState($tvpLogoutWhenDone, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($tvpLogoutWhenDone, $GUI_CHECKED)
 
    $position+= 20
    $tvp2 = GUICtrlCreateCheckbox (_DateDayOfWeek (2), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($tvp2, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($tvp2, $GUI_CHECKED)
 
    $position+= 20
    $tvp3 = GUICtrlCreateCheckbox (_DateDayOfWeek (3), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($tvp3, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($tvp3, $GUI_CHECKED)
 
    $position+= 20
    $tvp4 = GUICtrlCreateCheckbox (_DateDayOfWeek (4), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($tvp4, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($tvp4, $GUI_CHECKED)
 
    $position+= 20
    $tvp5 = GUICtrlCreateCheckbox (_DateDayOfWeek (5), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($tvp5, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($tvp5, $GUI_CHECKED)
 
    $position+= 20
    $tvp6 = GUICtrlCreateCheckbox (_DateDayOfWeek (6), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($tvp6, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($tvp6, $GUI_CHECKED)
 
    $position+= 20
    $tvp7 = GUICtrlCreateCheckbox (_DateDayOfWeek (7), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($tvp7, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($tvp7, $GUI_CHECKED)
 
 EndFunc
 
@@ -100,7 +100,7 @@ Func BuildTabBc($position)
    $bc2 = GUICtrlCreateCheckbox (_DateDayOfWeek (2), 30, $position, 90, $rowHeight)
    GUICtrlSetState($bc2, $GUI_CHECKED)
    $bcLogoutWhenDone = GUICtrlCreateCheckbox ("Logout When Done", 150, $position + 10, 120, $rowHeight)
-   GUICtrlSetState($bcLogoutWhenDone, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($bcLogoutWhenDone, $GUI_CHECKED)
 
 
    $position+= 20
@@ -140,7 +140,7 @@ Func BuildTabNtd($position)
    $ntd2 = GUICtrlCreateCheckbox (_DateDayOfWeek (2), 30, $position, 90, $rowHeight)
    GUICtrlSetState($ntd2, $GUI_CHECKED)
    $ntdLogoutWhenDone = GUICtrlCreateCheckbox ("Logout When Done", 150, $position + 10, 120, $rowHeight)
-   GUICtrlSetState($ntdLogoutWhenDone, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($ntdLogoutWhenDone, $GUI_CHECKED)
 
    $position += 20
    $ntd3 = GUICtrlCreateCheckbox (_DateDayOfWeek (3), 30, $position, 90, $rowHeight)
@@ -164,12 +164,12 @@ Func BuildTabNtd($position)
 
 EndFunc
 
-Local $cbBuyItem, $cbSellItem, $cbUseItem
+Local $cbBuyItem, $cbSellItem, $cbUseItem, $cbOnlineExp
 Local $cbNoBackHomeItem, $cbNoManaItem, $cbNoFoodItem, $cbSetting
 Func BuildTabCb($position)
    GUICtrlCreateTabItem("CanBan")
    $cbBuyItem = GUICtrlCreateCheckbox ("BuyItems", 30, $position, 60, $rowHeight)
-   GUICtrlSetState($cbBuyItem, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($cbBuyItem, $GUI_CHECKED)
 
    GUICtrlCreateLabel ("Phu", 110, $position + 3, 30, $rowHeight)
    $cbNoBackHomeItem = GUICtrlCreateCombo("", 140, $position, 40, $rowHeight)
@@ -183,14 +183,17 @@ Func BuildTabCb($position)
    $cbNoFoodItem = GUICtrlCreateCombo("", 350, $position, 40, $rowHeight)
    GUICtrlSetData($cbNoFoodItem, "1|5|10|20|30|40|50|60", "1")
 
-   $position += 30
+   $position += 25
    $cbSellItem = GUICtrlCreateCheckbox ("SellItems", 30, $position, 60, $rowHeight)
 
-   $position += 30
+   $position += 25
    $cbUseItem = GUICtrlCreateCheckbox ("UseItems", 30, $position, 60, $rowHeight)
 
-   $position += 30
+   $position += 25
    $cbSetting = GUICtrlCreateCheckbox ("Setting", 30, $position, 60, $rowHeight)
+
+   $position += 25
+   $cbOnlineExp = GUICtrlCreateCheckbox ("Online Exp", 30, $position, 80, $rowHeight)
 EndFunc
 
 Local $nmq1, $nmq2, $nmq3, $nmq4, $nmq5, $nmq6, $nmq7
@@ -201,7 +204,7 @@ Func BuildTabNmq($position)
    GUICtrlSetState($nmq1, $GUI_UNCHECKED)
 
    $nmqLogoutWhenDone = GUICtrlCreateCheckbox ("Logout When Done", 150, $position + 10, 120, $rowHeight)
-   GUICtrlSetState($nmqLogoutWhenDone, $GUI_DISABLE + $GUI_CHECKED)
+   GUICtrlSetState($nmqLogoutWhenDone, $GUI_CHECKED)
 
    $position+= 20
    $nmq2 = GUICtrlCreateCheckbox (_DateDayOfWeek (2), 30, $position, 90, $rowHeight)
@@ -211,7 +214,7 @@ Func BuildTabNmq($position)
 
    $position+= 20
    $nmq3 = GUICtrlCreateCheckbox (_DateDayOfWeek (3), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($nmq3, $GUI_DISABLE + $GUI_UNCHECKED)
+   GUICtrlSetState($nmq3, $GUI_UNCHECKED)
 
    GUICtrlCreateLabel("Limit parallel", 150, $position + 15, 90, $rowHeight)
    $nmqLimitParallel = GUICtrlCreateCombo("", 250, $position + 10, 30, $rowHeight)
@@ -223,7 +226,7 @@ Func BuildTabNmq($position)
 
    $position+= 20
    $nmq5 = GUICtrlCreateCheckbox (_DateDayOfWeek (5), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($nmq5, $GUI_DISABLE + $GUI_UNCHECKED)
+   GUICtrlSetState($nmq5, $GUI_UNCHECKED)
 
    $position+= 20
    $nmq6 = GUICtrlCreateCheckbox (_DateDayOfWeek (6), 30, $position, 90, $rowHeight)
@@ -231,7 +234,7 @@ Func BuildTabNmq($position)
 
    $position+= 20
    $nmq7 = GUICtrlCreateCheckbox (_DateDayOfWeek (7), 30, $position, 90, $rowHeight)
-   GUICtrlSetState($nmq7, $GUI_DISABLE + $GUI_UNCHECKED)
+   GUICtrlSetState($nmq7, $GUI_UNCHECKED)
 EndFunc
 
 
@@ -338,6 +341,9 @@ Func BuildUI()
 			EndIf
 			If GUICtrlRead($cbUseItem) = $GUI_CHECKED Then
 			   $utilObj.Add("useItem", True)
+			EndIf
+			If GUICtrlRead($cbOnlineExp) = $GUI_CHECKED Then
+			   $utilObj.Add("onlineExp", True)
 			EndIf
 
 			; Feature NhanMonQuan
@@ -495,6 +501,9 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 			   EndIf
 			   Sleep(10000)
 			   ; Run util task
+			   If $ranUtil And $utilObj.Exists("onlineExp") Then
+				  OnlineExp($character, $basicObj)
+			   EndIf
 			   If $ranUtil And $utilObj.Exists("useItem") Then
 				  UseItems($character, $basicObj)
 			   EndIf
