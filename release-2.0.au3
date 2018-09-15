@@ -355,6 +355,19 @@ Func BuildUI()
 			   $utilObj.Add("onlineExp", True)
 			EndIf
 
+			; Feature Event
+			Local $eventFeature = ObjCreate("Scripting.Dictionary")
+			Local $eventSchedule = ObjCreate("Scripting.Dictionary")
+			$eventSchedule.Add(_DateDayOfWeek(@WDAY), True)
+			$eventFeature.Add("Scheduler", $eventSchedule)
+			Local $eventRequireTask = ['TryLuckyCard', 'TurnOffGraphic']
+			$eventFeature.Add("RequireTasks", $eventRequireTask)
+			Local $eventMainTask = ['receiveEvent']
+			$eventFeature.Add("MainTasks", $eventMainTask)
+			If GUICtrlRead($runEvent) = $GUI_CHECKED Then
+			   $featuresObj.Add("Event", $eventFeature)
+			EndIf
+
 			; Feature NhanMonQuan
 			Local $nmqFeature = ObjCreate("Scripting.Dictionary")
 			Local $nmqInWeek = [$nmq1, $nmq2, $nmq3, $nmq4, $nmq5, $nmq6, $nmq7]
@@ -407,20 +420,6 @@ Func BuildUI()
 			For $j = 1 To GUICtrlRead($ntdNo)
 			   $featuresObj.Add("NguTrucDam" & $j, $ntdFeature)
 			Next
-
-			; Feature Event
-			Local $eventFeature = ObjCreate("Scripting.Dictionary")
-			Local $eventSchedule = ObjCreate("Scripting.Dictionary")
-			$eventSchedule.Add(_DateDayOfWeek(1), True)
-			$eventSchedule.Add(_DateDayOfWeek(7), True)
-			$eventSchedule.Add("Scheduler", $eventSchedule)
-			Local $eventRequireTask = ['TryLuckyCard', 'TurnOffGraphic']
-			$eventFeature.Add("RequireTasks", $eventRequireTask)
-			Local $eventMainTask = ['receiveEvent']
-			$eventFeature.Add("MainTasks", $eventMainTask)
-			If GUICtrlRead($runEvent) = $GUI_CHECKED Then
-			   $featuresObj.Add("Event", $eventFeature)
-			EndIf
 
 			Local $count = 10;
 			While True
@@ -530,35 +529,29 @@ Func RunFeature($featuresObj, $basicObj, $utilObj)
 			   If $ranUtil And $utilObj.Exists("useItem") Then
 				  UseItems($character, $basicObj)
 			   EndIf
-			   If GUICtrlRead($cbOnlineExp) = $GUI_CHECKED Then
-				  receiveEvent($character)
-				  Logout($character)
+			   For $requireTask In $featureObj.Item("RequireTasks")
+				  WriteLog("release", StringFormat("Run task %s", $requireTask))
+				  Call($requireTask, $character, $basicObj)
+			   Next
+			   ; Run main task
+			   If $featureObj.Exists("parallel") Then
+				  Local $characterObj = ObjCreate("Scripting.Dictionary")
+				  $characterObj.Add("featureName", $featureName)
+				  $characterObj.Add("featureObj", $featureObj)
+				  $charactersObj.Add($character, $characterObj)
+				  ParallelRunning($basicObj, $charactersObj, False)
 			   Else
-				  ; Run require task
-				  For $requireTask In $featureObj.Item("RequireTasks")
-					 WriteLog("release", StringFormat("Run task %s", $requireTask))
-					 Call($requireTask, $character, $basicObj)
+				  For $mainTask In $featureObj.Item("MainTasks")
+					 WriteLog("release", StringFormat("Run task %s", $mainTask))
+					 While True
+						Local $done = Call($mainTask, $character, $basicObj)
+						If $done Then
+						   ExitLoop
+						EndIf
+					 WEnd
 				  Next
-				  ; Run main task
-				  If $featureObj.Exists("parallel") Then
-					 Local $characterObj = ObjCreate("Scripting.Dictionary")
-					 $characterObj.Add("featureName", $featureName)
-					 $characterObj.Add("featureObj", $featureObj)
-					 $charactersObj.Add($character, $characterObj)
-					 ParallelRunning($basicObj, $charactersObj, False)
-				  Else
-					 For $mainTask In $featureObj.Item("MainTasks")
-						WriteLog("release", StringFormat("Run task %s", $mainTask))
-						While True
-						   Local $done = Call($mainTask, $character, $basicObj)
-						   If $done Then
-							  ExitLoop
-						   EndIf
-						WEnd
-					 Next
-					 Logout($character)
-					 FileWriteLine($featureName & "_" & $basicObj.Item("level") & ".ig", $character)
-				  EndIf
+				  Logout($character)
+				  FileWriteLine($featureName & "_" & $basicObj.Item("level") & ".ig", $character)
 			   EndIf
 			   If _NowCalcDate() > $startDate Then
 				  ExitLoop
