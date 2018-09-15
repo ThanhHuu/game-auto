@@ -21,7 +21,7 @@ Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 ;receiveEvent("BoTreMeGame©")
-Func receiveEvent($character)
+Func receiveEvent($character, $basicObj)
    Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
    If ActiveWindowWithinTimeOut($winTitle, 3000) Then
 	  OpenDuongChauMap(1000)
@@ -55,4 +55,5 @@ Func receiveEvent($character)
 	  Sleep(300)
 	  MouseClick("left", 171, 240)
    EndIf
+   Return True
 EndFunc
