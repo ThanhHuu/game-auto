@@ -306,7 +306,8 @@ Func FindIndex($character)
 			Exit
 		 EndIf
 		 Local $itemInfo = _GUICtrlListView_GetItem($listView, $i, 1)
-		 If StringStripWS($itemInfo[3], $STR_STRIPLEADING + $STR_STRIPTRAILING) = $character Then
+		 Local $name = StringStripWS($itemInfo[3], $STR_STRIPLEADING + $STR_STRIPTRAILING)
+		 If $name = $character Then
 			WriteLogDebug("utils", StringFormat("Find out %s at index %d", $character, $i))
 			Return $i
 		 EndIf
