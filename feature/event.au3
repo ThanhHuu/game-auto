@@ -33,26 +33,8 @@ Func receiveEvent($character, $basicObj)
 	  Sleep(300)
 	  MouseClick("left", 171, 298)
 	  Sleep(300)
-	  Local $y
-	  If @MDAY < 16 Then
-		 If @HOUR > 12 And @HOUR < 16 Then
-			$y = 270
-		 ElseIf @HOUR > 18 And @HOUR < 20 Then
-			$y = 330
-		 Else
-			$y = 360
-		 EndIf
-	  Else
-		 If @HOUR > 12 And @HOUR < 16 Then
-			$y = 390
-		 ElseIf @HOUR > 18 And @HOUR < 20 Then
-			$y = 240
-		 Else
-			$y = 300
-		 EndIf
-	  EndIf
-	  MouseClick("left", 171, $y)
-	  Sleep(300)
+	  MouseClick("left", 171, 240)
+	  Sleep(1000)
 	  MouseClick("left", 171, 240)
    EndIf
    Return True
