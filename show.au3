@@ -12,6 +12,7 @@ Opt("WinTitleMatchMode", 4)
 ; Script Start - Add your code below here
 showAll("[REGEXPTITLE:.* Oracle VM VirtualBox]")
 showAll("[TITLE:NoxPlayer]")
+showAll("[TITLE:nox]")
 
 Func showAll($title)
    Local $wins = WinList($title)

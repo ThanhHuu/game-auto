@@ -13,6 +13,7 @@ Opt("WinTitleMatchMode", 4)
 
 hideAll("[REGEXPTITLE:.* Oracle VM VirtualBox]")
 hideAll("[TITLE:NoxPlayer]")
+hideAll("[TITLE:nox]")
 
 Func hideAll($regexTitle)
    Local $wins = WinList($regexTitle)
