@@ -316,3 +316,7 @@ Func FindIndex($character)
    WriteLogDebug("utils", StringFormat("Not found %s after over %d index", $character, 5))
    Return -1
 EndFunc
+
+Func GetWintitle($character)
+   Return "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & "]"
+EndFunc
