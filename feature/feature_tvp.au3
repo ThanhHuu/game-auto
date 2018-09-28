@@ -29,9 +29,9 @@ Func IsEnableTvp()
    Return GUICtrlRead($FEATURE_TVP) = $GUI_UNCHECKED
 EndFunc
 
-WinActivate($WINDOW_NKVS)
-Local $pramTest = ObjCreate("Scripting.Dictionary")
-RunTvp($pramTest)
+;WinActivate($WINDOW_NKVS)
+;Local $pramTest = ObjCreate("Scripting.Dictionary")
+;RunTvp($pramTest)
 Func RunTvp($paramDic)
    Local $featurePos = [365, 495]
    $paramDic.Add($PARAM_FEATURE_POS, $featurePos)

@@ -30,7 +30,7 @@ Func AssistantAward($paramDictionary)
 	  If ClickNpcWithinTimeOut($awardPopUp, $clickPos, 3000) Then
 		 Local $awardItemsWinPos = [1001, 212]
 		 $clickPos[0] = 858
-		 $clickPos[1] = 530
+		 $clickPos[1] = 532
 		 If ClickNpcWithinTimeOut($awardItemsWinPos, $clickPos, 3000) Then
 			If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
 			   If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
