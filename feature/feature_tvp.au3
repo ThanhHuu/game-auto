@@ -31,10 +31,9 @@ EndFunc
 
 WinActivate($WINDOW_NKVS)
 Local $pramTest = ObjCreate("Scripting.Dictionary")
-$pramTest.Add($PARAM_LEVEL, 100)
 RunTvp($pramTest)
 Func RunTvp($paramDic)
-   Local $featurePos = GetFeaturePos($paramDic)
+   Local $featurePos = [365, 495]
    $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
    Local $chainDic = ObjCreate("Scripting.Dictionary")
    $chainDic.Add("GoToHome", $paramDic)

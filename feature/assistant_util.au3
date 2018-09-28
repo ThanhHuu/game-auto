@@ -52,11 +52,20 @@ Func AssistantFeature($paramDictionary)
    Local $featurePos = $paramDictionary.Item($PARAM_FEATURE_POS)
    If ClickNpcWithinTimeOut($HOME_ASSISTANT_POPUP, $HOME_ASSISTANT_POS, 3000) Then
 	  If ClickNpcWithinTimeOut($featurePos, $featurePos, 1000) Then
-		 Local $confirmPopUp = [577, 298]
-		 Local $clickPos = [468, 594]
-		 If ClickNpcWithinTimeOut($confirmPopUp, $clickPos, 1000) Then
-			Local $acceptPos = [511, 467]
-			ClickNpcWithinTimeOut($confirmPopUp, $acceptPos, 1000)
+		 If $paramDictionary.Exists($PARAM_FEATURE_LEVEL_POS) Then
+			Local $ChooseLevePopUp = [258, 140]
+			Local $clickPos = [468, 594]
+			If ClickNpcWithinTimeOut($ChooseLevePopUp, $clickPos, 1000) Then
+			   Local $levelPos = $paramDictionary.Item($PARAM_FEATURE_LEVEL_POS)
+			   ClickNpcWithinTimeOut($levelPos, $levelPos, 200)
+			EndIf
+		 Else
+			Local $confirmPopUp = [577, 298]
+			Local $clickPos = [468, 594]
+			If ClickNpcWithinTimeOut($confirmPopUp, $clickPos, 1000) Then
+			   Local $acceptPos = [511, 467]
+			   ClickNpcWithinTimeOut($confirmPopUp, $acceptPos, 1000)
+			EndIf
 		 EndIf
 	  EndIf
    EndIf

@@ -162,82 +162,6 @@ Func ClickChangeMapWithinTimeOut($mapPos1, $mapPos2, $mapPos3, $npcPos, $timeOut
    Return False
 EndFunc
 
-Func AssistantAward()
-   Local $assistantWinPos = [260, 141]
-   Local $clickPos = [765, 370]
-   If ClickNpcWithinTimeOut($assistantWinPos, $clickPos, 1000) Then
-	  Local $awardWinPos = [938, 435]
-	  $clickPos[0] = 469
-	  $clickPos[1] = 591
-	  If ClickNpcWithinTimeOut($awardWinPos, $clickPos, 1000) Then
-		 Local $awardItemsWinPos = [1001, 212]
-		 $clickPos[0] = 858
-		 $clickPos[1] = 530
-		 If ClickNpcWithinTimeOut($awardItemsWinPos, $clickPos, 1000) Then
-			If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
-			   If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
-				  Sleep(8000)
-				  MouseClick($MOUSE_CLICK_LEFT, $clickPos[0], $clickPos[1])
-			   EndIf
-			   ClickNpcWithinTimeOut($awardItemsWinPos, $awardItemsWinPos, 1000)
-			EndIf
-		 EndIf
-	  EndIf
-	  PressKeyWithinTimeOut($assistantWinPos, "{TAB}", 1000)
-	  PressKeyWithinTimeOut($assistantWinPos, "{ESC}", 1000)
-   EndIf
-EndFunc
-
-Func AssistantFeature($featurePos)
-   Local $assistantWinPos = [260, 141]
-   Local $clickPos = [765, 370]
-   ; Click dieu doi
-   If ClickNpcWithinTimeOut($assistantWinPos, $clickPos, 1000) Then
-	  ; Click chon tinh nang
-	  If ClickNpcWithinTimeOut($featurePos, $featurePos, 1000) Then
-		 Local $confirmWinPos = [577, 298]
-		 $clickPos[0] = 468
-		 $clickPos[1] = 594
-		 ; Click dieu doi thuong
-		 If ClickNpcWithinTimeOut($confirmWinPos, $clickPos, 1000) Then
-			Local $acceptPos = [511, 467]
-			; Click xac nhan
-			ClickNpcWithinTimeOut($confirmWinPos, $acceptPos, 1000)
-		 EndIf
-	  EndIf
-	  ; Press ESC
-	  PressKeyWithinTimeOut($assistantWinPos, "{TAB}", 1000)
-	  PressKeyWithinTimeOut($assistantWinPos, "{ESC}", 1000)
-   EndIf
-EndFunc
-
-Func AssistantFeatureWithinLevel($featurePos, $level)
-   Local $assistantWinPos = [260, 141]
-   Local $clickPos = [765, 370]
-   ; Click dieu doi
-   If ClickNpcWithinTimeOut($assistantWinPos, $clickPos, 1000) Then
-	  ; Click chon tinh nang
-	  If ClickNpcWithinTimeOut($featurePos, $featurePos, 1000) Then
-		 Local $chooseLevelWinPos = [258, 140]
-		 $clickPos[0] = 468
-		 $clickPos[1] = 594
-		 ; Click dieu doi thuong
-		 If ClickNpcWithinTimeOut($chooseLevelWinPos, $clickPos, 1000) Then
-			Local $clickLevel = [175, 295]
-			If $level >= 100 Then
-			   $clickLevel[1] = 355
-			ElseIf $level >= 80 Then
-			   $clickLevel[1] = 325
-			EndIf
-			; click choose level
-			ClickNpcWithinTimeOut($chooseLevelWinPos, $clickLevel, 1000)
-		 EndIf
-	  EndIf
-	  ; Press ESC
-	  PressKeyWithinTimeOut($assistantWinPos, "{TAB}", 1000)
-	  PressKeyWithinTimeOut($assistantWinPos, "{ESC}", 1000)
-   EndIf
-EndFunc
 
 Func OpenDuongChauMap($timeOut)
    Local $mapPos = [37, 47]
@@ -319,4 +243,15 @@ EndFunc
 
 Func GetWintitle($character)
    Return "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & "]"
+EndFunc
+
+Func ExecuteChain($chainDic)
+   For $func In $chainDic.Keys
+	  Local $paramDic = $chainDic.Item($func)
+	  If Not Call($func, $paramDic) Then
+		 WriteLogDebug("utils", StringFormat("Stuck at function %s", $func))
+		 ExitLoop
+	  EndIf
+   Next
+   Return True
 EndFunc
