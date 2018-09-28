@@ -29,3 +29,4 @@
 #include"duty.au3"
 #include"online_exp.au3"
 #include"event.au3"
+#include"constant.au3"
