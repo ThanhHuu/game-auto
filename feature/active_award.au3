@@ -32,19 +32,15 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 ;GetActiveAward()
 Func GetActiveAward($character, $basicObj)
-   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
-   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
-	  WriteLog("active_award", "Nhan thuong soi noi")
-	  Local $eventWinPos = [247, 90]
-	  If PressKeyWithinTimeOut($eventWinPos, "{F11}", 1000) Then
-		 MouseClick($MOUSE_CLICK_LEFT, 560, 125)
+   Local $eventWinPos = [247, 90]
+   If PressKeyWithinTimeOut($eventWinPos, "{F11}", 1000) Then
+	  MouseClick($MOUSE_CLICK_LEFT, 560, 125)
+	  Sleep(100)
+	  For $i = 0 To 4
+		 MouseClick($MOUSE_CLICK_LEFT, 260, 565)
 		 Sleep(100)
-		 For $i = 0 To 4
-			MouseClick($MOUSE_CLICK_LEFT, 260, 565)
-			Sleep(100)
-		 Next
-		 PressKeyWithinTimeOut($eventWinPos, "{ESC}", 1000)
-	  EndIf
+	  Next
+	  PressKeyWithinTimeOut($eventWinPos, "{ESC}", 1000)
    EndIf
    Return True
 EndFunc

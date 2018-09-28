@@ -15,7 +15,7 @@
 #include "constant.au3"
 #include <GUIConstantsEx.au3>
 
-Func GoToHome($paramDictionary)
+Func GoToHome($paramDic)
    If PressKeyWithinTimeOut($MOVING_CHOICE_POPUP, "{0}", 3000) Then
 	  Local $lickPos = [160,325]
 	  Return ClickChangeMapWithinTimeOut($HOME_POS_FIRST, $HOME_POS_SECOND, $HOME_POS_THIRD, $lickPos, 10000)
@@ -23,14 +23,14 @@ Func GoToHome($paramDictionary)
    Return False
 EndFunc
 
-Func AssistantAward($paramDictionary)
+Func AssistantAward($paramDic)
    If ClickNpcWithinTimeOut($HOME_ASSISTANT_POPUP, $HOME_ASSISTANT_POS, 3000) Then
 	  Local $awardPopUp = [938, 435]
 	  Local $clickPos = [469, 591]
 	  If ClickNpcWithinTimeOut($awardPopUp, $clickPos, 3000) Then
 		 Local $awardItemsWinPos = [1001, 212]
 		 $clickPos[0] = 858
-		 $clickPos[1] = 532
+		 $clickPos[1] = 530
 		 If ClickNpcWithinTimeOut($awardItemsWinPos, $clickPos, 3000) Then
 			If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
 			   If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
@@ -48,15 +48,15 @@ Func AssistantAward($paramDictionary)
    Return True
 EndFunc
 
-Func AssistantFeature($paramDictionary)
-   Local $featurePos = $paramDictionary.Item($PARAM_FEATURE_POS)
+Func AssistantFeature($paramDic)
+   Local $featurePos = $paramDic.Item($PARAM_FEATURE_POS)
    If ClickNpcWithinTimeOut($HOME_ASSISTANT_POPUP, $HOME_ASSISTANT_POS, 3000) Then
 	  If ClickNpcWithinTimeOut($featurePos, $featurePos, 1000) Then
-		 If $paramDictionary.Exists($PARAM_FEATURE_LEVEL_POS) Then
+		 If $paramDic.Exists($PARAM_FEATURE_LEVEL_POS) Then
 			Local $ChooseLevePopUp = [258, 140]
 			Local $clickPos = [468, 594]
 			If ClickNpcWithinTimeOut($ChooseLevePopUp, $clickPos, 1000) Then
-			   Local $levelPos = $paramDictionary.Item($PARAM_FEATURE_LEVEL_POS)
+			   Local $levelPos = $paramDic.Item($PARAM_FEATURE_LEVEL_POS)
 			   ClickNpcWithinTimeOut($levelPos, $levelPos, 200)
 			EndIf
 		 Else

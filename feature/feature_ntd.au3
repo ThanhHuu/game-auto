@@ -29,10 +29,10 @@ Func IsEnableNtd()
    Return GUICtrlRead($UI_FEATURE_NTD) = $GUI_UNCHECKED
 EndFunc
 
-WinActivate($WINDOW_NKVS)
-Local $pramTest = ObjCreate("Scripting.Dictionary")
-RunTvp($pramTest)
-Func RunTvp($paramDic)
+;WinActivate($WINDOW_NKVS)
+;Local $pramTest = ObjCreate("Scripting.Dictionary")
+;RunTvp($pramTest)
+Func RunNtd($paramDic)
    Local $featurePos = [365, 435]
    $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
    Local $chainDic = ObjCreate("Scripting.Dictionary")

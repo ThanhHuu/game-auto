@@ -33,7 +33,7 @@ EndFunc
 ;Local $pramTest = ObjCreate("Scripting.Dictionary")
 ;$pramTest.Add($PARAM_LEVEL, 60)
 ;RunTvp($pramTest)
-Func RunTvp($paramDic)
+Func RunBc($paramDic)
    Local $featurePos = [370, 375]
    Local $featureLevelPos = GetFeaturePos($paramDic)
    $paramDic.Add($PARAM_FEATURE_POS, $featurePos)

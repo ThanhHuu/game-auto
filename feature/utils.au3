@@ -15,6 +15,8 @@
 #include <File.au3>
 #include <Date.au3>
 #include <GuiListView.au3>
+#include "constant.au3"
+
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
@@ -40,9 +42,8 @@ Func PressMap($character)
    EndIf
 EndFunc
 
-Func WaitingMovingWithinTimeOut($character, $offset, $timeOut)
-   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
-   Local $pointerPos = WinGetClientSize($winTitle)
+Func WaitingMovingWithinTimeOut($offset, $timeOut)
+   Local $pointerPos = WinGetClientSize($WINDOW_NKVS)
    Local $pointerX = $pointerPos[0]/2
    Local $pointerY = $pointerPos[1]/2
    Local $maxCount = $timeOut/3000
@@ -57,11 +58,9 @@ Func WaitingMovingWithinTimeOut($character, $offset, $timeOut)
 	  Local $nextBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
 	  Local $nextLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
 	  If $preTopPx = $nextTopPx And $preRightPx = $nextRightPx And $preBottomtPx = $nextBottomtPx And $preLeftPx = $nextLeftPx Then
-		 WriteLogDebug("utils", StringFormat("%s moved to specific point", $character))
-		 Return
+		 Return True
 	  EndIf
    Next
-   WriteLogDebug("utils", StringFormat("Timeout moving %s to specific point", $character))
    Return False
 EndFunc
 
@@ -180,12 +179,12 @@ Func OpenDuongChauMap($timeOut)
    Return False
 EndFunc
 
-Func MovingToNpcWithinTimeOut($character, $npcPos, $timeOut)
+Func MovingToNpcWithinTimeOut($npcPos, $timeOut)
    MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1], 2)
    Sleep(2000)
    PressKeyWithinTimeOut($npcPos, "{ESC}", 1000)
-   WaitingMovingWithinTimeOut($character, 100, $timeOut)
-   Sleep(5000)
+   WaitingMovingWithinTimeOut(100, $timeOut)
+   Sleep(2000)
 EndFunc
 
 Func WriteLog($caller, $msg)

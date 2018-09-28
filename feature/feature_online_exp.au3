@@ -31,16 +31,11 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-; OnlineExp("ChuLamDoiA")
-Func OnlineExp($character, $basicObj)
-   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
-   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
-	  WriteLog("online_exp", "Nhan thuong exp")
-	  Local $pwdClose = [800, 231]
-	  MouseClick($MOUSE_CLICK_LEFT, $pwdClose[0], $pwdClose[1])
-	  Sleep(300)
-	  Local $receiveBt = [582, 521]
-	  MouseClick($MOUSE_CLICK_LEFT, $receiveBt[0], $receiveBt[1])
-	  Sleep(300)
-   EndIf
+Func OnlineExp($paramDic)
+   Local $pwdClose = [800, 231]
+   MouseClick($MOUSE_CLICK_LEFT, $pwdClose[0], $pwdClose[1])
+   Sleep(300)
+   Local $receiveBt = [582, 521]
+   MouseClick($MOUSE_CLICK_LEFT, $receiveBt[0], $receiveBt[1])
+   Return True
 EndFunc
