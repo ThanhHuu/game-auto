@@ -15,6 +15,8 @@
 #include <File.au3>
 #include <Date.au3>
 #include "utils.au3"
+#include "constant.au3"
+
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
@@ -23,36 +25,33 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 DIM $ITEM_CELL_WIDTH = 37
 DIM $ITEM_CELL_HEIGHT = 40
 
-;UseItems()
-Func UseItems($character, $basicObj)
-   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
-   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
-	  Local $bagPos = [796, 362]
-	  Local $cellPointer = OpenUseBag($character, $bagPos)
-	  If $cellPointer <> False Then
-		 WriteLog("use_items", StringFormat("Using item with cellPointer [%d, %d]", $cellPointer[0], $cellPointer[1]))
-		 Local $countUseCell = $cellPointer[2]/2
-		 Local $close1 = [710, 115]
-		 Local $basePx1 = PixelGetColor(667, 370)
-		 For $row = 0 To $countUseCell
-			Local $currentCellY = $cellPointer[1] + $row*$ITEM_CELL_HEIGHT
-			For $column = 0 To 8
-			   Local $currentCellX = $cellPointer[0] + $column*$ITEM_CELL_WIDTH
-			   MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 5)
-			   If $basePx1 <> PixelGetColor(667, 370) Then
-				  ClickNpcWithinTimeOut($close1, $close1, 1000)
-				  ContinueLoop
-			   EndIf
-			Next
+;WinActivate($WINDOW_NKVS)
+;UseItems("")
+Func UseItems($paramDic)
+   Local $cellPointer = OpenUseBag($paramDic)
+   If $cellPointer <> False Then
+	  Local $countUseCell = $cellPointer[2]/2
+	  Local $close1 = [710, 115]
+	  Local $basePx1 = PixelGetColor(714, 116)
+	  For $row = 0 To $countUseCell
+		 Local $currentCellY = $cellPointer[1] + $row*$ITEM_CELL_HEIGHT
+		 For $column = 0 To 8
+			Local $currentCellX = $cellPointer[0] + $column*$ITEM_CELL_WIDTH
+			MouseMove($currentCellX, $currentCellY)
+			MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 5)
+			If $basePx1 <> PixelGetColor(714, 116) Then
+			   ClickNpcWithinTimeOut($close1, $close1, 1000)
+			   ContinueLoop
+			EndIf
 		 Next
-		 PressKeyWithinTimeOut($bagPos, "{ESC}", 1000)
-	  EndIf
+	  Next
+	  PressKeyWithinTimeOut($BAG_POS, "{TAB}", 200)
+	  PressKeyWithinTimeOut($BAG_POS, "{ESC}", 200)
    EndIf
    Return True
 EndFunc
 
-Func OpenUseBag($character, $bagPos)
-   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
+Func OpenUseBag($paramDic)
    Local $offExpPos = [909, 706]
    Local $offExpPopUpPos = [260, 201]
    If ClickNpcWithinTimeOut($offExpPopUpPos, $offExpPos, 1000) Then
@@ -61,9 +60,9 @@ Func OpenUseBag($character, $bagPos)
    EndIf
    Local $assistantDonePos = [887, 688]
    ClickNpcWithinTimeOut($assistantDonePos, $assistantDonePos, 100)
-   If PressKeyWithinTimeOut($bagPos, "b", 1000) Then
-	  Local $y = WinGetClientSize($winTitle)[1]
-	  Local $x = WinGetClientSize($winTitle)[0]
+   If PressKeyWithinTimeOut($BAG_POS, "b", 1000) Then
+	  Local $y = WinGetClientSize($WINDOW_NKVS)[1]
+	  Local $x = WinGetClientSize($WINDOW_NKVS)[0]
 	  Local $midY = $y/2
 	  Local $endX = $x - 80
 	  MouseMove($endX, $midY)
@@ -82,7 +81,7 @@ Func OpenUseBag($character, $bagPos)
 			MouseClick($MOUSE_CLICK_LEFT, $endX, $currentY)
 		 EndIf
 	  WEnd
-	  If Not PressKeyWithinTimeOut($bagPos, "b", 1000) Then
+	  If Not PressKeyWithinTimeOut($BAG_POS, "b", 1000) Then
 		 Return False
 	  EndIf
 	  MouseClick($MOUSE_CLICK_LEFT, $endX - $ITEM_CELL_WIDTH * 3, $currentY)
