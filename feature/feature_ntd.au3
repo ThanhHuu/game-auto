@@ -20,24 +20,21 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Func BuildBcUI($row)
+Func BuildNtdUI($row)
    Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * $row
-   $UI_FEATURE_BC = GUICtrlCreateCheckbox("Enable", $UI_MARGIN_LEFT, $marginTop, $UI_ROW_HEIGHT)
+   $UI_FEATURE_NTD = GUICtrlCreateCheckbox("Enable", $UI_MARGIN_LEFT, $marginTop, $UI_ROW_HEIGHT)
 EndFunc
 
-Func IsEnableBc()
-   Return GUICtrlRead($UI_FEATURE_BC) = $GUI_UNCHECKED
+Func IsEnableNtd()
+   Return GUICtrlRead($UI_FEATURE_NTD) = $GUI_UNCHECKED
 EndFunc
 
-;WinActivate($WINDOW_NKVS)
-;Local $pramTest = ObjCreate("Scripting.Dictionary")
-;$pramTest.Add($PARAM_LEVEL, 60)
-;RunTvp($pramTest)
+WinActivate($WINDOW_NKVS)
+Local $pramTest = ObjCreate("Scripting.Dictionary")
+RunTvp($pramTest)
 Func RunTvp($paramDic)
-   Local $featurePos = [370, 375]
-   Local $featureLevelPos = GetFeaturePos($paramDic)
+   Local $featurePos = [365, 435]
    $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
-   $paramDic.Add($PARAM_FEATURE_LEVEL_POS, $featureLevelPos)
    Local $chainDic = ObjCreate("Scripting.Dictionary")
    $chainDic.Add("GoToHome", $paramDic)
    $chainDic.Add("AssistantAward", $paramDic)

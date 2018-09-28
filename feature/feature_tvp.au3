@@ -20,13 +20,13 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Func BuildTVPUI($row)
+Func BuildTvpUI($row)
    Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * $row
-   $FEATURE_TVP = GUICtrlCreateCheckbox("Enable", $UI_MARGIN_LEFT, $marginTop, $UI_ROW_HEIGHT)
+   $UI_FEATURE_TVP = GUICtrlCreateCheckbox("Enable", $UI_MARGIN_LEFT, $marginTop, $UI_ROW_HEIGHT)
 EndFunc
 
 Func IsEnableTvp()
-   Return GUICtrlRead($FEATURE_TVP) = $GUI_UNCHECKED
+   Return GUICtrlRead($UI_FEATURE_TVP) = $GUI_UNCHECKED
 EndFunc
 
 ;WinActivate($WINDOW_NKVS)
