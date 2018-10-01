@@ -20,9 +20,14 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Func BuildTvpUI($row)
-   Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * $row
-   $UI_FEATURE_TVP = GUICtrlCreateCheckbox("Enable", $UI_MARGIN_LEFT, $marginTop, $UI_ROW_HEIGHT)
+Func BuildTvpUI($row, $column)
+   Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * ($row - 1) + $UI_MARGIN_TOP
+   Local $marginLeft = ($column - 1) * $UI_COLUMN_WIDTH + $UI_MARGIN_LEFT
+   Local $width = $UI_LABEL_WIDTH
+   GUICtrlCreateLabel("Thu Ve Phai", $UI_MARGIN_LEFT, $marginTop + 3, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $width = 30
+   $UI_FEATURE_TVP = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
 EndFunc
 
 Func IsEnableTvp()

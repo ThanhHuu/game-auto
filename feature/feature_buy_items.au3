@@ -53,3 +53,12 @@ Func BuyItemGoHome($paramDic)
    Return True
 EndFunc
 
+Func BuildBuyItemsUI($row, $column)
+   Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * ($row - 1) + $UI_MARGIN_TOP
+   Local $marginLeft = ($column - 1) * $UI_COLUMN_WIDTH + $UI_MARGIN_LEFT
+   Local $width = $UI_LABEL_WIDTH
+   GUICtrlCreateLabel("Mua Phu", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $width = 30
+   GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+EndFunc

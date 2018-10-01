@@ -17,15 +17,23 @@
 #include "utils.au3"
 #include "constant.au3"
 #include <GuiListView.au3>
+#include <GUIConstantsEx.au3>
+#include <ColorConstants.au3>
+#include <FontConstants.au3>
+#include <EditConstants.au3>
+#include <File.au3>
+
 Opt("PixelCoordMode", 2)
 Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 ; AddAccount("a", "b", "c")
-Func AddAccount($usr, $pwd, $character)
+Func AddAccount($paramDic)
+   Local $usr = $paramDic.Item($PARAM_USR)
+   Local $pwd = $paramDic.Item($PARAM_PWD)
+   Local $character = $paramDic.Item($PARAM_CHAR)
    If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
-	  WriteLog("add_account", StringFormat("Add account %s - %s",$usr, $character))
 	  EnterCharacter($usr, $pwd, $character)
 	  If WinExists($WINDOW_NKVS) Then
 		 ; Update character
@@ -65,4 +73,40 @@ Func EnterCharacter($usr, $pwd, $char)
    Sleep(100)
    Send($char)
    Sleep(100)
+EndFunc
+
+Func BuidUIAddAccount($row, $column)
+   Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * ($row - 1) + $UI_MARGIN_TOP
+   Local $marginLeft = ($column - 1) * $UI_COLUMN_WIDTH + $UI_MARGIN_LEFT
+   Local $width = $UI_LABEL_WIDTH
+   GUICtrlCreateLabel("Tai Khoan", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $width = 200
+   $UI_INPUT_ACCOUNTS = GUICtrlCreateInput("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT, $ES_READONLY)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $width = 80
+   $UI_BUTTON_ADD_ACCOUNT = GUICtrlCreateButton("Thu muc", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+EndFunc
+
+; Return array objects
+Func GetListAccounts()
+   Local $result = ObjCreate("Scripting.Dictionary")
+   Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
+   Local $files = _FileListToArrayRec($directoryPath, "*.acc", 1 + 4, 1, 1, 2);
+   If $files <> "" And $files[0] > 0 Then
+	  Local $count = 0;
+	  For $file In $files
+		 Local $lines = FileReadToArray($file)
+		 For $line In $lines
+			$count += 1
+			Local $accountObj = ObjCreate("Scripting.Dictionary")
+			Local $infomation = StringSplit($line, "=")
+			$accountObj.Add($PARAM_USR, $infomation[1])
+			$accountObj.Add($PARAM_CHAR, $infomation[2])
+			$accountObj.Add($PARAM_PWD, 'Ngoc@nh91')
+			$result.Add($count, $accountObj)
+		 Next
+	  Next
+   EndIf
+   Return $result.Items
 EndFunc

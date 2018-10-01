@@ -26,7 +26,11 @@ Local $UI_FEATURE_BC
 Local $UI_FEATURE_NTD
 Local $UI_ROW_HEIGHT = 20
 Local $UI_MARGIN_LEFT = 20
-Local $UI_MARGIN_TOP = 20
+Local $UI_MARGIN_TOP = 10
+Local $UI_BUTTON_ADD_ACCOUNT
+Local $UI_INPUT_ACCOUNTS
+Local $UI_LABEL_WIDTH = 100
+Local $UI_COLUMN_WIDTH = 200
 Local $MOVING_CHOICE_POPUP = [205, 138]
 Local $HOME_POS_FIRST = [262, 246]
 Local $HOME_POS_SECOND = [776, 446]
@@ -36,4 +40,7 @@ Local $HOME_ASSISTANT_POS = [765, 370]
 Local $PARAM_FEATURE_POS = "Feature_Pos"
 Local $PARAM_FEATURE_LEVEL_POS = "Feature_Level_Pos"
 Local $PARAM_LEVEL = "Level"
+Local $PARAM_USR = "Usr"
+Local $PARAM_PWD = "Pwd"
+Local $PARAM_CHAR = "Character"
 Local $BAG_POS = [796, 362]

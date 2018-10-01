@@ -20,9 +20,20 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Func BuildBcUI($row)
-   Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * $row
-   $UI_FEATURE_BC = GUICtrlCreateCheckbox("Enable", $UI_MARGIN_LEFT, $marginTop, $UI_ROW_HEIGHT)
+Func BuildBcUI($row, $column)
+   Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * ($row - 1) + $UI_MARGIN_TOP
+   Local $marginLeft = ($column - 1) * $UI_COLUMN_WIDTH + $UI_MARGIN_LEFT
+   Local $width = $UI_LABEL_WIDTH
+   GUICtrlCreateLabel("Bi Canh", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $width = 30
+   $UI_FEATURE_BC = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT + 30
+   $width = 50
+   GUICtrlCreateLabel("Cap Do", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $width = 40
+   GUICtrlCreateCombo("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
 EndFunc
 
 Func IsEnableBc()
