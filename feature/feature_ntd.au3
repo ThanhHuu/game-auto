@@ -31,18 +31,21 @@ Func BuildNtdUI($row, $column)
 EndFunc
 
 Func IsEnableNtd()
-   Return GUICtrlRead($UI_FEATURE_NTD) = $GUI_UNCHECKED
+   Return
 EndFunc
 
 ;WinActivate($WINDOW_NKVS)
 ;Local $pramTest = ObjCreate("Scripting.Dictionary")
 ;RunTvp($pramTest)
 Func RunNtd($paramDic)
-   Local $featurePos = [365, 435]
-   $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
-   Local $chainDic = ObjCreate("Scripting.Dictionary")
-   $chainDic.Add("GoToHome", $paramDic)
-   $chainDic.Add("AssistantAward", $paramDic)
-   $chainDic.Add("AssistantFeature", $paramDic)
-   Return ExecuteChain($chainDic)
+   If GUICtrlRead($UI_FEATURE_NTD) = $GUI_CHECKED Then
+	  Local $featurePos = [365, 435]
+	  $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
+	  Local $chainDic = ObjCreate("Scripting.Dictionary")
+	  $chainDic.Add("GoToHome", $paramDic)
+	  $chainDic.Add("AssistantAward", $paramDic)
+	  $chainDic.Add("AssistantFeature", $paramDic)
+	  Return ExecuteChain($chainDic)
+   EndIf
+   Return True
 EndFunc

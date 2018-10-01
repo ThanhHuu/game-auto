@@ -247,6 +247,8 @@ EndFunc
 Func ExecuteChain($chainDic)
    For $func In $chainDic.Keys
 	  Local $paramDic = $chainDic.Item($func)
+	  Local $character = $paramDic.Item($PARAM_CHAR)
+	  WinActivate(GetWintitle($character))
 	  If Not Call($func, $paramDic) Then
 		 WriteLogDebug("utils", StringFormat("Stuck at function %s", $func))
 		 ExitLoop

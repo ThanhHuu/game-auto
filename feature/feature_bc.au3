@@ -31,27 +31,29 @@ Func BuildBcUI($row, $column)
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT + 30
    $width = 50
    GUICtrlCreateLabel("Cap Do", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
+
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
    $width = 40
-   GUICtrlCreateCombo("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   $UI_FEATURE_BC_LEVEL = GUICtrlCreateCombo("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   GUICtrlSetData($UI_FEATURE_BC_LEVEL, "60|80|100", "80")
 EndFunc
 
-Func IsEnableBc()
-   Return GUICtrlRead($UI_FEATURE_BC) = $GUI_UNCHECKED
-EndFunc
 
 ;WinActivate($WINDOW_NKVS)
 ;Local $pramTest = ObjCreate("Scripting.Dictionary")
 ;$pramTest.Add($PARAM_LEVEL, 60)
 ;RunTvp($pramTest)
 Func RunBc($paramDic)
-   Local $featurePos = [370, 375]
-   Local $featureLevelPos = GetFeaturePos($paramDic)
-   $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
-   $paramDic.Add($PARAM_FEATURE_LEVEL_POS, $featureLevelPos)
-   Local $chainDic = ObjCreate("Scripting.Dictionary")
-   $chainDic.Add("GoToHome", $paramDic)
-   $chainDic.Add("AssistantAward", $paramDic)
-   $chainDic.Add("AssistantFeature", $paramDic)
-   Return ExecuteChain($chainDic)
+   If GUICtrlRead($UI_FEATURE_BC) = $GUI_CHECKED Then
+	  Local $featurePos = [370, 375]
+	  Local $featureLevelPos = GetFeaturePos($paramDic)
+	  $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
+	  $paramDic.Add($PARAM_FEATURE_LEVEL_POS, $featureLevelPos)
+	  Local $chainDic = ObjCreate("Scripting.Dictionary")
+	  $chainDic.Add("GoToHome", $paramDic)
+	  $chainDic.Add("AssistantAward", $paramDic)
+	  $chainDic.Add("AssistantFeature", $paramDic)
+	  Return ExecuteChain($chainDic)
+   EndIf
+   Return True
 EndFunc

@@ -21,8 +21,11 @@ Opt("MouseCoordMode", 2)
 Opt("WinTitleMatchMode", 4)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Func Login($character)
-   If Not WinExists(GetWintitle($character)) Then
+Func Login($paramDic)
+   Local $character = $paramDic.Item($PARAM_CHAR)
+   If WinExists(GetWintitle($character)) Then
+	  Return True
+   Else
 	  If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 10000) Then
 		 Local $index = FindIndex($character)
 		 MouseClick($MOUSE_CLICK_LEFT, $FIRST_CHARACTER[0], $FIRST_CHARACTER[1] + $index*17)
@@ -34,6 +37,7 @@ Func Login($character)
 			Return False
 		 EndIf
 	  EndIf
+	  Return False
    EndIf
 EndFunc
 

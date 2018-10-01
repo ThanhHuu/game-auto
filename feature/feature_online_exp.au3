@@ -26,6 +26,8 @@
 #include <File.au3>
 #include <Date.au3>
 #include "utils.au3"
+#include <GUIConstantsEx.au3>
+
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
@@ -38,14 +40,16 @@ Func BuildOnlineExpUI($row, $column)
    GUICtrlCreateLabel("Thuong Kinh Nghiem", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
    $width = 30
-   GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   $UI_FEATURE_ONLINE_EX = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
 EndFunc
 
 Func OnlineExp($paramDic)
-   Local $pwdClose = [800, 231]
-   MouseClick($MOUSE_CLICK_LEFT, $pwdClose[0], $pwdClose[1])
-   Sleep(300)
-   Local $receiveBt = [582, 521]
-   MouseClick($MOUSE_CLICK_LEFT, $receiveBt[0], $receiveBt[1])
+   If GUICtrlRead($UI_FEATURE_ONLINE_EX) = $GUI_CHECKED Then
+	  Local $pwdClose = [800, 231]
+	  MouseClick($MOUSE_CLICK_LEFT, $pwdClose[0], $pwdClose[1])
+	  Sleep(300)
+	  Local $receiveBt = [582, 521]
+	  MouseClick($MOUSE_CLICK_LEFT, $receiveBt[0], $receiveBt[1])
+   EndIf
    Return True
 EndFunc

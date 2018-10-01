@@ -37,6 +37,7 @@ Func AddAccount($paramDic)
 	  EnterCharacter($usr, $pwd, $character)
 	  If WinExists($WINDOW_NKVS) Then
 		 ; Update character
+		 MouseClick($MOUSE_CLICK_LEFT, $FIRST_CHARACTER[0], $FIRST_CHARACTER[1])
 		 MouseClick($MOUSE_CLICK_LEFT, $BUTTON_EDIT[0], $BUTTON_EDIT[1])
 	  Else
 		 ; Add new character
@@ -55,8 +56,8 @@ Func AddAccount($paramDic)
 		 EndIf
 		 Sleep(3000)
 	  Next
-	  Return False
    EndIf
+   Return False
 EndFunc
 
 Func EnterCharacter($usr, $pwd, $char)
@@ -95,7 +96,8 @@ Func GetListAccounts()
    Local $files = _FileListToArrayRec($directoryPath, "*.acc", 1 + 4, 1, 1, 2);
    If $files <> "" And $files[0] > 0 Then
 	  Local $count = 0;
-	  For $file In $files
+	  For $i = 1 To $files[0]
+		 Local $file = $files[$i]
 		 Local $lines = FileReadToArray($file)
 		 For $line In $lines
 			$count += 1
@@ -109,4 +111,22 @@ Func GetListAccounts()
 	  Next
    EndIf
    Return $result.Items
+EndFunc
+
+Func BuildIgnoreFeature()
+   $RUNTIME_IGNORE_DIC = ObjCreate("Scripting.Dictionary")
+   Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
+   Local $files = _FileListToArrayRec($directoryPath, "*.ignore", 1 + 4, 0, 1, 2);
+   If $files <> "" And $files[0] > 0 Then
+	  For $i = 1 To $files[0]
+		 Local $file = $files[$i]
+		 Local $featureDic = ObjCreate("Scripting.Dictionary")
+		 Local $lines = FileReadToArray($file)
+		 For $line In $lines
+			$featureDic.Add($line, True)
+		 Next
+		 Local $featureName = StringReplace($file, $directoryPath & '\', '')
+		 $RUNTIME_IGNORE_DIC.Add($featureName, $featureDic)
+	  Next
+   EndIf
 EndFunc

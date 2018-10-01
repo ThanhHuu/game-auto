@@ -23,7 +23,13 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
+HotKeySet("^q", "Stop")
+
 Local $UI, $BUTTON_RUN, $COUNT_DOWN
+Local $isRunning = False
+Local $currentAccount, $currentFeature
+Local $accountIndex = 0
+Local $featureIndex = 0
 
 Func BuidAutoUI()
    BuidUIAddAccount(1, 1)
@@ -49,15 +55,66 @@ BuidAutoUI()
 
 GUISetState(@SW_SHOW)
 While True
+   Start()
+   $isRunning = False
    Switch GUIGetMsg()
    Case $GUI_EVENT_CLOSE
 	  ExitLoop
    Case $UI_BUTTON_ADD_ACCOUNT
-	  GUICtrlSetData($UI_INPUT_ACCOUNTS, FileSelectFolder ("", @WindowsDir))
+	  Local $dir = FileSelectFolder ("", @WindowsDir)
+	  GUICtrlSetData($UI_INPUT_ACCOUNTS, $dir)
+	  $RUNTIME_ACCOUNTS = GetListAccounts()
+	  BuildIgnoreFeature()
    Case $BUTTON_RUN
+	  #cs
+	  If Not WinExists($WINDOW_LOGIN) Then
+		 MsgBox(0, "Warning", "Please start nkvs auto")
+		 ContinueLoop
+	  EndIf
+	  #ce
 	  CoundDown(10)
+	  $isRunning = True
    EndSwitch
 WEnd
+
+Func Start()
+   While $isRunning And $featureIndex < UBound($RUNTIME_FEATURES) And UBound($RUNTIME_ACCOUNTS) > 0
+	  Local $feature = $RUNTIME_FEATURES[$featureIndex]
+	  If FileExists(GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done') Then
+		 $featureIndex += 1
+		 $accountIndex = 0
+		 ContinueLoop
+	  EndIf
+	  Local $accountDic = $RUNTIME_ACCOUNTS[$accountIndex]
+	  RunForOne($feature, $accountDic)
+	  $accountIndex += 1
+	  If $accountIndex = UBound($RUNTIME_ACCOUNTS) Then
+		 Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
+		 Local $doneFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done'
+		 FileMove($ignoreFile, $doneFile)
+	  EndIf
+   WEnd
+EndFunc
+
+Func RunForOne($feature, $accountDic)
+   Local $chainDic = ObjCreate("Scripting.Dictionary")
+   ;$chainDic.Add("AddAccount", $accountDic)
+   $chainDic.Add("Login", $accountDic)
+   ;$chainDic.Add("OnlineExp", $accountDic)
+   ;$chainDic.Add("UseItems", $accountDic)
+   $chainDic.Add("OpenCard", $accountDic)
+   ;$chainDic.Add("TurnOffGraphic", $accountDic)
+   ;$chainDic.Add("SrollCircle", $accountDic)
+   ;$chainDic.Add("BuyItemGoHome", $accountDic)
+
+   ExecuteChain($chainDic)
+   Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
+   FileWriteLine($ignoreFile, $accountDic.Item($PARAM_CHAR))
+EndFunc
+
+Func Stop()
+   $isRunning = False
+EndFunc
 
 Func BuildActionUI($row, $column)
    Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * ($row - 1) + $UI_MARGIN_TOP * 2

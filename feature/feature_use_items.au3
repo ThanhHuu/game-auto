@@ -16,6 +16,7 @@
 #include <Date.au3>
 #include "utils.au3"
 #include "constant.au3"
+#include <GUIConstantsEx.au3>
 
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
@@ -28,25 +29,27 @@ DIM $ITEM_CELL_HEIGHT = 40
 ;WinActivate($WINDOW_NKVS)
 ;UseItems("")
 Func UseItems($paramDic)
-   Local $cellPointer = OpenUseBag($paramDic)
-   If $cellPointer <> False Then
-	  Local $countUseCell = $cellPointer[2]/2
-	  Local $close1 = [710, 115]
-	  Local $basePx1 = PixelGetColor(714, 116)
-	  For $row = 0 To $countUseCell
-		 Local $currentCellY = $cellPointer[1] + $row*$ITEM_CELL_HEIGHT
-		 For $column = 0 To 8
-			Local $currentCellX = $cellPointer[0] + $column*$ITEM_CELL_WIDTH
-			MouseMove($currentCellX, $currentCellY)
-			MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 5)
-			If $basePx1 <> PixelGetColor(714, 116) Then
-			   ClickNpcWithinTimeOut($close1, $close1, 1000)
-			   ContinueLoop
-			EndIf
+   If GUICtrlRead($UI_FEATURE_USE_ITEM) = $GUI_CHECKED Then
+	  Local $cellPointer = OpenUseBag($paramDic)
+	  If $cellPointer <> False Then
+		 Local $countUseCell = $cellPointer[2]/2
+		 Local $close1 = [710, 115]
+		 Local $basePx1 = PixelGetColor(714, 116)
+		 For $row = 0 To $countUseCell
+			Local $currentCellY = $cellPointer[1] + $row*$ITEM_CELL_HEIGHT
+			For $column = 0 To 8
+			   Local $currentCellX = $cellPointer[0] + $column*$ITEM_CELL_WIDTH
+			   MouseMove($currentCellX, $currentCellY)
+			   MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 5)
+			   If $basePx1 <> PixelGetColor(714, 116) Then
+				  ClickNpcWithinTimeOut($close1, $close1, 1000)
+				  ContinueLoop
+			   EndIf
+			Next
 		 Next
-	  Next
-	  PressKeyWithinTimeOut($BAG_POS, "{TAB}", 200)
-	  PressKeyWithinTimeOut($BAG_POS, "{ESC}", 200)
+		 PressKeyWithinTimeOut($BAG_POS, "{TAB}", 200)
+		 PressKeyWithinTimeOut($BAG_POS, "{ESC}", 200)
+	  EndIf
    EndIf
    Return True
 EndFunc
@@ -102,5 +105,5 @@ Func BuildUseItemsUI($row, $column)
    GUICtrlCreateLabel("Dung Vat Pham", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
    $width = 30
-   GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   $UI_FEATURE_USE_ITEM = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
 EndFunc

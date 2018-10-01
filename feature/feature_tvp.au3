@@ -30,19 +30,19 @@ Func BuildTvpUI($row, $column)
    $UI_FEATURE_TVP = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
 EndFunc
 
-Func IsEnableTvp()
-   Return GUICtrlRead($UI_FEATURE_TVP) = $GUI_UNCHECKED
-EndFunc
 
 ;WinActivate($WINDOW_NKVS)
 ;Local $pramTest = ObjCreate("Scripting.Dictionary")
 ;RunTvp($pramTest)
 Func RunTvp($paramDic)
-   Local $featurePos = [365, 495]
-   $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
-   Local $chainDic = ObjCreate("Scripting.Dictionary")
-   $chainDic.Add("GoToHome", $paramDic)
-   $chainDic.Add("AssistantAward", $paramDic)
-   $chainDic.Add("AssistantFeature", $paramDic)
-   Return ExecuteChain($chainDic)
+   If GUICtrlRead($UI_FEATURE_TVP) = $GUI_CHECKED Then
+	  Local $featurePos = [365, 495]
+	  $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
+	  Local $chainDic = ObjCreate("Scripting.Dictionary")
+	  $chainDic.Add("GoToHome", $paramDic)
+	  $chainDic.Add("AssistantAward", $paramDic)
+	  $chainDic.Add("AssistantFeature", $paramDic)
+	  Return ExecuteChain($chainDic)
+   EndIf
+   Return True
 EndFunc

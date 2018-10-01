@@ -16,6 +16,7 @@
 #include <Date.au3>
 #include "utils.au3"
 #include "constant.au3"
+#include <GUIConstantsEx.au3>
 
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
@@ -60,5 +61,6 @@ Func BuildBuyItemsUI($row, $column)
    GUICtrlCreateLabel("Mua Phu", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
    $width = 30
-   GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   Local $buyItem = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   GUICtrlSetState($buyItem, $GUI_DISABLE)
 EndFunc

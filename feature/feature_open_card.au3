@@ -14,6 +14,8 @@
 #include <Date.au3>
 #include "utils.au3"
 #include "constant.au3"
+#include <GUIConstantsEx.au3>
+#include <EditConstants.au3>
 
 ;WinActivate($WINDOW_NKVS)
 ;OpenCard("")
@@ -48,5 +50,6 @@ Func BuildOpenCardUI($row, $column)
    GUICtrlCreateLabel("Mo the", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
    $width = 30
-   GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   $UI_FEATURE_OPEN_CARD = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   GUICtrlSetState($UI_FEATURE_OPEN_CARD, $GUI_CHECKED)
 EndFunc
