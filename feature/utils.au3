@@ -16,13 +16,13 @@
 #include <Date.au3>
 #include <GuiListView.au3>
 #include "constant.au3"
+#include <GUIConstantsEx.au3>
 
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Local $allowDebug = True
 Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 
 Func PressMap($character)
@@ -71,11 +71,9 @@ Func ClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
    For $i = 0 To $maxLoop
 	  Sleep(100)
 	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
-		 WriteLogDebug("utils", StringFormat("Clicked [%d, %d]", $npcPos[0], $npcPos[1]))
-		 Return True
+		Return True
 	  EndIf
    Next
-   WriteLogDebug("utils", StringFormat("Timeout clicking [%d, %d] after %d ms", $npcPos[0], $npcPos[1], $timeOut))
    Return False
 EndFunc
 
@@ -86,11 +84,9 @@ Func RightClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
    For $i = 0 To $maxLoop
 	  Sleep(100)
 	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
-		 WriteLogDebug("utils", StringFormat("Right clicked [%d, %d]", $npcPos[0], $npcPos[1]))
 		 Return True
 	  EndIf
    Next
-   WriteLogDebug("utils", StringFormat("Timeout right clicking [%d, %d] after %d ms", $npcPos[0], $npcPos[1], $timeOut))
    Return False
 EndFunc
 
@@ -101,11 +97,10 @@ Func PressKeyWithinTimeOut($winPos, $key, $timeOut)
    For $i = 0 To $maxLoop
 	  Sleep(100)
 	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
-		 WriteLogDebug("utils", StringFormat("Pressed %s", $key, $timeOut))
 		 Return True
 	  EndIf
    Next
-   WriteLogDebug("utils", StringFormat("Timeout press %s after %d ms", $key, $timeOut))
+   WriteLogDebug("utils", StringFormat("Timeout when press %s", $key))
    Return False
 EndFunc
 
@@ -153,7 +148,6 @@ Func ClickChangeMapWithinTimeOut($mapPos1, $mapPos2, $mapPos3, $npcPos, $timeOut
    For $i = 0 To $maxLoop
 	  Sleep(1000)
 	  If $basePx1 <> PixelGetColor($mapPos1[0], $mapPos1[1]) And $basePx2 <> PixelGetColor($mapPos2[0], $mapPos2[1]) And $basePx3 <> PixelGetColor($mapPos3[0], $mapPos3[1]) Then
-		 WriteLogDebug("utils", StringFormat("Changed map when clicking [%d, %d]", $npcPos[0], $npcPos[1]))
 		 Return True
 	  EndIf
    Next
@@ -193,7 +187,7 @@ Func WriteLog($caller, $msg)
 EndFunc
 
 Func WriteLogDebug($caller, $msg)
-   If $allowDebug Then
+   If GUICtrlRead($UI_DEBUG_MODE) = $GUI_CHECKED Then
 	  Local $logFile = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
 	  _FileWriteLog($logFile, StringFormat("%s- DEBUG - %s", $caller, $msg))
    EndIf
@@ -206,10 +200,8 @@ Func IsMovedPosition($clickPos, $checkingPos1, $checkingPos2, $checkingPos3)
    MouseClick($MOUSE_CLICK_LEFT, $clickPos[0], $clickPos[1])
    Sleep(1000)
    If $px1 <> PixelGetColor($checkingPos1[0], $checkingPos1[1]) And $px2 <> PixelGetColor($checkingPos2[0], $checkingPos2[1]) And $px3 <> PixelGetColor($checkingPos3[0], $checkingPos3[1]) Then
-	  WriteLogDebug("utils", StringFormat("Moved after click [%d, %d]", $clickPos[0], $clickPos[1]))
 	  Return True
    Else
-	  WriteLogDebug("utils", StringFormat("Did not move after click [%d, %d]", $clickPos[0], $clickPos[1]))
 	  Return False
    EndIf
 EndFunc
@@ -231,13 +223,11 @@ Func FindIndex($character)
 		 Local $itemInfo = _GUICtrlListView_GetItem($listView, $i, 1)
 		 Local $name = StringStripWS($itemInfo[3], $STR_STRIPLEADING + $STR_STRIPTRAILING)
 		 If $name = $character Then
-			WriteLogDebug("utils", StringFormat("Find out %s at index %d", $character, $i))
 			Return $i
 		 EndIf
 	  Next
    EndIf
-   WriteLogDebug("utils", StringFormat("Not found %s after over %d index", $character, 5))
-   Return -1
+  Return -1
 EndFunc
 
 Func GetWintitle($character)
@@ -251,8 +241,9 @@ Func ExecuteChain($chainDic)
 	  WinActivate(GetWintitle($character))
 	  If Not Call($func, $paramDic) Then
 		 WriteLogDebug("utils", StringFormat("Stuck at function %s", $func))
-		 ExitLoop
+		 Return False
 	  EndIf
+	  WriteLogDebug("utils", StringFormat("Ran function %s", $func))
    Next
    Return True
 EndFunc

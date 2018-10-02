@@ -33,7 +33,6 @@ Func TurnOffGraphic($paramDic)
 		 If ClickNpcWithinTimeOut($basePos, $BUTTON_SYSTEM, 2000) Then
 			Local $popUpPos = [250, 188]
 			If ClickNpcWithinTimeOut($popUpPos, $BUTTON_SYSTEM_SETUP, 2000) Then
-			   WriteLog("setting", "Turnoff graphic")
 			   MouseClick($MOUSE_CLICK_LEFT, 390, 225)
 			   Sleep(200)
 			   MouseClick($MOUSE_CLICK_LEFT, 340, 370)
@@ -81,4 +80,5 @@ Func BuildTurnOffGraphicUI($row, $column)
    $width = 30
    $UI_FEATURE_HIDE_GRAPHIC = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
    GUICtrlSetState($UI_FEATURE_HIDE_GRAPHIC, $GUI_CHECKED)
+   GUICtrlSetState($UI_FEATURE_HIDE_GRAPHIC, $GUI_DISABLE)
 EndFunc

@@ -24,3 +24,4 @@
 #include"feature_sroll_circle.au3"
 #include"feature_tvp.au3"
 #include"feature_use_items.au3"
+#include"active_award.au3"

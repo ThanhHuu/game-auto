@@ -35,14 +35,17 @@ EndFunc
 ;Local $pramTest = ObjCreate("Scripting.Dictionary")
 ;RunTvp($pramTest)
 Func RunTvp($paramDic)
-   If GUICtrlRead($UI_FEATURE_TVP) = $GUI_CHECKED Then
+   If $paramDic.Item($PARAM_FEATURE_NAME) = $RUNTIME_FEATURE_TVP And GUICtrlRead($UI_FEATURE_TVP) = $GUI_CHECKED Then
+	  WriteLog("feature_tvp", "Run TVP")
 	  Local $featurePos = [365, 495]
 	  $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
 	  Local $chainDic = ObjCreate("Scripting.Dictionary")
 	  $chainDic.Add("GoToHome", $paramDic)
 	  $chainDic.Add("AssistantAward", $paramDic)
 	  $chainDic.Add("AssistantFeature", $paramDic)
-	  Return ExecuteChain($chainDic)
+	  If Not ExecuteChain($chainDic) Then
+		 WriteLog("feature_tvp", "Fail TVP")
+	  EndIf
    EndIf
    Return True
 EndFunc

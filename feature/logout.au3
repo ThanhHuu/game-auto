@@ -24,16 +24,11 @@ Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 ;Logout("PhanSanDoiA")
-Func Logout($character)
-   If ActiveWindowWithinTimeOut(GetWintitle($character), 3000) Then
-	  Send("{TAB}")
-	  Send("{ESC}")
-	  MouseClick($MOUSE_CLICK_LEFT, $BUTTON_SYSTEM[0], $BUTTON_SYSTEM[1])
-	  Sleep(1000)
-	  MouseClick($MOUSE_CLICK_LEFT, $BUTTON_SYSTEM_RELOGIN[0], $BUTTON_SYSTEM_RELOGIN[1])
-	  Sleep(1000)
-	  MouseClick($MOUSE_CLICK_LEFT, $BUTTON_SYSTEM_EXIT_YES[0], $BUTTON_SYSTEM_EXIT_YES[1])
-	  Return True
-   EndIf
-   Return False
+Func Logout($paramDic)
+   Local $settingPopup = [508, 268]
+   ClickNpcWithinTimeOut($settingPopup, $BUTTON_SYSTEM, 2000)
+   ClickNpcWithinTimeOut($settingPopup, $BUTTON_SYSTEM_RELOGIN, 2000)
+   ClickNpcWithinTimeOut($settingPopup, $BUTTON_SYSTEM_EXIT_YES, 2000)
+   Sleep(500)
+   Return True
 EndFunc

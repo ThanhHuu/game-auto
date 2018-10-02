@@ -30,22 +30,21 @@ Func BuildNtdUI($row, $column)
    $UI_FEATURE_NTD = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
 EndFunc
 
-Func IsEnableNtd()
-   Return
-EndFunc
-
 ;WinActivate($WINDOW_NKVS)
 ;Local $pramTest = ObjCreate("Scripting.Dictionary")
 ;RunTvp($pramTest)
 Func RunNtd($paramDic)
-   If GUICtrlRead($UI_FEATURE_NTD) = $GUI_CHECKED Then
+   If $paramDic.Item($PARAM_FEATURE_NAME) = $RUNTIME_FEATURE_NTD And GUICtrlRead($UI_FEATURE_NTD) = $GUI_CHECKED Then
+	  WriteLog("feature_ntd", "Run NTD")
 	  Local $featurePos = [365, 435]
 	  $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
 	  Local $chainDic = ObjCreate("Scripting.Dictionary")
 	  $chainDic.Add("GoToHome", $paramDic)
 	  $chainDic.Add("AssistantAward", $paramDic)
 	  $chainDic.Add("AssistantFeature", $paramDic)
-	  Return ExecuteChain($chainDic)
+	  If Not ExecuteChain($chainDic) Then
+		 WriteLog("feature_ntd", "Fail NTD")
+	  EndIf
    EndIf
    Return True
 EndFunc

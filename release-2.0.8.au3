@@ -63,23 +63,27 @@ While True
    Case $UI_BUTTON_ADD_ACCOUNT
 	  Local $dir = FileSelectFolder ("", @WindowsDir)
 	  GUICtrlSetData($UI_INPUT_ACCOUNTS, $dir)
-	  $RUNTIME_ACCOUNTS = GetListAccounts()
-	  BuildIgnoreFeature()
    Case $BUTTON_RUN
-	  #cs
 	  If Not WinExists($WINDOW_LOGIN) Then
 		 MsgBox(0, "Warning", "Please start nkvs auto")
 		 ContinueLoop
 	  EndIf
-	  #ce
-	  CoundDown(10)
+	  CoundDown(3)
+	  BuildRuntimeAccounts()
+	  BuildRuntimeIgnore()
 	  $isRunning = True
    EndSwitch
 WEnd
 
 Func Start()
    While $isRunning And $featureIndex < UBound($RUNTIME_FEATURES) And UBound($RUNTIME_ACCOUNTS) > 0
+
 	  Local $feature = $RUNTIME_FEATURES[$featureIndex]
+	  If Not IsCheckFeature($feature) Then
+		 $featureIndex += 1
+		 $accountIndex = 0
+		 ContinueLoop
+	  EndIf
 	  If FileExists(GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done') Then
 		 $featureIndex += 1
 		 $accountIndex = 0
@@ -96,20 +100,44 @@ Func Start()
    WEnd
 EndFunc
 
-Func RunForOne($feature, $accountDic)
-   Local $chainDic = ObjCreate("Scripting.Dictionary")
-   ;$chainDic.Add("AddAccount", $accountDic)
-   $chainDic.Add("Login", $accountDic)
-   ;$chainDic.Add("OnlineExp", $accountDic)
-   ;$chainDic.Add("UseItems", $accountDic)
-   $chainDic.Add("OpenCard", $accountDic)
-   ;$chainDic.Add("TurnOffGraphic", $accountDic)
-   ;$chainDic.Add("SrollCircle", $accountDic)
-   ;$chainDic.Add("BuyItemGoHome", $accountDic)
+Func IsCheckFeature($feature)
+   If $feature = $RUNTIME_FEATURE_TVP Then
+	  Return GUICtrlRead($UI_FEATURE_TVP) = $GUI_CHECKED ? True : False
+   EndIf
+   If $feature = $RUNTIME_FEATURE_NTD Then
+	  Return GUICtrlRead($UI_FEATURE_NTD) = $GUI_CHECKED ? True : False
+   EndIf
+   If $feature = $RUNTIME_FEATURE_BC Then
+	  Return GUICtrlRead($UI_FEATURE_BC) = $GUI_CHECKED ? True : False
+   EndIf
+   Return False
+EndFunc
 
-   ExecuteChain($chainDic)
-   Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
-   FileWriteLine($ignoreFile, $accountDic.Item($PARAM_CHAR))
+Func RunForOne($feature, $accountDic)
+   If $RUNTIME_IGNORE_DIC.Exists($feature) And $RUNTIME_IGNORE_DIC.Item($feature).Exists($accountDic.Item($PARAM_CHAR)) Then
+	  Return
+   EndIf
+   $accountDic.Add($PARAM_LEVEL, GUICtrlRead($UI_FEATURE_BC_LEVEL))
+   $accountDic.Add($PARAM_FEATURE_NAME, $feature)
+   Local $chainDic = ObjCreate("Scripting.Dictionary")
+   $chainDic.Add("AddAccount", $accountDic)
+   $chainDic.Add("Login", $accountDic)
+   $chainDic.Add("OnlineExp", $accountDic)
+   $chainDic.Add("UseItems", $accountDic)
+   $chainDic.Add("OpenCard", $accountDic)
+   $chainDic.Add("TurnOffGraphic", $accountDic)
+   $chainDic.Add("SrollCircle", $accountDic)
+   $chainDic.Add("BuyItemGoHome", $accountDic)
+   $chainDic.Add("RunTvp", $accountDic)
+   $chainDic.Add("RunNtd", $accountDic)
+   $chainDic.Add("RunBc", $accountDic)
+   $chainDic.Add("GetActiveAward", $accountDic)
+   $chainDic.Add("Logout", $accountDic)
+   WriteLog("main", StringFormat("Run for %s - %s - %s", $accountDic.Item($PARAM_USR), $accountDic.Item($PARAM_CHAR), $feature))
+   If ExecuteChain($chainDic) Then
+	  Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
+	  FileWriteLine($ignoreFile, $accountDic.Item($PARAM_CHAR))
+   EndIf
 EndFunc
 
 Func Stop()
@@ -121,6 +149,7 @@ Func BuildActionUI($row, $column)
    Local $marginLeft = ($column - 1) * $UI_COLUMN_WIDTH + $UI_MARGIN_LEFT
    Local $width = 50
    $BUTTON_RUN = GUICtrlCreateButton("Bat Dau", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   $UI_DEBUG_MODE = GUICtrlCreateCheckbox("Debug", $marginLeft + $width + 20, $marginTop, $width, $UI_ROW_HEIGHT)
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
    $width = 60
    Local $uiSize = WinGetClientSize($UI)

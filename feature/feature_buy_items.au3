@@ -27,6 +27,7 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 ;BuyItemGoHome(10)
 Func BuyItemGoHome($paramDic)
    If Not PressKeyWithinTimeOut($MOVING_CHOICE_POPUP, "{0}", 3000) Then
+	  WriteLogDebug("feature_buy_items", "Need to buy item")
 	  OpenDuongChauMap(1000)
 	  Local $npcPos = [930,330]
 	  MovingToNpcWithinTimeOut($npcPos, 60000)
@@ -63,4 +64,5 @@ Func BuildBuyItemsUI($row, $column)
    $width = 30
    Local $buyItem = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
    GUICtrlSetState($buyItem, $GUI_DISABLE)
+   GUICtrlSetState($buyItem, $GUI_CHECKED)
 EndFunc

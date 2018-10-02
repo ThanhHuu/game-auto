@@ -31,8 +31,8 @@ Opt("MouseCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 ;GetActiveAward()
-Func GetActiveAward($character, $basicObj)
-   Local $eventWinPos = [247, 90]
+Func GetActiveAward($paramDic)
+   Local $eventWinPos = [868, 91]
    If PressKeyWithinTimeOut($eventWinPos, "{F11}", 1000) Then
 	  MouseClick($MOUSE_CLICK_LEFT, 560, 125)
 	  Sleep(100)
@@ -40,7 +40,7 @@ Func GetActiveAward($character, $basicObj)
 		 MouseClick($MOUSE_CLICK_LEFT, 260, 565)
 		 Sleep(100)
 	  Next
-	  PressKeyWithinTimeOut($eventWinPos, "{ESC}", 1000)
+	  ClickNpcWithinTimeOut($eventWinPos, $eventWinPos, 1000)
    EndIf
    Return True
 EndFunc

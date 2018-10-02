@@ -33,29 +33,32 @@ Func AddAccount($paramDic)
    Local $usr = $paramDic.Item($PARAM_USR)
    Local $pwd = $paramDic.Item($PARAM_PWD)
    Local $character = $paramDic.Item($PARAM_CHAR)
-   If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 2000) Then
+   If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 3000) Then
+	  MouseClick($MOUSE_CLICK_LEFT, $FIRST_CHARACTER[0] + 40, $FIRST_CHARACTER[1])
+	  ActiveWindowWithinTimeOut($WINDOW_LOGIN, 3000)
 	  EnterCharacter($usr, $pwd, $character)
 	  If WinExists($WINDOW_NKVS) Then
 		 ; Update character
-		 MouseClick($MOUSE_CLICK_LEFT, $FIRST_CHARACTER[0], $FIRST_CHARACTER[1])
 		 MouseClick($MOUSE_CLICK_LEFT, $BUTTON_EDIT[0], $BUTTON_EDIT[1])
+		 Sleep(500)
+		 GUICtrlSetState($UI_FEATURE_HIDE_GRAPHIC, $GUI_UNCHECKED)
 	  Else
 		 ; Add new character
 		 MouseClick($MOUSE_CLICK_LEFT, $BUTTON_ADD[0], $BUTTON_ADD[1])
+		 Sleep(500)
 	  EndIf
 	  For $i = 0 To 4
-		 Sleep(100)
+		 Sleep(1000)
 		 If WinExists("[TITLE:Thông báo;CLASS:#32770]") Then
-			WriteLogDebug("add_account", StringFormat("Error adding account %s - %s",$usr, $character))
 			ControlClick("[TITLE:Thông báo;CLASS:#32770]", "", "[CLASS:Button;INSTANCE:1]")
 		 Else
 			If FindIndex($character) <> -1 Then
-			   WriteLogDebug("add_account", StringFormat("Added account %s - %s",$usr, $character))
 			   Return True
 			EndIf
 		 EndIf
-		 Sleep(3000)
+		 Sleep(2000)
 	  Next
+	  WriteLogDebug("add_account", "Fail add account")
    EndIf
    Return False
 EndFunc
@@ -90,7 +93,7 @@ Func BuidUIAddAccount($row, $column)
 EndFunc
 
 ; Return array objects
-Func GetListAccounts()
+Func BuildRuntimeAccounts()
    Local $result = ObjCreate("Scripting.Dictionary")
    Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
    Local $files = _FileListToArrayRec($directoryPath, "*.acc", 1 + 4, 1, 1, 2);
@@ -110,10 +113,10 @@ Func GetListAccounts()
 		 Next
 	  Next
    EndIf
-   Return $result.Items
+   $RUNTIME_ACCOUNTS = $result.Items
 EndFunc
 
-Func BuildIgnoreFeature()
+Func BuildRuntimeIgnore()
    $RUNTIME_IGNORE_DIC = ObjCreate("Scripting.Dictionary")
    Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
    Local $files = _FileListToArrayRec($directoryPath, "*.ignore", 1 + 4, 0, 1, 2);
@@ -125,8 +128,9 @@ Func BuildIgnoreFeature()
 		 For $line In $lines
 			$featureDic.Add($line, True)
 		 Next
-		 Local $featureName = StringReplace($file, $directoryPath & '\', '')
+		 Local $featureName = StringReplace(StringReplace($file, $directoryPath & '\', ''), '.ignore', '')
 		 $RUNTIME_IGNORE_DIC.Add($featureName, $featureDic)
 	  Next
    EndIf
+
 EndFunc

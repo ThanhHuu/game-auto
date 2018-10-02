@@ -44,7 +44,8 @@ EndFunc
 ;$pramTest.Add($PARAM_LEVEL, 60)
 ;RunTvp($pramTest)
 Func RunBc($paramDic)
-   If GUICtrlRead($UI_FEATURE_BC) = $GUI_CHECKED Then
+   If $paramDic.Item($PARAM_FEATURE_NAME) = $RUNTIME_FEATURE_BC And GUICtrlRead($UI_FEATURE_BC) = $GUI_CHECKED Then
+	  WriteLog("feature_bc", "Run BC")
 	  Local $featurePos = [370, 375]
 	  Local $featureLevelPos = GetFeaturePos($paramDic)
 	  $paramDic.Add($PARAM_FEATURE_POS, $featurePos)
@@ -53,7 +54,9 @@ Func RunBc($paramDic)
 	  $chainDic.Add("GoToHome", $paramDic)
 	  $chainDic.Add("AssistantAward", $paramDic)
 	  $chainDic.Add("AssistantFeature", $paramDic)
-	  Return ExecuteChain($chainDic)
+	  If Not ExecuteChain($chainDic) Then
+		 WriteLog("feature_bc", "Fail BC")
+	  EndIf
    EndIf
    Return True
 EndFunc
