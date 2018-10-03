@@ -28,14 +28,20 @@ Func BuildBcUI($row, $column)
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
    $width = 30
    $UI_FEATURE_BC = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT + 30
-   $width = 50
+   $width = $UI_LABEL_WIDTH
    GUICtrlCreateLabel("Cap Do", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
 
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
    $width = 40
    $UI_FEATURE_BC_LEVEL = GUICtrlCreateCombo("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
    GUICtrlSetData($UI_FEATURE_BC_LEVEL, "60|80|100", "80")
+
+   $width = 30
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $UI_FEATURE_BC_NO = GUICtrlCreateCombo("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   GUICtrlSetData($UI_FEATURE_BC_NO, "1|2", "2")
 EndFunc
 
 

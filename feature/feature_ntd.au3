@@ -28,6 +28,10 @@ Func BuildNtdUI($row, $column)
    $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
    $width = 30
    $UI_FEATURE_NTD = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   $width = 30
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $UI_FEATURE_NTD_NO = GUICtrlCreateCombo("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   GUICtrlSetData($UI_FEATURE_NTD_NO, "1|2", "2")
 EndFunc
 
 ;WinActivate($WINDOW_NKVS)

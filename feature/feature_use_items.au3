@@ -26,29 +26,37 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 DIM $ITEM_CELL_WIDTH = 37
 DIM $ITEM_CELL_HEIGHT = 40
 
-;WinActivate($WINDOW_NKVS)
-;UseItems("")
 Func UseItems($paramDic)
    If GUICtrlRead($UI_FEATURE_USE_ITEM) = $GUI_CHECKED Then
 	  Local $cellPointer = OpenUseBag($paramDic)
 	  If $cellPointer <> False Then
 		 Local $countUseCell = $cellPointer[2]/2
-		 Local $close1 = [710, 115]
-		 Local $basePx1 = PixelGetColor(714, 116)
+		 Local $pointClose1 = [837, 96]
+		 Local $pointClose2 = [732, 82]
+		 Local $pointClose3 = [712, 114]
 		 For $row = 0 To $countUseCell
 			Local $currentCellY = $cellPointer[1] + $row*$ITEM_CELL_HEIGHT
 			For $column = 0 To 8
 			   Local $currentCellX = $cellPointer[0] + $column*$ITEM_CELL_WIDTH
 			   MouseMove($currentCellX, $currentCellY)
+			   Sleep(300)
+			   Local $px1 = PixelGetColor($pointClose1[0], $pointClose1[1])
+			   Local $px2 = PixelGetColor($pointClose2[0], $pointClose2[1])
+			   Local $px3 = PixelGetColor($pointClose3[0], $pointClose3[1])
 			   MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 5)
-			   If $basePx1 <> PixelGetColor(714, 116) Then
-				  ClickNpcWithinTimeOut($close1, $close1, 1000)
-				  ContinueLoop
+			   Sleep(1000)
+			   If $px1 <> PixelGetColor($pointClose1[0], $pointClose1[1]) Then
+				  ClickNpcWithinTimeOut($pointClose1, $pointClose1, 300)
+			   ElseIf $px2 <> PixelGetColor($pointClose2[0], $pointClose2[1]) Then
+				  ClickNpcWithinTimeOut($pointClose2, $pointClose2, 300)
+			   ElseIf $px3 <> PixelGetColor($pointClose3[0], $pointClose3[1]) Then
+				  ClickNpcWithinTimeOut($pointClose3, $pointClose3, 300)
 			   EndIf
 			Next
 		 Next
-		 PressKeyWithinTimeOut($BAG_POS, "{TAB}", 200)
-		 PressKeyWithinTimeOut($BAG_POS, "{ESC}", 200)
+		 Local $closeMap = [31, 60]
+		 PressKeyWithinTimeOut($closeMap, "{TAB}", 1000)
+		 PressKeyWithinTimeOut($closeMap, "{ESC}", 1000)
 	  EndIf
    EndIf
    Return True

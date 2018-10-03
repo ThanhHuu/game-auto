@@ -23,28 +23,39 @@ Func GoToHome($paramDic)
    Return False
 EndFunc
 
+;WinActivate("Ngạo Kiếm Vô Song II(TrangPhóDoiB Cụm 1 Kim Kiếm) Version: 0.127")
+;AssistantAward("")
 Func AssistantAward($paramDic)
    If ClickNpcWithinTimeOut($HOME_ASSISTANT_POPUP, $HOME_ASSISTANT_POS, 3000) Then
-	  Local $awardPopUp = [938, 435]
-	  Local $clickPos = [469, 591]
-	  If ClickNpcWithinTimeOut($awardPopUp, $clickPos, 3000) Then
-		 Local $awardItemsWinPos = [1001, 212]
-		 $clickPos[0] = 858
-		 $clickPos[1] = 530
-		 If ClickNpcWithinTimeOut($awardItemsWinPos, $clickPos, 3000) Then
-			If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
-			   If ClickNpcWithinTimeOut($clickPos, $clickPos, 1000) Then
-				  Sleep(8000)
-				  MouseClick($MOUSE_CLICK_LEFT, $clickPos[0], $clickPos[1])
-			   EndIf
-			   ClickNpcWithinTimeOut($awardItemsWinPos, $awardItemsWinPos, 500)
+	  Local $closeAwardPopUp = [1002, 210]
+	  Local $clickReceive = [469, 591]
+	  If ClickNpcWithinTimeOut($closeAwardPopUp, $clickReceive, 3000) Then
+		 Local $closeOffExp = [1002, 558]
+		 ClickNpcWithinTimeOut($closeOffExp, $closeOffExp, 300)
+		 Local $startReceive = [839, 540]
+		 Local $px = PixelGetColor($closeAwardPopUp[0], $closeAwardPopUp[1])
+		 ClickNpcWithinTimeOut($closeAwardPopUp, $startReceive, 300)
+		 Local $count = 0
+		 While $count < 8
+			$count += 1
+			If $px <> PixelGetColor($closeAwardPopUp[0], $closeAwardPopUp[1]) Then
+			   ExitLoop
 			EndIf
-		 EndIf
+			Sleep(500)
+		 WEnd
+		 #cs
+		 ClickNpcWithinTimeOut($startReceive, $startReceive, 500)
+		 ClickNpcWithinTimeOut($startReceive, $startReceive, 500)
+		 Sleep(8000)
+		 ClickNpcWithinTimeOut($startReceive, $startReceive, 500)
+		 #ce
+		 ClickNpcWithinTimeOut($closeAwardPopUp, $closeAwardPopUp, 1000)
 	  EndIf
    EndIf
    Send("{TAB}")
-   Sleep(200)
+   Sleep(300)
    Send("{ESC}")
+   Sleep(300)
    Return True
 EndFunc
 

@@ -25,26 +25,20 @@ Func Login($paramDic)
    Local $character = $paramDic.Item($PARAM_CHAR)
    If WinExists(GetWintitle($character)) Then
 	  Return True
-   Else
-	  If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 10000) Then
-		 Local $index = FindIndex($character)
-		 MouseClick($MOUSE_CLICK_LEFT, $FIRST_CHARACTER[0], $FIRST_CHARACTER[1] + $index*17)
-		 If LoggedIn($character) Then
-			Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
-			WinActivate($winTitle)
-			Return True
-		 Else
-			Return False
-		 EndIf
-	  EndIf
-	  Return False
    EndIf
+   If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 3000) Then
+	  MouseClick($MOUSE_CLICK_LEFT, $FIRST_CHARACTER[0], $FIRST_CHARACTER[1])
+	  If LoggedIn($character) Then
+		 WinActivate(GetWintitle($character))
+		 Return True
+	  EndIf
+   EndIf
+   Return False
 EndFunc
 
 Func LoggedIn($character)
-   Local $windowCharacter = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & "]"
    For $i = 0 To 50
-	  If WinExists($windowCharacter) Then
+	  If WinExists(GetWintitle($character)) Then
 		 Return True
 	  EndIf
 	  Sleep(3000)

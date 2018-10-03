@@ -47,20 +47,8 @@ Func AddAccount($paramDic)
 		 MouseClick($MOUSE_CLICK_LEFT, $BUTTON_ADD[0], $BUTTON_ADD[1])
 		 Sleep(500)
 	  EndIf
-	  For $i = 0 To 4
-		 Sleep(1000)
-		 If WinExists("[TITLE:Thông báo;CLASS:#32770]") Then
-			ControlClick("[TITLE:Thông báo;CLASS:#32770]", "", "[CLASS:Button;INSTANCE:1]")
-		 Else
-			If FindIndex($character) <> -1 Then
-			   Return True
-			EndIf
-		 EndIf
-		 Sleep(2000)
-	  Next
-	  WriteLogDebug("add_account", "Fail add account")
    EndIf
-   Return False
+   Return True
 EndFunc
 
 Func EnterCharacter($usr, $pwd, $char)

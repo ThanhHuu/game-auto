@@ -30,6 +30,7 @@ Local $isRunning = False
 Local $currentAccount, $currentFeature
 Local $accountIndex = 0
 Local $featureIndex = 0
+Local $LAST_RUN_DATE = @YDAY
 
 Func BuidAutoUI()
    BuidUIAddAccount(1, 1)
@@ -77,7 +78,20 @@ WEnd
 
 Func Start()
    While $isRunning And $featureIndex < UBound($RUNTIME_FEATURES) And UBound($RUNTIME_ACCOUNTS) > 0
-
+	  ; Reset for new day
+	  If $LAST_RUN_DATE <> @YDAY Then
+		 $LAST_RUN_DATE = @YDAY
+		 $featureIndex = 0
+		 $accountIndex = 0
+		 Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
+		 Local $files = _FileListToArrayRec($directoryPath, "*.ignore", 1 + 4, 0, 1, 2);
+		 If $files <> "" And $files[0] > 0 Then
+			For $i = 1 To $files[0]
+			   FileDelete($files[$i])
+			Next
+		 EndIf
+		 ContinueLoop
+	  EndIf
 	  Local $feature = $RUNTIME_FEATURES[$featureIndex]
 	  If Not IsCheckFeature($feature) Then
 		 $featureIndex += 1
@@ -96,8 +110,39 @@ Func Start()
 		 Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
 		 Local $doneFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done'
 		 FileMove($ignoreFile, $doneFile)
+		 GUICtrlSetState($UI_FEATURE_USE_ITEM, $GUI_CHECKED)
+		 ReduceNoFeature($feature)
+		 $accountIndex = 0
 	  EndIf
    WEnd
+EndFunc
+
+Func ReduceNoFeature($feature)
+   If $feature = $RUNTIME_FEATURE_BC Then
+	  Local $value = GUICtrlRead($UI_FEATURE_BC_NO)
+	  Local $newValue = $value - 1
+	  If $newValue > 0 Then
+		 GUICtrlSetData($UI_FEATURE_BC_NO, $newValue)
+		 Local $doneFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done'
+		 Local $backupFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & $value
+		 FileMove($doneFile, $backupFile)
+		 WriteLog("main", StringFormat("Backup for %s", $feature))
+	  Else
+		 GUICtrlSetState($UI_FEATURE_BC, $GUI_UNCHECKED + $GUI_DISABLE)
+	  EndIf
+   ElseIf $feature = $RUNTIME_FEATURE_NTD Then
+	  Local $value = GUICtrlRead($UI_FEATURE_NTD_NO)
+	  Local $newValue = $value - 1
+	  If $newValue > 0 Then
+		 GUICtrlSetData($UI_FEATURE_NTD_NO, $newValue)
+		 Local $doneFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done'
+		 Local $backupFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & $value
+		 FileMove($doneFile, $backupFile)
+		 WriteLog("main", StringFormat("Backup for %s", $feature))
+	  Else
+		 GUICtrlSetState($UI_FEATURE_NTD, $GUI_UNCHECKED + $GUI_DISABLE)
+	  EndIf
+   EndIf
 EndFunc
 
 Func IsCheckFeature($feature)
@@ -138,6 +183,7 @@ Func RunForOne($feature, $accountDic)
 	  Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
 	  FileWriteLine($ignoreFile, $accountDic.Item($PARAM_CHAR))
    EndIf
+   Sleep(1000)
 EndFunc
 
 Func Stop()

@@ -28,9 +28,8 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 ;TurnOffGraphic("")
 Func TurnOffGraphic($paramDic)
    If GUICtrlRead($UI_FEATURE_HIDE_GRAPHIC) = $GUI_CHECKED Then
-	  Local $basePos = [508, 268]
 	  For $i = 0 To 1
-		 If ClickNpcWithinTimeOut($basePos, $BUTTON_SYSTEM, 2000) Then
+		 If ClickNpcWithinTimeOut($SYSTEM_POPUP, $BUTTON_SYSTEM, 2000) Then
 			Local $popUpPos = [250, 188]
 			If ClickNpcWithinTimeOut($popUpPos, $BUTTON_SYSTEM_SETUP, 2000) Then
 			   MouseClick($MOUSE_CLICK_LEFT, 390, 225)

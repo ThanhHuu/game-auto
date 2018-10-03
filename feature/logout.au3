@@ -25,10 +25,10 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 ;Logout("PhanSanDoiA")
 Func Logout($paramDic)
-   Local $settingPopup = [508, 268]
-   ClickNpcWithinTimeOut($settingPopup, $BUTTON_SYSTEM, 2000)
-   ClickNpcWithinTimeOut($settingPopup, $BUTTON_SYSTEM_RELOGIN, 2000)
-   ClickNpcWithinTimeOut($settingPopup, $BUTTON_SYSTEM_EXIT_YES, 2000)
-   Sleep(500)
-   Return True
+   If ClickNpcWithinTimeOut($SYSTEM_POPUP, $BUTTON_SYSTEM, 2000) Then
+	  If ClickNpcWithinTimeOut($SYSTEM_POPUP, $BUTTON_SYSTEM_RELOGIN, 2000) Then
+		 Return ClickNpcWithinTimeOut($BUTTON_SYSTEM_EXIT_YES, $BUTTON_SYSTEM_EXIT_YES, 2000)
+	  EndIf
+   EndIf
+   Return False
 EndFunc

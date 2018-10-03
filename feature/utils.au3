@@ -183,7 +183,7 @@ EndFunc
 
 Func WriteLog($caller, $msg)
    Local $logFile = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
-   _FileWriteLog($logFile, StringFormat("%s - %s", $caller, $msg))
+   _FileWriteLog($logFile, StringFormat("%s- INFO - %s", $caller, $msg))
 EndFunc
 
 Func WriteLogDebug($caller, $msg)
@@ -239,11 +239,12 @@ Func ExecuteChain($chainDic)
 	  Local $paramDic = $chainDic.Item($func)
 	  Local $character = $paramDic.Item($PARAM_CHAR)
 	  WinActivate(GetWintitle($character))
-	  If Not Call($func, $paramDic) Then
+	  If Call($func, $paramDic) Then
+		 WriteLogDebug("utils", StringFormat("Ran function %s", $func))
+	  Else
 		 WriteLogDebug("utils", StringFormat("Stuck at function %s", $func))
 		 Return False
 	  EndIf
-	  WriteLogDebug("utils", StringFormat("Ran function %s", $func))
    Next
    Return True
 EndFunc
