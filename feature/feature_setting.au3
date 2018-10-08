@@ -27,45 +27,63 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 ;WinActivate($WINDOW_NKVS)
 ;TurnOffGraphic("")
 Func TurnOffGraphic($paramDic)
+   Local $posObj = ObjCreate("Scripting.Dictionary")
    If GUICtrlRead($UI_FEATURE_HIDE_GRAPHIC) = $GUI_CHECKED Then
-	  For $i = 0 To 1
-		 If ClickNpcWithinTimeOut($SYSTEM_POPUP, $BUTTON_SYSTEM, 2000) Then
-			Local $popUpPos = [250, 188]
-			If ClickNpcWithinTimeOut($popUpPos, $BUTTON_SYSTEM_SETUP, 2000) Then
-			   MouseClick($MOUSE_CLICK_LEFT, 390, 225)
-			   Sleep(200)
-			   MouseClick($MOUSE_CLICK_LEFT, 340, 370)
-			   Sleep(200)
-			   Local $advanceBtPos = [439, 526]
-			   Local $advanceOptPos = [339, 527]
-			   If ClickNpcWithinTimeOut($advanceBtPos, $advanceOptPos, 2000) Then
-				  If ClickNpcWithinTimeOut($advanceBtPos, $advanceBtPos, 2000) Then
-					 MouseClick($MOUSE_CLICK_LEFT, 334, 270)
-					 MouseClick($MOUSE_CLICK_LEFT, 531, 270)
-					 MouseClick($MOUSE_CLICK_LEFT, 705, 270)
+	  Local $pos1 = [334, 270]
+	  Local $pos2 = [531, 270]
+	  Local $pos3 = [705, 270]
+	  $posObj.Add(1, $pos1)
+	  $posObj.Add(2, $pos2)
+	  $posObj.Add(3, $pos3)
 
-					 MouseClick($MOUSE_CLICK_LEFT, 320, 350)
-					 MouseClick($MOUSE_CLICK_LEFT, 500, 350)
-					 MouseClick($MOUSE_CLICK_LEFT, 665, 350)
+	  Local $pos4 = [320, 350]
+	  Local $pos5 = [500, 350]
+	  Local $pos6 = [665, 350]
+	  $posObj.Add(4, $pos4)
+	  $posObj.Add(5, $pos5)
+	  $posObj.Add(6, $pos6)
 
-					 MouseClick($MOUSE_CLICK_LEFT, 351, 430)
-					 MouseClick($MOUSE_CLICK_LEFT, 351, 460)
-					 MouseClick($MOUSE_CLICK_LEFT, 351, 490)
-					 MouseClick($MOUSE_CLICK_LEFT, 351, 520)
+	  Local $pos7 = [351, 430]
+	  Local $pos8 = [351, 460]
+	  Local $pos9 = [351, 490]
+	  Local $pos10 = [351, 520]
+	  $posObj.Add(7, $pos7)
+	  $posObj.Add(8, $pos8)
+	  $posObj.Add(9, $pos9)
+	  $posObj.Add(10, $pos10)
 
-					 MouseClick($MOUSE_CLICK_LEFT, 550, 430)
-					 MouseClick($MOUSE_CLICK_LEFT, 550, 460)
-					 MouseClick($MOUSE_CLICK_LEFT, 550, 490)
+	  Local $pos11 = [550, 430]
+	  Local $pos12 = [550, 460]
+	  Local $pos13 = [550, 490]
+	  $posObj.Add(11, $pos11)
+	  $posObj.Add(12, $pos12)
+	  $posObj.Add(13, $pos13)
+	  GUICtrlSetState($UI_FEATURE_HIDE_GRAPHIC, $GUI_UNCHECKED)
+   Else
+	  Local $pos2 = [531, 270]
+	  $posObj.Add(2, $pos2)
+   EndIf
 
-					 Local $btConfirmPos = [569, 570]
-					 ClickNpcWithinTimeOut($btConfirmPos, $btConfirmPos, 2000)
-				  EndIf
-			   EndIf
+   If ClickNpcWithinTimeOut($SYSTEM_POPUP, $BUTTON_SYSTEM, 2000) Then
+	  Local $popUpPos = [250, 188]
+	  If ClickNpcWithinTimeOut($popUpPos, $BUTTON_SYSTEM_SETUP, 2000) Then
+		 MouseClick($MOUSE_CLICK_LEFT, 390, 225)
+		 Sleep(200)
+		 MouseClick($MOUSE_CLICK_LEFT, 340, 370)
+		 Sleep(200)
+		 Local $advanceBtPos = [439, 526]
+		 Local $advanceOptPos = [339, 527]
+		 If ClickNpcWithinTimeOut($advanceBtPos, $advanceOptPos, 2000) Then
+			If ClickNpcWithinTimeOut($advanceBtPos, $advanceBtPos, 2000) Then
+			   For $pos In $posObj.Items
+				  MouseClick($MOUSE_CLICK_LEFT, $pos[0], $pos[1])
+			   Next
+			   Local $btConfirmPos = [569, 570]
+			   ClickNpcWithinTimeOut($btConfirmPos, $btConfirmPos, 2000)
 			EndIf
-			PressKeyWithinTimeOut($popUpPos, "{ESC}", 500)
-			ExitLoop
 		 EndIf
-	  Next
+	  EndIf
+	  PressKeyWithinTimeOut($popUpPos, "{ESC}", 500)
    EndIf
    Return True
 EndFunc

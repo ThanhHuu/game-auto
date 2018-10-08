@@ -26,37 +26,36 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 DIM $ITEM_CELL_WIDTH = 37
 DIM $ITEM_CELL_HEIGHT = 40
 
+;WinActivate("Ngạo Kiếm Vô Song II(LụcTrầmDoiC Cụm 1 Kim Kiếm) Version: 0.127")
+;UseItems("")
 Func UseItems($paramDic)
    If GUICtrlRead($UI_FEATURE_USE_ITEM) = $GUI_CHECKED Then
 	  Local $cellPointer = OpenUseBag($paramDic)
 	  If $cellPointer <> False Then
 		 Local $countUseCell = $cellPointer[2]/2
 		 Local $pointClose1 = [837, 96]
+		 Local $px1 = PixelGetColor(852, 682)
 		 Local $pointClose2 = [732, 82]
+		 Local $px2 = PixelGetColor(743, 689)
 		 Local $pointClose3 = [712, 114]
+		 Local $px3 = PixelGetColor(724, 659)
 		 For $row = 0 To $countUseCell
 			Local $currentCellY = $cellPointer[1] + $row*$ITEM_CELL_HEIGHT
 			For $column = 0 To 8
 			   Local $currentCellX = $cellPointer[0] + $column*$ITEM_CELL_WIDTH
-			   MouseMove($currentCellX, $currentCellY)
-			   Sleep(300)
-			   Local $px1 = PixelGetColor($pointClose1[0], $pointClose1[1])
-			   Local $px2 = PixelGetColor($pointClose2[0], $pointClose2[1])
-			   Local $px3 = PixelGetColor($pointClose3[0], $pointClose3[1])
 			   MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 5)
 			   Sleep(1000)
-			   If $px1 <> PixelGetColor($pointClose1[0], $pointClose1[1]) Then
+			   If $px1 <> PixelGetColor(852, 682) Then
 				  ClickNpcWithinTimeOut($pointClose1, $pointClose1, 300)
-			   ElseIf $px2 <> PixelGetColor($pointClose2[0], $pointClose2[1]) Then
+			   ElseIf $px2 <> PixelGetColor(743, 689) Then
 				  ClickNpcWithinTimeOut($pointClose2, $pointClose2, 300)
-			   ElseIf $px3 <> PixelGetColor($pointClose3[0], $pointClose3[1]) Then
+			   ElseIf $px3 <> PixelGetColor(724, 659) Then
 				  ClickNpcWithinTimeOut($pointClose3, $pointClose3, 300)
 			   EndIf
 			Next
 		 Next
-		 Local $closeMap = [31, 60]
-		 PressKeyWithinTimeOut($closeMap, "{TAB}", 1000)
-		 PressKeyWithinTimeOut($closeMap, "{ESC}", 1000)
+		 Local $firstCell = [$cellPointer[0], $cellPointer[1]]
+		 PressKeyWithinTimeOut($firstCell, "{ESC}", 1000)
 	  EndIf
    EndIf
    Return True

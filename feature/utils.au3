@@ -104,36 +104,19 @@ Func PressKeyWithinTimeOut($winPos, $key, $timeOut)
    Return False
 EndFunc
 
-Func KillDumpProcess($timeOut)
-   Local $maxLoop = $timeOut/100
-   For $i = 0 To $maxLoop
-	  If ProcessExists("DumpReportX86.exe") Then
-		 ProcessClose("DumpReportX86.exe")
-		 Sleep(100)
-	  Else
-		 ExitLoop
-	  EndIf
-   Next
-EndFunc
-
 Func ActiveWindowWithinTimeOut($win, $timeOut)
-   KillDumpProcess($timeOut)
    If WinExists($win) Then
-	  If WinActive($win) Then
-		 Return True
-	  Else
-		 WinActivate($win)
-		 Local $maxLoop = $timeOut/100
-		 For $i = 0 To $maxLoop
-			Sleep(100)
-			If WinActive($win) Then
-			   WriteLogDebug("utils", StringFormat("Actived window %s", $win))
-			   Return True
-			EndIf
-		 Next
-		 WriteLogDebug("utils", StringFormat("Timeout activation window %s after %d ms", $win, $timeOut))
-		 Return False
-	  EndIf
+	  WinActivate($win)
+	  Local $maxLoop = $timeOut/100
+	  For $i = 0 To $maxLoop
+		 If WinActive($win) Then
+			WriteLogDebug("utils", StringFormat("Actived window %s", $win))
+			Return True
+		 EndIf
+		 Sleep(100)
+	  Next
+	  WriteLogDebug("utils", StringFormat("Timeout activation window %s after %d ms", $win, $timeOut))
+	  Return False
    EndIf
    WriteLogDebug("utils", StringFormat("Not found window %s", $win))
    Return False
@@ -183,13 +166,13 @@ EndFunc
 
 Func WriteLog($caller, $msg)
    Local $logFile = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
-   _FileWriteLog($logFile, StringFormat("%s- INFO - %s", $caller, $msg))
+   _FileWriteLog($logFile, StringFormat("INFO - %s - %s", $caller, $msg))
 EndFunc
 
 Func WriteLogDebug($caller, $msg)
    If GUICtrlRead($UI_DEBUG_MODE) = $GUI_CHECKED Then
 	  Local $logFile = StringReplace(_NowCalcDate(), "/","-") & "." & "log"
-	  _FileWriteLog($logFile, StringFormat("%s- DEBUG - %s", $caller, $msg))
+	  _FileWriteLog($logFile, StringFormat("DEBUG - %s - %s", $caller, $msg))
    EndIf
 EndFunc
 
@@ -211,23 +194,6 @@ Func IsChangeWhenMouseHover($hoverPos, $checkPos)
    MouseMove($hoverPos[0], $hoverPos[1])
    Sleep(1000)
    Return $px <> PixelGetColor($checkPos[0], $checkPos[1])
-EndFunc
-
-Func FindIndex($character)
-   If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 10000) Then
-	  Local $listView = ControlGetHandle($WINDOW_LOGIN, "", "[CLASS:SysListView32;INSTANCE:1]")
-	  For $i = 0 To 5
-		 If _GUICtrlListView_GetItemCount($listView) = 0 Then
-			Exit
-		 EndIf
-		 Local $itemInfo = _GUICtrlListView_GetItem($listView, $i, 1)
-		 Local $name = StringStripWS($itemInfo[3], $STR_STRIPLEADING + $STR_STRIPTRAILING)
-		 If $name = $character Then
-			Return $i
-		 EndIf
-	  Next
-   EndIf
-  Return -1
 EndFunc
 
 Func GetWintitle($character)

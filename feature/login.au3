@@ -27,17 +27,32 @@ Func Login($paramDic)
 	  Return True
    EndIf
    If ActiveWindowWithinTimeOut($WINDOW_LOGIN, 3000) Then
-	  MouseClick($MOUSE_CLICK_LEFT, $FIRST_CHARACTER[0], $FIRST_CHARACTER[1])
+	  Local $count = 0
+	  Local $checkSum = PixelChecksum($FIRST_CHARACTER[0], $FIRST_CHARACTER[1], $FIRST_CHARACTER[0] + 5, $FIRST_CHARACTER[1] + 5, 1, WinGetHandle($WINDOW_LOGIN))
+	  While $checkSum = PixelChecksum($FIRST_CHARACTER[0], $FIRST_CHARACTER[1], $FIRST_CHARACTER[0] + 5, $FIRST_CHARACTER[1] + 5, 1, WinGetHandle($WINDOW_LOGIN))
+		 Sleep(100)
+		 MouseClick($MOUSE_CLICK_LEFT, $FIRST_CHARACTER[0], $FIRST_CHARACTER[1])
+		 $count += 1
+		 If $count = 10 Then
+			WriteLogDebug("Login", "Error click character")
+			ExitLoop
+		 EndIf
+	  WEnd
+
 	  If LoggedIn($character) Then
 		 WinActivate(GetWintitle($character))
 		 Return True
 	  EndIf
    EndIf
+   If WinExists(GetWintitle(".*")) Or WinExists($WINDOW_NKVS) Then
+	  ProcessClose("ClientX86.exe")
+	  GUICtrlSetState($UI_FEATURE_HIDE_GRAPHIC, $GUI_CHECKED)
+   EndIf
    Return False
 EndFunc
 
 Func LoggedIn($character)
-   For $i = 0 To 50
+   For $i = 0 To 5
 	  If WinExists(GetWintitle($character)) Then
 		 Return True
 	  EndIf

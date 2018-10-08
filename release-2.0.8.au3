@@ -31,6 +31,7 @@ Local $currentAccount, $currentFeature
 Local $accountIndex = 0
 Local $featureIndex = 0
 Local $LAST_RUN_DATE = @YDAY
+Local $LAST_FEATURE_BC_NO, $LAST_FEATURE_BC_STATE, $LAST_FEATURE_NTD_NO, $LAST_FEATURE_NTD_STATE
 
 Func BuidAutoUI()
    BuidUIAddAccount(1, 1)
@@ -73,6 +74,10 @@ While True
 	  BuildRuntimeAccounts()
 	  BuildRuntimeIgnore()
 	  $isRunning = True
+	  $LAST_FEATURE_BC_NO = GUICtrlRead($UI_FEATURE_BC_NO)
+	  $LAST_FEATURE_NTD_NO = GUICtrlRead($UI_FEATURE_NTD_NO)
+	  $LAST_FEATURE_BC_STATE = GUICtrlRead($UI_FEATURE_BC)
+	  $LAST_FEATURE_NTD_STATE = GUICtrlRead($UI_FEATURE_NTD)
    EndSwitch
 WEnd
 
@@ -83,13 +88,7 @@ Func Start()
 		 $LAST_RUN_DATE = @YDAY
 		 $featureIndex = 0
 		 $accountIndex = 0
-		 Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
-		 Local $files = _FileListToArrayRec($directoryPath, "*.ignore", 1 + 4, 0, 1, 2);
-		 If $files <> "" And $files[0] > 0 Then
-			For $i = 1 To $files[0]
-			   FileDelete($files[$i])
-			Next
-		 EndIf
+		 ReverseToOrigin()
 		 ContinueLoop
 	  EndIf
 	  Local $feature = $RUNTIME_FEATURES[$featureIndex]
@@ -110,11 +109,33 @@ Func Start()
 		 Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
 		 Local $doneFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done'
 		 FileMove($ignoreFile, $doneFile)
-		 GUICtrlSetState($UI_FEATURE_USE_ITEM, $GUI_CHECKED)
+		 If $RUNTIME_IGNORE_DIC.Exists($feature) Then
+			$RUNTIME_IGNORE_DIC.Remove($feature)
+		 EndIf
 		 ReduceNoFeature($feature)
 		 $accountIndex = 0
 	  EndIf
    WEnd
+EndFunc
+
+Func ReverseToOrigin()
+   Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
+   Local $ignoreFiles = _FileListToArrayRec($directoryPath, "*.ignore", 1 + 4, 0, 1, 2);
+   If $ignoreFiles <> "" And $ignoreFiles[0] > 0 Then
+	  For $i = 1 To $ignoreFiles[0]
+		 FileDelete($ignoreFiles[$i])
+	  Next
+   EndIf
+   Local $doneFiles = _FileListToArrayRec($directoryPath, "*.done", 1 + 4, 0, 1, 2);
+   If $doneFiles <> "" And $doneFiles[0] > 0 Then
+	  For $j = 1 To $doneFiles[0]
+		 FileDelete($doneFiles[$j])
+	  Next
+   EndIf
+   GUICtrlSetData($UI_FEATURE_BC_NO, $LAST_FEATURE_BC_NO)
+   GUICtrlSetData($UI_FEATURE_NTD_NO, $LAST_FEATURE_NTD_NO)
+   GUICtrlSetState($UI_FEATURE_BC, $LAST_FEATURE_BC_STATE)
+   GUICtrlSetState($UI_FEATURE_NTD, $LAST_FEATURE_NTD_STATE)
 EndFunc
 
 Func ReduceNoFeature($feature)
@@ -162,26 +183,30 @@ Func RunForOne($feature, $accountDic)
    If $RUNTIME_IGNORE_DIC.Exists($feature) And $RUNTIME_IGNORE_DIC.Item($feature).Exists($accountDic.Item($PARAM_CHAR)) Then
 	  Return
    EndIf
-   $accountDic.Add($PARAM_LEVEL, GUICtrlRead($UI_FEATURE_BC_LEVEL))
-   $accountDic.Add($PARAM_FEATURE_NAME, $feature)
+   Local $paramDic = ObjCreate("Scripting.Dictionary")
+   For $key In $accountDic.Keys
+	  $paramDic.Add($key, $accountDic.Item($key))
+   Next
+   $paramDic.Add($PARAM_LEVEL, GUICtrlRead($UI_FEATURE_BC_LEVEL))
+   $paramDic.Add($PARAM_FEATURE_NAME, $feature)
    Local $chainDic = ObjCreate("Scripting.Dictionary")
-   $chainDic.Add("AddAccount", $accountDic)
-   $chainDic.Add("Login", $accountDic)
-   $chainDic.Add("OnlineExp", $accountDic)
-   $chainDic.Add("UseItems", $accountDic)
-   $chainDic.Add("OpenCard", $accountDic)
-   $chainDic.Add("TurnOffGraphic", $accountDic)
-   $chainDic.Add("SrollCircle", $accountDic)
-   $chainDic.Add("BuyItemGoHome", $accountDic)
-   $chainDic.Add("RunTvp", $accountDic)
-   $chainDic.Add("RunNtd", $accountDic)
-   $chainDic.Add("RunBc", $accountDic)
-   $chainDic.Add("GetActiveAward", $accountDic)
-   $chainDic.Add("Logout", $accountDic)
-   WriteLog("main", StringFormat("Run for %s - %s - %s", $accountDic.Item($PARAM_USR), $accountDic.Item($PARAM_CHAR), $feature))
+   $chainDic.Add("AddAccount", $paramDic)
+   $chainDic.Add("Login", $paramDic)
+   $chainDic.Add("OnlineExp", $paramDic)
+   $chainDic.Add("UseItems", $paramDic)
+   $chainDic.Add("OpenCard", $paramDic)
+   $chainDic.Add("TurnOffGraphic", $paramDic)
+   $chainDic.Add("SrollCircle", $paramDic)
+   $chainDic.Add("BuyItemGoHome", $paramDic)
+   $chainDic.Add("RunTvp", $paramDic)
+   $chainDic.Add("RunNtd", $paramDic)
+   $chainDic.Add("RunBc", $paramDic)
+   $chainDic.Add("GetActiveAward", $paramDic)
+   $chainDic.Add("Logout", $paramDic)
+   WriteLog("main", StringFormat("Run for %s - %s - %s", $paramDic.Item($PARAM_USR), $paramDic.Item($PARAM_CHAR), $feature))
    If ExecuteChain($chainDic) Then
 	  Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
-	  FileWriteLine($ignoreFile, $accountDic.Item($PARAM_CHAR))
+	  FileWriteLine($ignoreFile, $paramDic.Item($PARAM_CHAR))
    EndIf
    Sleep(1000)
 EndFunc
@@ -218,4 +243,46 @@ Func CoundDown($seconds)
 	  Sleep(500)
    WEnd
    GUICtrlSetState($COUNT_DOWN, $GUI_HIDE)
+EndFunc
+
+; Return array objects
+Func BuildRuntimeAccounts()
+   Local $result = ObjCreate("Scripting.Dictionary")
+   Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
+   Local $files = _FileListToArrayRec($directoryPath, "*.acc", 1 + 4, 1, 1, 2);
+   If $files <> "" And $files[0] > 0 Then
+	  Local $count = 0;
+	  For $i = 1 To $files[0]
+		 Local $file = $files[$i]
+		 Local $lines = FileReadToArray($file)
+		 For $line In $lines
+			$count += 1
+			Local $accountObj = ObjCreate("Scripting.Dictionary")
+			Local $infomation = StringSplit($line, "=")
+			$accountObj.Add($PARAM_USR, $infomation[1])
+			$accountObj.Add($PARAM_CHAR, $infomation[2])
+			$accountObj.Add($PARAM_PWD, 'Ngoc@nh91')
+			$result.Add($count, $accountObj)
+		 Next
+	  Next
+   EndIf
+   $RUNTIME_ACCOUNTS = $result.Items
+EndFunc
+
+Func BuildRuntimeIgnore()
+   $RUNTIME_IGNORE_DIC = ObjCreate("Scripting.Dictionary")
+   Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
+   Local $files = _FileListToArrayRec($directoryPath, "*.ignore", 1 + 4, 0, 1, 2);
+   If $files <> "" And $files[0] > 0 Then
+	  For $i = 1 To $files[0]
+		 Local $file = $files[$i]
+		 Local $featureDic = ObjCreate("Scripting.Dictionary")
+		 Local $lines = FileReadToArray($file)
+		 For $line In $lines
+			$featureDic.Add($line, True)
+		 Next
+		 Local $featureName = StringReplace(StringReplace($file, $directoryPath & '\', ''), '.ignore', '')
+		 $RUNTIME_IGNORE_DIC.Add($featureName, $featureDic)
+	  Next
+   EndIf
 EndFunc

@@ -37,18 +37,18 @@ Func AddAccount($paramDic)
 	  MouseClick($MOUSE_CLICK_LEFT, $FIRST_CHARACTER[0] + 40, $FIRST_CHARACTER[1])
 	  ActiveWindowWithinTimeOut($WINDOW_LOGIN, 3000)
 	  EnterCharacter($usr, $pwd, $character)
-	  If WinExists($WINDOW_NKVS) Then
+	  If ExistCharacter() Then
 		 ; Update character
 		 MouseClick($MOUSE_CLICK_LEFT, $BUTTON_EDIT[0], $BUTTON_EDIT[1])
 		 Sleep(500)
-		 GUICtrlSetState($UI_FEATURE_HIDE_GRAPHIC, $GUI_UNCHECKED)
 	  Else
 		 ; Add new character
 		 MouseClick($MOUSE_CLICK_LEFT, $BUTTON_ADD[0], $BUTTON_ADD[1])
 		 Sleep(500)
 	  EndIf
+	  Return IsAddedAccount($character)
    EndIf
-   Return True
+   Return False
 EndFunc
 
 Func EnterCharacter($usr, $pwd, $char)
@@ -80,45 +80,18 @@ Func BuidUIAddAccount($row, $column)
    $UI_BUTTON_ADD_ACCOUNT = GUICtrlCreateButton("Thu muc", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
 EndFunc
 
-; Return array objects
-Func BuildRuntimeAccounts()
-   Local $result = ObjCreate("Scripting.Dictionary")
-   Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
-   Local $files = _FileListToArrayRec($directoryPath, "*.acc", 1 + 4, 1, 1, 2);
-   If $files <> "" And $files[0] > 0 Then
-	  Local $count = 0;
-	  For $i = 1 To $files[0]
-		 Local $file = $files[$i]
-		 Local $lines = FileReadToArray($file)
-		 For $line In $lines
-			$count += 1
-			Local $accountObj = ObjCreate("Scripting.Dictionary")
-			Local $infomation = StringSplit($line, "=")
-			$accountObj.Add($PARAM_USR, $infomation[1])
-			$accountObj.Add($PARAM_CHAR, $infomation[2])
-			$accountObj.Add($PARAM_PWD, 'Ngoc@nh91')
-			$result.Add($count, $accountObj)
-		 Next
-	  Next
-   EndIf
-   $RUNTIME_ACCOUNTS = $result.Items
+Func ExistCharacter()
+   Local $listView = ControlGetHandle($WINDOW_LOGIN, "", "[CLASS:SysListView32;INSTANCE:1]")
+   Return _GUICtrlListView_GetItemCount($listView) > 0 ? True : False
 EndFunc
 
-Func BuildRuntimeIgnore()
-   $RUNTIME_IGNORE_DIC = ObjCreate("Scripting.Dictionary")
-   Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
-   Local $files = _FileListToArrayRec($directoryPath, "*.ignore", 1 + 4, 0, 1, 2);
-   If $files <> "" And $files[0] > 0 Then
-	  For $i = 1 To $files[0]
-		 Local $file = $files[$i]
-		 Local $featureDic = ObjCreate("Scripting.Dictionary")
-		 Local $lines = FileReadToArray($file)
-		 For $line In $lines
-			$featureDic.Add($line, True)
-		 Next
-		 Local $featureName = StringReplace(StringReplace($file, $directoryPath & '\', ''), '.ignore', '')
-		 $RUNTIME_IGNORE_DIC.Add($featureName, $featureDic)
-	  Next
+Func IsAddedAccount($character)
+   Local $listView = ControlGetHandle($WINDOW_LOGIN, "", "[CLASS:SysListView32;INSTANCE:1]")
+	  If _GUICtrlListView_GetItemCount($listView) > 0 Then
+	  Local $firstItem = _GUICtrlListView_GetItem($listView, 0, 1)
+	  Local $name = StringStripWS($firstItem[3], $STR_STRIPLEADING + $STR_STRIPTRAILING)
+	  Return $name = $character ? True : False
    EndIf
-
+   Return False
 EndFunc
+

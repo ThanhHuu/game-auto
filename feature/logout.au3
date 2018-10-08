@@ -23,7 +23,6 @@ Opt("WinTitleMatchMode", 4)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-;Logout("PhanSanDoiA")
 Func Logout($paramDic)
    If ClickNpcWithinTimeOut($SYSTEM_POPUP, $BUTTON_SYSTEM, 2000) Then
 	  If ClickNpcWithinTimeOut($SYSTEM_POPUP, $BUTTON_SYSTEM_RELOGIN, 2000) Then
