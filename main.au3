@@ -5,15 +5,6 @@
 
 FileInstall("conf\Variables.cons", "Variables.cons")
 FileInstall("conf\Features.fea", "Features.fea")
-FileInstall("scenario\host\BuyItems.sce", "BuyItems.sce", 1)
-FileInstall("scenario\host\CauPhuc.sce", "CauPhuc.sce", 1)
-FileInstall("scenario\host\LatThe.sce", "LatThe.sce", 1)
-FileInstall("scenario\host\NhanSoiNoi.sce", "NhanSoiNoi.sce", 1)
-FileInstall("scenario\host\ShowHide0.sce", "ShowHide0.sce", 1)
-FileInstall("scenario\host\ShowHide1.sce", "ShowHide1.sce", 1)
-FileInstall("scenario\host\ShowHide2.sce", "ShowHide2.sce", 1)
-FileInstall("scenario\host\ShowHide3.sce", "ShowHide3.sce", 1)
-FileInstall("scenario\host\ShowHide4.sce", "ShowHide4.sce", 1)
 FileInstall("tm\Action.tm", "Action.tm", 1)
 FileInstall("tm\BiCanh1.tm", "BiCanh1.tm", 1)
 FileInstall("tm\BiCanh2.tm", "BiCanh2.tm", 1)
@@ -32,6 +23,7 @@ If $APP_PATH = "{}" Then
    Exit
 EndIf
 
+
 #cs
 return -1: reset all
 return 1: next feature
@@ -43,7 +35,7 @@ Func RunFeature($feature)
    footLog("INFO", StringFormat("%s - Run feature %s", "Main", $featureName))
    Local $files = _FileListToArrayRec(@WorkingDir, "*.acc", 1 + 4, 1, 1)
    If $files <> "" Then
-	  footLog("INFO", StringFormat("%s - Num of file %i", "Main", $files[0]))
+	  footLog("INFO", StringFormat("%s - Num of file %i", "RunFeature", $files[0]))
 	  Local $ignoreAccounts = ReadIgnoreAccount($featureName)
 	  For $i = 1 To $files[0]
 
@@ -52,7 +44,7 @@ Func RunFeature($feature)
 			; Ingore this account
 			ContinueLoop
 		 EndIf
-
+		 footLog("INFO", StringFormat("%s - run for file %s", "RunFeature", $accFile))
 		 Local $next = FirstScenario($template, $accFile)
 		 If $next = 0 Then
 			; Error step move file Accounts.xml
@@ -63,20 +55,18 @@ Func RunFeature($feature)
 			; Error login to window auto
 			Exit
 		 EndIf
-		 ThirdScenario($hwndAuto, $time*60)
-		 MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
+		 Local $logonGame = ThirdScenario($hwndAuto, $time*60)
+		 If $logonGame = -1 Then
+			footLog("ERROR", StringFormat("$s - Error run for %s", "RunFeature", $accFile))
+		 Else
+			MarkIgnoreAccount($ignoreAccounts, $featureName, $accFile)
 
-		 If $feature.Exists("scenarios") Then
-			footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))
-			Local $scenarios = StringSplit($feature.Item("scenarios"), "|")
-			For $i = 1 To $scenarios[0]
-			   Local $sceFile = $scenarios[$i] & ".sce"
-
-			   ApplyActionSteps($hwndAuto, $sceFile)
-			Next
+			If $feature.Exists("scenarios") Then
+			   footLog("INFO", StringFormat("%s - Run scenario %s", "RunFeature", $feature.Item("scenarios")))
+			   ApplyActionSteps($hwndAuto, $feature.Item("scenarios"))
+			EndIf
+			FinalScenario($hwndAuto)
 		 EndIf
-		 FinalScenario($hwndAuto)
-
 		 If _NowCalcDate() > $startDate Then
 			Return -1
 		 EndIf
@@ -92,9 +82,8 @@ While True
    $features = InitFeatures("Features.fea")
    Local $reset = False
    For $feature In $features
-	  Local $enable = $feature.Item("enable")
 	  Local $featureName = $feature.Item("feature")
-	  If $enable = 0 Or CheckFeatureDone($featureName) Then
+	  If CheckFeatureIsIgnore($feature) Then
 		 footLog("INFO", StringFormat("%s - Ignore feature %s", "Main", $featureName))
 		 ContinueLoop
 	  EndIf
@@ -107,7 +96,15 @@ While True
    If $reset Then
 	  footLog("INFO", StringFormat("%s - Reset for date %s", "Main", _NowCalcDate()))
 	  ResetBeforeInitialization()
-	  ExitLoop
+   Else
+	  While True
+		 Sleep(120000)
+		 If _NowCalcDate() > $startDate Then
+			footLog("INFO", StringFormat("%s - Reset for date %s", "Main", _NowCalcDate()))
+			ResetBeforeInitialization()
+			ExitLoop
+		 EndIf
+	  WEnd
    EndIf
 WEnd
 

@@ -193,7 +193,8 @@ Func footLog($level, $msg)
 	  EndIf
    EndSwitch
    If $allowLog Then
-	  _FileWriteLog($LOG_FILE, @TAB & $level & @TAB & $msg)
+	  Local $logFileName = $LOG_FILE & "." & StringReplace(_NowCalcDate(), "/","-")
+	  _FileWriteLog($logFileName, @TAB & $level & @TAB & $msg)
    EndIf
 EndFunc
 

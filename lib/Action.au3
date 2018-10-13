@@ -5,9 +5,11 @@ Opt("MouseCoordMode", 1)
 #RequireAdmin
 
 Local $CLICK = "click"
+Local $RIGHT_CLICK = "right-click"
 Local $DOUBLE_CLICK = "double-click"
 Local $PRESS = "press"
 Local $CALL = "call"
+Local $DRAG = "drag"
 
 Func ImplementAction($steps)
    For $step In $steps
@@ -30,10 +32,23 @@ Func ImplementAction($steps)
 		 MouseClick($MOUSE_CLICK_LEFT, $x, $y)
 		 Local $pause = $step.Item("pause")
 		 Sleep($pause)
+	  Case $RIGHT_CLICK
+		 Local $x = $step.Item("x")
+		 Local $y = $step.Item("y")
+		 MouseClick($MOUSE_CLICK_RIGHT, $x, $y)
+		 Local $pause = $step.Item("pause")
+		 Sleep($pause)
 	  Case $CALL
 		 Local $funcName = $step.Item("func")
 		 Local $hwnd = $step.Item("hwnd")
 		 Call($funcName, $hwnd)
+		 Local $pause = $step.Item("pause")
+		 Sleep($pause)
+	  Case $DRAG
+		 Local $x = $step.Item("x")
+		 Local $y = $step.Item("y")
+		 Local $z = $step.Item("z")
+		 MouseClickDrag("left",$x,$y,$z,$y)
 		 Local $pause = $step.Item("pause")
 		 Sleep($pause)
 	  Case Else

@@ -187,20 +187,41 @@ Func MarkFeatureDone($featureName)
    FileMove($ignoreAcc, $done)
 EndFunc
 
-Func CheckFeatureDone($featureName)
+Func CheckFeatureIsIgnore($feature)
+   Local $enable = $feature.Item("enable")
+   If $enable = 0 Then
+	  Return True
+   EndIf
+
+   If $feature.Exists("scheduler") Then
+	  Local $toDay = _DateDayOfWeek(@WDAY, $DMW_SHORTNAME)
+	  Local $scheduler = $feature.Item("scheduler")
+	  If StringInStr($scheduler, $toDay) = 0 Then
+		 Return True
+	  EndIf
+   EndIf
+
+   Local $featureName = $feature.Item("feature")
    Local $done = $featureName & ".done"
    Return FileExists($done)
 EndFunc
 
 Func ResetBeforeInitialization()
    Local $dones = _FileListToArrayRec(@WorkingDir, "*.done", 1)
-   For $done In $dones
-	  FileDelete($done)
-   Next
+   If $dones <> "" Then
+	  For $i = 1 To $dones[0]
+		 FileDelete($dones[$i])
+		 footLog("DEBUG", StringFormat("%s - Delete file %s", "ResetBeforeInitialization", $dones[$i]))
+	  Next
+   EndIf
+
    Local $ignores = _FileListToArrayRec(@WorkingDir, "*.ig", 1)
-   For $ingore In $ignores
-	  FileDelete($ingore)
-   Next
+   If $ignores <> "" Then
+	  For $j = 1 To $ignores[0]
+		 FileDelete($ignores[$j])
+		 footLog("DEBUG", StringFormat("%s - Delete file %s", "ResetBeforeInitialization", $ignores[$j]))
+	  Next
+   EndIf
 EndFunc
 
 

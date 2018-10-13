@@ -14,14 +14,23 @@ Dim $WINDOW_UPDATE = "[TITLE:VIEAUTO.COM - Auto Update]"
 Dim $WINDOW_LOGIN = "[TITLE:Tài khoản VIEAUTO.COM]"
 Dim $WINDOW_AUTO = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Dim $WINDOW_ERROR[2] = ["[TITLE:nkvsAuto]", "[TITLE:ClienX86.exe]"]
+Dim $SCENARIO_DIR = @WorkingDir & "\scenario\"
 
 Func CleanUpError()
    For $hwndError In $WINDOW_ERROR
 	  If WinExists($hwndError) Then
 		 footLog("DEBUG", StringFormat("$s - Exists error %s", "CleanUpError", $hwndError))
-		 WinClose($hwndError)
+		 If WinKill($hwndError) Then
+			footLog("DEBUG", StringFormat("$s - Closed error %s", "CleanUpError", $hwndError))
+		 Else
+			footLog("ERROR", StringFormat("$s - Can not close error %s", "CleanUpError", $hwndError))
+		 EndIf
 	  EndIf
    Next
+EndFunc
+Func CleanUpProcess()
+   KillProcess($PROCESS_OF_GAME)
+   KillProcess($PROCESS_OF_DUMP)
 EndFunc
 
 
@@ -110,11 +119,11 @@ Func LoginStep($hwndId, $waiting)
    EndIf
    Local $hbtLogin = FindButtonWithInstance($hwnd, 1, $waiting)
    If $hbtLogin = -1 Or $hbtLogin = -2 Then
-	  ; not found button login
+	   footLog("ERROR", StringFormat("%s - Clicked login fail", "LoginStep"))
 	  Return -1
    Else
 	  ClickButton($hwnd, $hbtLogin)
-	  footLog("DEBUG", StringFormat("%s - Update success return %s", "LoginStep", $WINDOW_AUTO))
+	  footLog("DEBUG", StringFormat("%s - Clicked login success return %s", "LoginStep", $WINDOW_AUTO))
 	  Return $WINDOW_AUTO
    EndIf
 EndFunc
@@ -124,13 +133,13 @@ Step logon game
 $hwndId: auto ui
 $waiting: waiting for logon button
 return -1: Deny next step because cannot select logon all
-return 0: Deny next step because cannot click implement
 return 1: Clicked implement
 #ce
 Func LogOnGameStep($hwndId, $waiting)
    Local $hwnd = WinWait($hwndId, "", 30)
    If $hwnd = 0 Then
-	  Return 0
+	  footLog("DEBUG", StringFormat("%s - Not found window auto", "LogOnGameStep"))
+	  Return -1
    EndIf
    Local $cbLogOn = FindComboboxContainOptions($hwnd, $LOGON_OPTIONS, $waiting);
    If $cbLogOn = -1 Or $cbLogOn = -2 Or Not SelectOption($hwnd, $cbLogOn, $LOGON_OPTIONS[2]) Then
@@ -138,7 +147,7 @@ Func LogOnGameStep($hwndId, $waiting)
    EndIf
    Local $btLogOn = FindButtonWithText($hwnd, "Thực hiện", $waiting)
    If $btLogOn = -1 Or $btLogOn = -2 Then
-	  Return 0
+	  Return -1
    Else
 	  ClickButton($hwnd, $btLogOn)
 	  Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
@@ -188,7 +197,9 @@ return 1: checked
 Func ApplyToAllCharacter($hwnd)
    Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
    Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
+   Local $winPos = WinGetPos($hwnd)
    WinActivate($hwnd)
+   WinMove($hwnd, "", $winPos[0], $winPos[1] - 30)
    For $i = 0 To $noCharacter - 1
 	  Local $chaStatus = _GUICtrlListView_GetItemText($listView, $i, $CHARACTER_STATUS_POSITION)
 	  If StringStripWS ($chaStatus, 8) == "OFFLINE" Then
@@ -250,51 +261,59 @@ Func StopAutoStep($hwndId, $waiting)
 	  EndIf
 	  ClickButton($hwndConfirm, $btYes)
    EndIf
-   Sleep(1000)
-   If ProcessExists($PROCESS_OF_GAME) <> 0 Then
-	  footLog("DEBUG", StringFormat("%s - Still exists process %s", "StopAutoStep", $PROCESS_OF_GAME))
-	  Local $count = 0;
-	  While $count < 100
-		 $count += 1
-		 If ProcessClose($PROCESS_OF_GAME) = 1 Then
-			; kill success
-			ExitLoop
-		 EndIf
-		 Sleep(500)
-	  WEnd
-	  If $count = 100 Then
-		 ; error kill process after try
-		 Return -3
-	  EndIf
-   EndIf
-   If ProcessExists($PROCESS_OF_DUMP) <> 0 Then
-	  footLog("DEBUG", StringFormat("%s - Still exists process %s", "StopAutoStep", $PROCESS_OF_DUMP))
-	  While $count < 100
-		 $count += 1
-		 If ProcessClose($PROCESS_OF_DUMP) = 1 Then
-			; kill success
-			ExitLoop
-		 EndIf
-		 Sleep(500)
-	  WEnd
-   EndIf
-
+   Sleep(500)
+   KillProcess($PROCESS_OF_GAME)
+   Sleep(500)
+   KillProcess($PROCESS_OF_DUMP)
    Return 1
 EndFunc
 
-Func ApplyActionSteps($hwnd, $scenario)
+Func KillProcess($processName)
+   Local $try = 0
+   While $try < 100
+	  $try += 1
+	  If ProcessExists($processName) <> 0 Then
+		 footLog("DEBUG", StringFormat("%s - Still exists process %s", "StopAutoStep", $processName))
+		 Local $count = 0;
+		 While $count < 100
+			$count += 1
+			If ProcessClose($processName) = 1 Then
+			   footLog("DEBUG", StringFormat("%s - Killed process %s", "StopAutoStep", $processName))
+			   ExitLoop
+			EndIf
+			Sleep(100)
+		 WEnd
+		 If $count = 100 Then
+			footLog("ERROR", StringFormat("%s - Can not exit exists process %s", "StopAutoStep", $processName))
+			Return -1
+		 EndIf
+	  Else
+		 ExitLoop
+	  EndIf
+   WEnd
+   Return 1
+EndFunc
+
+
+Func ApplyActionSteps($hwnd, $strScenarios)
    Local $listView = ControlGetHandle($hwnd, "", $CHARACTER_LIST_VIEW)
    Local $noCharacter = _GUICtrlListView_GetItemCount($listView)
 
    For $i = 0 To $noCharacter - 1
-	  Local $showHideSce = StringReplace($SHOW_HIDE_SCENARIO_PATTERN, "{}", $i)
+	  Local $showHideSce = $SCENARIO_DIR & StringReplace($SHOW_HIDE_SCENARIO_PATTERN, "{}", $i)
 	  Local $showHideSteps = BuildActionSteps($showHideSce)
 
 	  ; Show game
 	  ImplementAction($showHideSteps)
-	  footLog("DEBUG", StringFormat("%s - Run scenario %s", "ApplyActionSteps", $scenario))
-	  Local $actionSteps = BuildActionSteps($scenario)
-	  ImplementAction($actionSteps)
+	  Local $scenarios = StringSplit($strScenarios, "|")
+	  If $scenarios <> "" Then
+		 For $j = 1 To $scenarios[0]
+			Local $scenario = $SCENARIO_DIR & $scenarios[$j] & ".sce"
+			footLog("DEBUG", StringFormat("%s - Run scenario %s", "ApplyActionSteps", $scenario))
+			Local $actionSteps = BuildActionSteps($scenario)
+			ImplementAction($actionSteps)
+		 Next
+	  EndIf
 	  ; Hide game
 	  ImplementAction($showHideSteps)
    Next

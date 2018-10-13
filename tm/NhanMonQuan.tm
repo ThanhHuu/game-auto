@@ -3,7 +3,7 @@
         <LoginTab control="0" domain="0" server="Kim Kiếm" user="{account1}" pass="96D1C7ADF400B0FBA00F68B0DAF1E1632D2E52B112611207F5EA165BBA44FAC4" player="{character1}" safe="8838DDA8A415F0B5D16F1CEEE7977112" nhaphathanh="0" hide="1"/>
         <BasicTab faction="0" enemyplayer="0" chkpk="0" setpk="4" follow="0" followtp="0" followrange="372" followattack="0" pvptarget="0" pvprange="0" pvprangevalue="800" usehp="1" usehpvalue="50" svrday="0" svrmonth="0" svryear="0">
             <Activity act="21" checked="1" completed="0"/>
-            <Activity act="20" checked="1" completed="0"/>
+            <Activity act="20" checked="0" completed="0"/>
             <Activity act="2" checked="0" completed="0"/>
             <Activity act="1" checked="0" completed="0"/>
             <Activity act="3" checked="0" completed="0"/>
@@ -95,7 +95,7 @@
         <LoginTab control="0" domain="0" server="Kim Kiếm" user="{account2}" pass="96D1C7ADF400B0FBA00F68B0DAF1E1632D2E52B112611207F5EA165BBA44FAC4" player="{character2}" safe="8838DDA8A415F0B5D16F1CEEE7977112" nhaphathanh="0" hide="1"/>
         <BasicTab faction="0" enemyplayer="0" chkpk="0" setpk="4" follow="0" followtp="0" followrange="372" followattack="0" pvptarget="0" pvprange="0" pvprangevalue="800" usehp="1" usehpvalue="50" svrday="0" svrmonth="0" svryear="0">
             <Activity act="21" checked="1" completed="0"/>
-            <Activity act="20" checked="1" completed="0"/>
+            <Activity act="20" checked="0" completed="0"/>
             <Activity act="2" checked="0" completed="0"/>
             <Activity act="1" checked="0" completed="0"/>
             <Activity act="3" checked="0" completed="0"/>
@@ -185,7 +185,7 @@
         <LoginTab control="0" domain="0" server="Kim Kiếm" user="{account3}" pass="96D1C7ADF400B0FBA00F68B0DAF1E1632D2E52B112611207F5EA165BBA44FAC4" player="{character3}" safe="8838DDA8A415F0B5D16F1CEEE7977112" nhaphathanh="0" hide="1"/>
         <BasicTab faction="0" enemyplayer="0" chkpk="0" setpk="4" follow="0" followtp="0" followrange="372" followattack="0" pvptarget="0" pvprange="0" pvprangevalue="800" usehp="1" usehpvalue="50" svrday="0" svrmonth="0" svryear="0">
             <Activity act="21" checked="1" completed="0"/>
-            <Activity act="20" checked="1" completed="0"/>
+            <Activity act="20" checked="0" completed="0"/>
             <Activity act="2" checked="0" completed="0"/>
             <Activity act="1" checked="0" completed="0"/>
             <Activity act="3" checked="0" completed="0"/>
@@ -275,7 +275,7 @@
         <LoginTab control="0" domain="0" server="Kim Kiếm" user="{account4}" pass="96D1C7ADF400B0FBA00F68B0DAF1E1632D2E52B112611207F5EA165BBA44FAC4" player="{character4}" safe="8838DDA8A415F0B5D16F1CEEE7977112" nhaphathanh="0" hide="1"/>
         <BasicTab faction="0" enemyplayer="0" chkpk="0" setpk="4" follow="0" followtp="0" followrange="372" followattack="0" pvptarget="0" pvprange="0" pvprangevalue="800" usehp="1" usehpvalue="50" svrday="0" svrmonth="0" svryear="0">
             <Activity act="21" checked="1" completed="0"/>
-            <Activity act="20" checked="1" completed="0"/>
+            <Activity act="20" checked="0" completed="0"/>
             <Activity act="2" checked="0" completed="0"/>
             <Activity act="1" checked="0" completed="0"/>
             <Activity act="3" checked="0" completed="0"/>
@@ -365,7 +365,7 @@
         <LoginTab control="0" domain="0" server="Kim Kiếm" user="{account5}" pass="96D1C7ADF400B0FBA00F68B0DAF1E1632D2E52B112611207F5EA165BBA44FAC4" player="{character5}" safe="8838DDA8A415F0B5D16F1CEEE7977112" nhaphathanh="0" hide="1"/>
         <BasicTab faction="0" enemyplayer="0" chkpk="0" setpk="4" follow="0" followtp="0" followrange="372" followattack="0" pvptarget="0" pvprange="0" pvprangevalue="800" usehp="1" usehpvalue="50" svrday="0" svrmonth="0" svryear="0">
             <Activity act="21" checked="1" completed="0"/>
-            <Activity act="20" checked="1" completed="0"/>
+            <Activity act="20" checked="0" completed="0"/>
             <Activity act="2" checked="0" completed="0"/>
             <Activity act="1" checked="0" completed="0"/>
             <Activity act="3" checked="0" completed="0"/>

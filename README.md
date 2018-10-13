@@ -1,2 +1,2 @@
 # game-auto
-My autoit script for game
+Release 2.0.5 Support Run NhanMonQuan parallel

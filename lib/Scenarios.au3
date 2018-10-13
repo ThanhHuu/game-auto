@@ -14,6 +14,7 @@ Prepare account and start auto
 #ce
 Func FirstScenario($template, $accFile)
    CleanUpError()
+   CleanUpProcess()
    If FileExists($template) = 0 Or FileExists($template) = 0 Then
 	  ; Missing param
 	  Return 0
@@ -39,6 +40,8 @@ Update and login
 Return window auto
 #ce
 Func SecondScenario($pause)
+   CleanUpError()
+   CleanUpProcess()
    Local $hwnUpdate = StartStep($APP_PATH)
    If $hwnUpdate = -1 Then
 	  ; Error start auto
@@ -65,11 +68,13 @@ $pause: wait logon all character
 #ce
 Func ThirdScenario($hwndAuto, $pause)
    Local $loggedOn = LogOnGameStep($hwndAuto, 5)
-   If $loggedOn = -1 Or $loggedOn = 0 Then
+   If $loggedOn = -1 Then
 	  ; error dang nhap tat ca
+	  footLog("ERROR", StringFormat("%s - Can not logon game", "ThirdScenario") )
 	  Return -1
    Else
 	  ; bat dau chay hoat dong
+	  CleanUpError()
 	  ApplyToAllCharacter($hwndAuto)
 	  Sleep($pause*1000)
 	  Return 1
@@ -81,6 +86,7 @@ logout and stop auto
 #ce
 Func FinalScenario($hwndAuto)
    LogOutGameStep($hwndAuto, 5)
+   Sleep(3000)
    StopAutoStep($hwndAuto, 5)
 EndFunc
 
