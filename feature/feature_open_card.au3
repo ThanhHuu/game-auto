@@ -36,8 +36,6 @@ Func OpenCard($paramDic)
    Local $closePos = [711, 103]
    ClickNpcWithinTimeOut($luckyPointerPos, $closePos, 500)
    Local $onlineExpPos = [484, 364]
-   PressKeyWithinTimeOut($onlineExpPos, "{TAB}", 500)
-   PressKeyWithinTimeOut($onlineExpPos, "{ESC}", 500)
    Local $healPos = [498, 497]
    ClickNpcWithinTimeOut($onlineExpPos, $healPos, 700)
    Return True

@@ -25,7 +25,7 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 HotKeySet("^q", "Stop")
 
-Local $UI, $BUTTON_RUN, $COUNT_DOWN
+Local $UI, $BUTTON_RUN, $COUNT_DOWN, $CURRENT_CHARACTER
 Local $isRunning = False
 Local $currentAccount, $currentFeature
 Local $accountIndex = 0
@@ -50,6 +50,7 @@ Func BuidAutoUI()
    BuildBcUI(6, 1)
 
    BuildActionUI(7, 1)
+   BuildCurrentCharacterInfo(7, 2)
 EndFunc
 
 $UI = GUICreate("Auto Configuration",460, 240)
@@ -66,14 +67,18 @@ While True
 	  Local $dir = FileSelectFolder ("", @WindowsDir)
 	  GUICtrlSetData($UI_INPUT_ACCOUNTS, $dir)
    Case $BUTTON_RUN
-	  If Not WinExists($WINDOW_LOGIN) Then
-		 MsgBox(0, "Warning", "Please start nkvs auto")
+	  If Not WinExists($WINDOW_NKVS) Then
+		 MsgBox(0, "Warning", "Please open instance NKVS2")
 		 ContinueLoop
 	  EndIf
 	  CoundDown(3)
+	  WriteLog("main", "START at date " & $LAST_RUN_DATE)
 	  BuildRuntimeAccounts()
 	  BuildRuntimeIgnore()
+	  LoadMapCharacter()
 	  $isRunning = True
+	  $featureIndex = 0
+	  $accountIndex = 0
 	  $LAST_FEATURE_BC_NO = GUICtrlRead($UI_FEATURE_BC_NO)
 	  $LAST_FEATURE_NTD_NO = GUICtrlRead($UI_FEATURE_NTD_NO)
 	  $LAST_FEATURE_BC_STATE = GUICtrlRead($UI_FEATURE_BC)
@@ -89,6 +94,8 @@ Func Start()
 		 $featureIndex = 0
 		 $accountIndex = 0
 		 ReverseToOrigin()
+		 BuildRuntimeIgnore()
+		 WriteLog("main", "Reset for new date")
 		 ContinueLoop
 	  EndIf
 	  Local $feature = $RUNTIME_FEATURES[$featureIndex]
@@ -114,6 +121,7 @@ Func Start()
 		 EndIf
 		 ReduceNoFeature($feature)
 		 $accountIndex = 0
+		 GUICtrlSetState($UI_FEATURE_USE_ITEM, $GUI_UNCHECKED)
 	  EndIf
    WEnd
 EndFunc
@@ -189,8 +197,8 @@ Func RunForOne($feature, $accountDic)
    Next
    $paramDic.Add($PARAM_LEVEL, GUICtrlRead($UI_FEATURE_BC_LEVEL))
    $paramDic.Add($PARAM_FEATURE_NAME, $feature)
+   GUICtrlSetData($CURRENT_CHARACTER, $paramDic.Item($PARAM_CHAR))
    Local $chainDic = ObjCreate("Scripting.Dictionary")
-   $chainDic.Add("AddAccount", $paramDic)
    $chainDic.Add("Login", $paramDic)
    $chainDic.Add("OnlineExp", $paramDic)
    $chainDic.Add("UseItems", $paramDic)
@@ -208,7 +216,6 @@ Func RunForOne($feature, $accountDic)
 	  Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
 	  FileWriteLine($ignoreFile, $paramDic.Item($PARAM_CHAR))
    EndIf
-   Sleep(1000)
 EndFunc
 
 Func Stop()
@@ -231,6 +238,15 @@ Func BuildActionUI($row, $column)
    GUICtrlSetFont($COUNT_DOWN, 50, $FW_MEDIUM)
    GUICtrlSetState($COUNT_DOWN, $GUI_ONTOP )
    GUICtrlSetBkColor($COUNT_DOWN, $GUI_BKCOLOR_TRANSPARENT)
+EndFunc
+
+Func BuildCurrentCharacterInfo($row, $column)
+   Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * ($row - 1) + $UI_MARGIN_TOP * 2
+   Local $marginLeft = ($column - 1) * $UI_COLUMN_WIDTH + $UI_MARGIN_LEFT
+   Local $width = $UI_LABEL_WIDTH
+   GUICtrlCreateLabel("Dang chay:", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $CURRENT_CHARACTER = GUICtrlCreateLabel("", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
 EndFunc
 
 Func CoundDown($seconds)
@@ -283,6 +299,17 @@ Func BuildRuntimeIgnore()
 		 Next
 		 Local $featureName = StringReplace(StringReplace($file, $directoryPath & '\', ''), '.ignore', '')
 		 $RUNTIME_IGNORE_DIC.Add($featureName, $featureDic)
+	  Next
+   EndIf
+EndFunc
+
+Func LoadMapCharacter()
+   $RUNTIME_MAP_CHARACTER = ObjCreate("Scripting.Dictionary")
+   If FileExists($CHARACTER_INDEX_FILE) Then
+	  Local $lines = FileReadToArray($CHARACTER_INDEX_FILE)
+	  For $line In $lines
+		 Local $infomation = StringSplit($line, "=")
+		 $RUNTIME_MAP_CHARACTER.Add($infomation[1], $infomation[2])
 	  Next
    EndIf
 EndFunc

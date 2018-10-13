@@ -46,12 +46,12 @@ Func BuyItemGoHome($paramDic)
 			   Local $confirmBt2 = [520, 450]
 			   ClickNpcWithinTimeOut($confirmBt1, $confirmBt2, 300)
 			EndIf
+			PressKeyWithinTimeOut($shopPos, "{ESC}", 3000)
 		 EndIf
 	  EndIf
+   Else
+	  PressKeyWithinTimeOut($MOVING_CHOICE_POPUP, "{ESC}", 3000)
    EndIf
-   Send("{TAB}")
-   Sleep(300)
-   Send("{ESC}")
    Return True
 EndFunc
 

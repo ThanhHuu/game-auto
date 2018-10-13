@@ -55,7 +55,10 @@ Func UseItems($paramDic)
 			Next
 		 Next
 		 Local $firstCell = [$cellPointer[0], $cellPointer[1]]
-		 PressKeyWithinTimeOut($firstCell, "{ESC}", 1000)
+		 PressKeyWithinTimeOut($BAG_POS, "{ESC}", 3000)
+		 Local $cancelOpenStockPos = [617, 459]
+		 Local $cancelOpenStockPxPos = [$cancelOpenStockPos[0] - 50, $cancelOpenStockPos[1]]
+		 ClickNpcWithinTimeOut($cancelOpenStockPxPos, $cancelOpenStockPos, 1000)
 	  EndIf
    EndIf
    Return True
@@ -65,8 +68,7 @@ Func OpenUseBag($paramDic)
    Local $offExpPos = [909, 706]
    Local $offExpPopUpPos = [260, 201]
    If ClickNpcWithinTimeOut($offExpPopUpPos, $offExpPos, 1000) Then
-	  PressKeyWithinTimeOut($offExpPopUpPos, "{TAB}", 200)
-	  PressKeyWithinTimeOut($offExpPopUpPos, "{ESC}", 200)
+	  PressKeyWithinTimeOut($offExpPopUpPos, "{ESC}", 3000)
    EndIf
    Local $assistantDonePos = [887, 688]
    ClickNpcWithinTimeOut($assistantDonePos, $assistantDonePos, 100)

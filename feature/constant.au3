@@ -9,7 +9,6 @@
 #ce ----------------------------------------------------------------------------
 #include-once
 ; Script Start - Add your code below here
-Local $WINDOW_LOGIN = "[REGEXPTITLE:Auto Ngạo Kiếm Vô Song 2]"
 Local $BUTTON_ADD = [260, 220]
 Local $BUTTON_EDIT = [260, 265]
 Local $WINDOW_NKVS = "[REGEXPTITLE:Ngạo Kiếm Vô Song II.*]"

@@ -30,10 +30,6 @@ Func BuildTvpUI($row, $column)
    $UI_FEATURE_TVP = GUICtrlCreateCheckbox("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
 EndFunc
 
-
-;WinActivate($WINDOW_NKVS)
-;Local $pramTest = ObjCreate("Scripting.Dictionary")
-;RunTvp($pramTest)
 Func RunTvp($paramDic)
    If $paramDic.Item($PARAM_FEATURE_NAME) = $RUNTIME_FEATURE_TVP And GUICtrlRead($UI_FEATURE_TVP) = $GUI_CHECKED Then
 	  WriteLog("feature_tvp", "Run TVP")

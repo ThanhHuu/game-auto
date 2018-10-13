@@ -37,8 +37,7 @@ Func SrollCircle($paramDic)
 			MouseClick($MOUSE_CLICK_LEFT, 715,525)
 			Sleep(100)
 		 EndIf
-		 PressKeyWithinTimeOut($luckyRoundPos, "{TAB}", 1000)
-		 PressKeyWithinTimeOut($luckyRoundPos, "{ESC}", 1000)
+		 PressKeyWithinTimeOut($luckyRoundPos, "{ESC}", 3000)
 	  EndIf
    EndIf
    Return True

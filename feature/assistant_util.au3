@@ -23,8 +23,6 @@ Func GoToHome($paramDic)
    Return False
 EndFunc
 
-;WinActivate("Ngạo Kiếm Vô Song II(TrangPhóDoiB Cụm 1 Kim Kiếm) Version: 0.127")
-;AssistantAward("")
 Func AssistantAward($paramDic)
    If ClickNpcWithinTimeOut($HOME_ASSISTANT_POPUP, $HOME_ASSISTANT_POS, 3000) Then
 	  Local $closeAwardPopUp = [1002, 210]
@@ -52,10 +50,7 @@ Func AssistantAward($paramDic)
 		 ClickNpcWithinTimeOut($closeAwardPopUp, $closeAwardPopUp, 1000)
 	  EndIf
    EndIf
-   Send("{TAB}")
-   Sleep(300)
-   Send("{ESC}")
-   Sleep(300)
+   PressKeyWithinTimeOut($HOME_ASSISTANT_POPUP, "{ESC}", 3000)
    Return True
 EndFunc
 
@@ -80,9 +75,7 @@ Func AssistantFeature($paramDic)
 		 EndIf
 	  EndIf
    EndIf
-   Send("{TAB}")
-   Sleep(200)
-   Send("{ESC}")
+   PressKeyWithinTimeOut($HOME_ASSISTANT_POPUP, "{ESC}", 3000)
    Return True
 EndFunc
 
