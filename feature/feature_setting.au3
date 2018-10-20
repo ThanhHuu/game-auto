@@ -24,8 +24,6 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-;WinActivate($WINDOW_NKVS)
-;TurnOffGraphic("")
 Func TurnOffGraphic($paramDic)
    Local $posObj = ObjCreate("Scripting.Dictionary")
    If GUICtrlRead($UI_FEATURE_HIDE_GRAPHIC) = $GUI_CHECKED Then
@@ -58,32 +56,31 @@ Func TurnOffGraphic($paramDic)
 	  $posObj.Add(11, $pos11)
 	  $posObj.Add(12, $pos12)
 	  $posObj.Add(13, $pos13)
-	  GUICtrlSetState($UI_FEATURE_HIDE_GRAPHIC, $GUI_UNCHECKED)
    Else
 	  Local $pos2 = [531, 270]
 	  $posObj.Add(2, $pos2)
    EndIf
 
-   If ClickNpcWithinTimeOut($BUTTON_SYSTEM, $BUTTON_SYSTEM, 2000) Then
+   If LeftClick($BUTTON_SYSTEM, $BUTTON_SYSTEM, 3000) Then
 	  Local $popUpPos = [250, 188]
-	  If ClickNpcWithinTimeOut($popUpPos, $BUTTON_SYSTEM_SETUP, 2000) Then
+	  If LeftClick($popUpPos, $BUTTON_SYSTEM_SETUP, 2000) Then
 		 MouseClick($MOUSE_CLICK_LEFT, 390, 225)
 		 Sleep(200)
 		 MouseClick($MOUSE_CLICK_LEFT, 340, 370)
 		 Sleep(200)
 		 Local $advanceBtPos = [439, 526]
 		 Local $advanceOptPos = [339, 527]
-		 If ClickNpcWithinTimeOut($advanceBtPos, $advanceOptPos, 2000) Then
-			If ClickNpcWithinTimeOut($advanceBtPos, $advanceBtPos, 2000) Then
+		 If LeftClick($advanceBtPos, $advanceOptPos, 2000) Then
+			If LeftClick($advanceBtPos, $advanceBtPos, 2000) Then
 			   For $pos In $posObj.Items
 				  MouseClick($MOUSE_CLICK_LEFT, $pos[0], $pos[1])
 			   Next
 			   Local $btConfirmPos = [569, 570]
-			   ClickNpcWithinTimeOut($btConfirmPos, $btConfirmPos, 2000)
+			   LeftClick($btConfirmPos, $btConfirmPos, 2000)
 			EndIf
 		 EndIf
 	  EndIf
-	  PressKeyWithinTimeOut($popUpPos, "{ESC}", 3000)
+	  PressKey($popUpPos, "{ESC}", 3000)
    EndIf
    Return True
 EndFunc

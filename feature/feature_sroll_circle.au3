@@ -17,15 +17,13 @@
 #include <GUIConstantsEx.au3>
 #include <EditConstants.au3>
 
-;WinActivate($WINDOW_NKVS)
-;SrollCircle("")
 Func SrollCircle($paramDic)
    If GUICtrlRead($UI_FEATURE_LUCKY_ROUND) = $GUI_CHECKED Then
 	  Local $luckyRoundPos = [788, 164]
-	  If PressKeyWithinTimeOut($luckyRoundPos, "j", 2000) Then
+	  If PressKey($luckyRoundPos, "j", 2000) Then
 		 Local $winPos = [682, 181]
 		 Local $npcPos = [820,420]
-		 If ClickNpcWithinTimeOut($winPos, $npcPos, 1000) Then
+		 If LeftClick($winPos, $npcPos, 1000) Then
 			Local $beforePx = PixelGetColor(688, 524)
 			For $i = 0 To 4
 			   MouseClick($MOUSE_CLICK_LEFT, 415,370, 2)
@@ -37,7 +35,7 @@ Func SrollCircle($paramDic)
 			MouseClick($MOUSE_CLICK_LEFT, 715,525)
 			Sleep(100)
 		 EndIf
-		 PressKeyWithinTimeOut($luckyRoundPos, "{ESC}", 3000)
+		 PressKey($luckyRoundPos, "{ESC}", 3000)
 	  EndIf
    EndIf
    Return True

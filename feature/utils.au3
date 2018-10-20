@@ -17,149 +17,115 @@
 #include <GuiListView.au3>
 #include "constant.au3"
 #include <GUIConstantsEx.au3>
+#include <WinAPI.au3>
 
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-Func PressMap($character)
-   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
-   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
-	  Local $basePx = PixelGetColor(27, 48)
-	  Local $count = 0;
-	  Local $maxLoop = 30
-	  Send("{TAB}")
-	  While $count  < $maxLoop
-		 $count += 1
-		 Sleep(100)
-		 If $basePx <> PixelGetColor(27, 48) Then
-			ExitLoop
-		 EndIf
-	  WEnd
-   EndIf
+HotKeySet("^e", "ForceExit")
+Func ForceExit()
+   Exit
 EndFunc
 
-Func WaitingMovingWithinTimeOut($offset, $timeOut)
-   Local $pointerPos = WinGetClientSize($WINDOW_NKVS)
-   Local $pointerX = $pointerPos[0]/2
-   Local $pointerY = $pointerPos[1]/2
-   Local $maxCount = $timeOut/3000
-   For $i = 0 To $maxCount
-	  Local $preTopPx = PixelGetColor($pointerX - $offset, $pointerY - $offset)
-	  Local $preRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
-	  Local $preBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
-	  Local $preLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
-	  Sleep(3000)
-	  Local $nextTopPx = PixelGetColor($pointerX - $offset,$pointerY - $offset)
-	  Local $nextRightPx = PixelGetColor($pointerX + $offset,$pointerY - $offset)
-	  Local $nextBottomtPx = PixelGetColor($pointerX + $offset,$pointerY + $offset)
-	  Local $nextLeftPx = PixelGetColor($pointerX - $offset,$pointerY + $offset)
-	  If $preTopPx = $nextTopPx And $preRightPx = $nextRightPx And $preBottomtPx = $nextBottomtPx And $preLeftPx = $nextLeftPx Then
-		 Return True
-	  EndIf
-   Next
-   Return False
-EndFunc
-
-Func ClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
-   Local $basePx = PixelGetColor($winPos[0], $winPos[1])
-   MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1])
-   Local $maxLoop = $timeOut/100
+Func LeftClick($baseCoord, $coord, $waitingTime, $numberClick = 1)
+   Local $basePx = PixelGetColor($baseCoord[0], $baseCoord[1])
+   MouseClick($MOUSE_CLICK_LEFT, $coord[0], $coord[1], $numberClick)
+   Local $maxLoop = $waitingTime/100
    For $i = 0 To $maxLoop
 	  Sleep(100)
-	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
+	  If $basePx <> PixelGetColor($baseCoord[0], $baseCoord[1]) Then
 		Return True
 	  EndIf
    Next
    Return False
 EndFunc
 
-Func RightClickNpcWithinTimeOut($winPos, $npcPos, $timeOut)
-   Local $basePx = PixelGetColor($winPos[0], $winPos[1])
+Func RightClick($popupCoord, $npcPos, $timeOut)
+   Local $basePx = PixelGetColor($popupCoord[0], $popupCoord[1])
    MouseClick($MOUSE_CLICK_RIGHT, $npcPos[0], $npcPos[1])
    Local $maxLoop = $timeOut/100
    For $i = 0 To $maxLoop
 	  Sleep(100)
-	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
+	  If $basePx <> PixelGetColor($popupCoord[0], $popupCoord[1]) Then
 		 Return True
 	  EndIf
    Next
    Return False
 EndFunc
 
-Func PressKeyWithinTimeOut($winPos, $key, $timeOut)
-   Local $basePx = PixelGetColor($winPos[0], $winPos[1])
+Func PressKey($popupCoord, $key, $timeOut)
+   Local $basePx = PixelGetColor($popupCoord[0], $popupCoord[1])
    Send($key)
    Local $maxLoop = $timeOut/100
    For $i = 0 To $maxLoop
 	  Sleep(100)
-	  If $basePx <> PixelGetColor($winPos[0], $winPos[1]) Then
+	  If $basePx <> PixelGetColor($popupCoord[0], $popupCoord[1]) Then
 		 Return True
 	  EndIf
    Next
-   WriteLogDebug("utils", StringFormat("Timeout when press %s", $key))
    Return False
 EndFunc
 
-Func ActiveWindowWithinTimeOut($win, $timeOut)
-   If WinExists($win) Then
-	  WinActivate($win)
-	  Local $maxLoop = $timeOut/100
-	  For $i = 0 To $maxLoop
-		 If WinActive($win) Then
-			WriteLogDebug("utils", StringFormat("Actived window %s", $win))
+Func ActiveWindow($hwnd, $waitingTime)
+   Local $deplay = 100
+   If WinExists($hwnd) Then
+	  WinActivate($hwnd)
+	  Local $maxLoop = $waitingTime/$deplay
+	  For $i = 1 To $maxLoop
+		 Sleep($deplay)
+		 If WinActive($hwnd) Then
 			Return True
 		 EndIf
-		 Sleep(100)
 	  Next
-	  WriteLogDebug("utils", StringFormat("Timeout activation window %s after %d ms", $win, $timeOut))
 	  Return False
    EndIf
-   WriteLogDebug("utils", StringFormat("Not found window %s", $win))
+   WriteLogDebug("utils", StringFormat("Not found window %s", $hwnd))
    Return False
 EndFunc
 
-Func ClickChangeMapWithinTimeOut($mapPos1, $mapPos2, $mapPos3, $npcPos, $timeOut)
-   Local $basePx1 = PixelGetColor($mapPos1[0], $mapPos1[1])
-   Local $basePx2 = PixelGetColor($mapPos2[0], $mapPos2[1])
-   Local $basePx3 = PixelGetColor($mapPos3[0], $mapPos3[1])
-   MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1])
-   Local $maxLoop = $timeOut/1000
-   For $i = 0 To $maxLoop
-	  Sleep(1000)
-	  If $basePx1 <> PixelGetColor($mapPos1[0], $mapPos1[1]) And $basePx2 <> PixelGetColor($mapPos2[0], $mapPos2[1]) And $basePx3 <> PixelGetColor($mapPos3[0], $mapPos3[1]) Then
+Func WaitChangeMap($hwnd, $watingTime, $delay = 3000, $offset = 50)
+   Local $winSize = WinGetClientSize($hwnd)
+   Local $maxCount = $watingTime/$delay
+   For $i = 1 To $maxCount
+	  Local $topLeft = PixelGetColor($winSize[0] - $offset, $winSize[1] - $offset)
+	  Local $topRight = PixelGetColor($winSize[0] + $offset, $winSize[1] - $offset)
+	  Local $bottomRight = PixelGetColor($winSize[0] + $offset, $winSize[1] + $offset)
+	  Local $bottomLeft = PixelGetColor($winSize[0] - $offset, $winSize[1] + $offset)
+	  Sleep($delay)
+	  Local $count = 0
+	  If $topLeft = PixelGetColor($winSize[0] - $offset, $winSize[1] - $offset) Then
+		 $count += 1
+	  EndIf
+	  If $topRight = PixelGetColor($winSize[0] + $offset, $winSize[1] - $offset) Then
+		 $count += 1
+	  EndIf
+	  If $bottomRight = PixelGetColor($winSize[0] + $offset, $winSize[1] + $offset) Then
+		 $count += 1
+	  EndIf
+	  If $bottomLeft = PixelGetColor($winSize[0] - $offset, $winSize[1] + $offset) Then
+		 $count += 1
+	  EndIf
+	  If $count > 3 Then
 		 Return True
 	  EndIf
    Next
-   WriteLogDebug("utils", StringFormat("Timeout changing map when clicking [%d, %d] after %d", $npcPos[0], $npcPos[1], $timeOut))
    Return False
 EndFunc
 
-
 Func OpenDuongChauMap($timeOut)
-   Local $mapPos = [37, 47]
-   ; Press TAB
-   If PressKeyWithinTimeOut($mapPos, "{TAB}", $timeOut) Then
-	  Local $duongChauPos = [782, 432]
-	  Local $clickWordMap = [78, 78]
-	  ; click ban do the gioi
-	  If ClickNpcWithinTimeOut($duongChauPos, $clickWordMap, $timeOut) Then
-		 ; Click duong chau
-		 If ClickNpcWithinTimeOut($duongChauPos, $duongChauPos, $timeOut) Then
+   Local $btTab = [1002, 167]
+   If LeftClick($btTab, $btTab, $timeOut) Then
+	  Local $btWordMap = [74, 78]
+	  If LeftClick($btWordMap, $btWordMap, $timeOut) Then
+		 Local $duongChauPos = [782, 432]
+		 If LeftClick($btWordMap, $duongChauPos, $timeOut) Then
 			Return True
 		 EndIf
 	  EndIf
    EndIf
    Return False
-EndFunc
-
-Func MovingToNpcWithinTimeOut($npcPos, $timeOut)
-   MouseClick($MOUSE_CLICK_LEFT, $npcPos[0], $npcPos[1], 2)
-   Sleep(2000)
-   PressKeyWithinTimeOut($npcPos, "{ESC}", 1000)
-   WaitingMovingWithinTimeOut(100, $timeOut)
-   Sleep(2000)
 EndFunc
 
 Func WriteLog($caller, $msg)
@@ -174,17 +140,28 @@ Func WriteLogDebug($caller, $msg)
    EndIf
 EndFunc
 
-Func IsMovedPosition($clickPos, $checkingPos1, $checkingPos2, $checkingPos3)
-   Local $px1 = PixelGetColor($checkingPos1[0], $checkingPos1[1])
-   Local $px2 = PixelGetColor($checkingPos2[0], $checkingPos2[1])
-   Local $px3 = PixelGetColor($checkingPos3[0], $checkingPos3[1])
-   MouseClick($MOUSE_CLICK_LEFT, $clickPos[0], $clickPos[1])
-   Sleep(1000)
-   If $px1 <> PixelGetColor($checkingPos1[0], $checkingPos1[1]) And $px2 <> PixelGetColor($checkingPos2[0], $checkingPos2[1]) And $px3 <> PixelGetColor($checkingPos3[0], $checkingPos3[1]) Then
-	  Return True
-   Else
-	  Return False
+Func IsMoved($hwnd, $waitingTime)
+   Local $winSize = WinGetClientSize($hwnd)
+   Local $offset = 50;
+   Local $topLeft = PixelGetColor($winSize[0] - $offset, $winSize[1] - $offset)
+   Local $topRight = PixelGetColor($winSize[0] + $offset, $winSize[1] - $offset)
+   Local $bottomRight = PixelGetColor($winSize[0] + $offset, $winSize[1] + $offset)
+   Local $bottomLeft = PixelGetColor($winSize[0] - $offset, $winSize[1] + $offset)
+   Sleep($waitingTime)
+   Local $count = 0
+   If $topLeft <> PixelGetColor($winSize[0] - $offset, $winSize[1] - $offset) Then
+	  $count += 1
    EndIf
+   If $topRight <> PixelGetColor($winSize[0] + $offset, $winSize[1] - $offset) Then
+	  $count += 1
+   EndIf
+   If $bottomRight <> PixelGetColor($winSize[0] + $offset, $winSize[1] + $offset) Then
+	  $count += 1
+   EndIf
+   If $bottomLeft <> PixelGetColor($winSize[0] - $offset, $winSize[1] + $offset) Then
+	  $count += 1
+   EndIf
+   Return $topLeft > 3
 EndFunc
 
 Func IsChangeWhenMouseHover($hoverPos, $checkPos)
@@ -211,4 +188,47 @@ Func ExecuteChain($chainDic)
 	  EndIf
    Next
    Return True
+EndFunc
+
+Func GetWinTitleWithinOrder($order)
+   Local $result = $RUNTIME_NKVS_TITLE[$order]
+   Return $result
+EndFunc
+
+Func IsFindOutNpcPos($character)
+   Local $winTitle = GetWintitle($character)
+   If ActiveWindow($winTitle, 3000) Then
+	  Local $winSize = WinGetClientSize($winTitle)
+	  Local $centerCoord = [$winSize[0]/2, $winSize[1]/2]
+	  MouseMove(1, 1)
+	  Sleep(300)
+	  Local $cursor = _WinAPI_GetCursorInfo()[2]
+	  If DoScanAroundCoord($cursor, $centerCoord, -40, 40) Then
+		 Return True
+	  ElseIf DoScanAroundCoord($cursor, $centerCoord, -40, -40) Then
+		 Return True
+	  ElseIf DoScanAroundCoord($cursor, $centerCoord, 40, 40) Then
+		 Return True
+	  ElseIf DoScanAroundCoord($cursor, $centerCoord, 40, -40) Then
+		 Return True
+	  Else
+		 Local $result = [-1, -1]
+		 Return False
+	  EndIf
+   EndIf
+   Return False
+EndFunc
+
+Func DoScanAroundCoord($basicCursor, $coord, $stepX, $stepY)
+   For $i = 0 To 5
+	  For $j = 0 To 4
+		 Local $aroundCoord = [$coord[0] + $i*$stepX, $coord[1] + $j*$stepY]
+		 MouseMove($aroundCoord[0], $aroundCoord[1])
+		 Sleep(100)
+		 If $basicCursor <> _WinAPI_GetCursorInfo()[2] Then
+			Return True
+		 EndIf
+	  Next
+   Next
+   Return False
 EndFunc

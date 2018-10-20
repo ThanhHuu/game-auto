@@ -8,6 +8,8 @@
 
 #ce ----------------------------------------------------------------------------
 #include-once
+#include <WinAPI.au3>
+
 ; Script Start - Add your code below here
 Local $BUTTON_ADD = [260, 220]
 Local $BUTTON_EDIT = [260, 265]
@@ -20,6 +22,7 @@ Local $BUTTON_SYSTEM_RELOGIN = [506, 380]
 Local $BUTTON_SYSTEM_EXIT = [506, 417]
 Local $BUTTON_SYSTEM_EXIT_YES = [602, 585]
 Local $BUTTON_SYSTEM_EXIT_NO = [710, 585]
+Local $NKVS_BUTTON_CLOSE_MAP = [990, 46]
 Local $UI_FEATURE_TVP
 Local $UI_FEATURE_EVENT
 Local $UI_FEATURE_BC
@@ -40,8 +43,9 @@ Local $UI_FEATURE_HIDE_GRAPHIC
 Local $UI_FEATURE_LUCKY_ROUND
 Local $UI_FEATURE_USE_ITEM
 Local $UI_DEBUG_MODE
+Local $UI_TEAM_MEMBER
 
-Local $MOVING_CHOICE_POPUP = [205, 138]
+Local $MOVING_CHOICE_POPUP = [364, 621]
 Local $HOME_POS_FIRST = [262, 246]
 Local $HOME_POS_SECOND = [776, 446]
 Local $HOME_POS_THIRD = [553, 628]
@@ -53,8 +57,12 @@ Local $PARAM_LEVEL = "Level"
 Local $PARAM_USR = "Usr"
 Local $PARAM_PWD = "Pwd"
 Local $PARAM_CHAR = "Character"
+Local $PARAM_ORDER = "Order"
 Local $PARAM_FEATURE_NAME = "Feature_Name"
 Local $BAG_POS = [796, 362]
+Local $PARAM_HOST = "Host"
+Local $PARAM_GUEST = "Guest"
+Local $PARAM_TEAM_MEMBER = "Team_Member"
 
 Local $RUNTIME_IGNORE_DIC
 Local $RUNTIME_FEATURE_TVP = "TVP"
@@ -63,3 +71,12 @@ Local $RUNTIME_FEATURE_BC = "BC"
 Local $RUNTIME_FEATURES = [$RUNTIME_FEATURE_TVP, $RUNTIME_FEATURE_NTD, $RUNTIME_FEATURE_BC]
 Local $RUNTIME_ACCOUNTS
 Local $RUNTIME_FEATURE_ALLOW_FAIL = ObjCreate("Scripting.Dictionary")
+Local $RUNTIME_NKVS_HWND
+Local $RUNTIME_NKVS_TITLE
+
+Local $CHECKSUM_FILE = "checksum.init"
+Local $CHECKSUM_DATA_RUNTIME
+
+Local $WINDOW_TITLE_HEIGHT = _WinAPI_GetSystemMetrics(4)
+Local $SCREEN_SIZE = WinGetClientSize("Program Manager")
+Local $NKVS_SERVER_KIMKIEM = [490, 271]

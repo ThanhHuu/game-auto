@@ -23,34 +23,44 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-;WinActivate($WINDOW_NKVS)
-;BuyItemGoHome(10)
+;Local $paramDic = ObjCreate("Scripting.Dictionary")
+;$paramDic.Add($PARAM_CHAR, "VũPhươngDoiB")
+;BuyItemGoHome($paramDic)
 Func BuyItemGoHome($paramDic)
-   If Not PressKeyWithinTimeOut($MOVING_CHOICE_POPUP, "{0}", 3000) Then
-	  WriteLogDebug("feature_buy_items", "Need to buy item")
-	  OpenDuongChauMap(1000)
-	  Local $npcPos = [930,330]
-	  MovingToNpcWithinTimeOut($npcPos, 60000)
-	  Local $askShopPos = [209, 140]
-	  Local $askShopClickPos = [500, 400]
-	  If ClickNpcWithinTimeOut($askShopPos, $askShopClickPos, 5000) Then
-		 Local $shopPos = [77, 268]
-		 Local $openShopPos = [160,240]
-		 If ClickNpcWithinTimeOut($shopPos, $openShopPos, 2000) Then
-			Local $itemPos = [170,250]
-			Local $itemPopUp = [502, 334]
-			If ClickNpcWithinTimeOut($itemPopUp, $itemPos, 5000) Then
-			   Send(60)
-			   Local $confirmBt1 = [520, 365]
-			   ClickNpcWithinTimeOut($confirmBt1, $confirmBt1, 300)
-			   Local $confirmBt2 = [520, 450]
-			   ClickNpcWithinTimeOut($confirmBt1, $confirmBt2, 300)
+   Local $hwnd = GetWinTitle($paramDic.Item($PARAM_CHAR))
+   If ActiveWindow($hwnd, 3000) Then
+	  If Not PressKey($MOVING_CHOICE_POPUP, "{0}", 3000) Then
+		 WriteLogDebug("feature_buy_items", "Need to buy item")
+		 OpenDuongChauMap(3000)
+		 Local $npcPos = [870,330]
+		 LeftClick($npcPos, $npcPos, 1000, 2)
+		 Sleep(5000)
+		 If LeftClick($NKVS_BUTTON_CLOSE_MAP, $NKVS_BUTTON_CLOSE_MAP, 3000) Then
+			WaitChangeMap($hwnd, 60000, 2000)
+			If IsFindOutNpcPos($paramDic.Item($PARAM_CHAR)) Then
+			   Local $shopOpt = [194, 243]
+			   If LeftClick($shopOpt, MouseGetPos(), 5000) Then
+				  Local $bagIcon = [1002, 406]
+				  If LeftClick($bagIcon, $shopOpt, 2000) Then
+					 Local $itemPos = [170,250]
+					 Local $itemPopUp = [614, 310]
+					 If LeftClick($itemPopUp, $itemPos, 5000) Then
+						WriteLogDebug("buy-items", "Buy 60 phu hoi thanh")
+						Send(60)
+						Local $confirmBt1 = [520, 365]
+						If Not LeftClick($itemPopUp, $confirmBt1, 1000) Then
+						   Local $confirmBt2 = [520, 450]
+						   LeftClick($itemPopUp, $confirmBt2, 300)
+						EndIf
+					 EndIf
+				  EndIf
+				  PressKey($shopOpt, "{ESC}", 3000)
+			   EndIf
 			EndIf
-			PressKeyWithinTimeOut($shopPos, "{ESC}", 3000)
 		 EndIf
+	  Else
+		 PressKey($MOVING_CHOICE_POPUP, "{ESC}", 3000)
 	  EndIf
-   Else
-	  PressKeyWithinTimeOut($MOVING_CHOICE_POPUP, "{ESC}", 3000)
    EndIf
    Return True
 EndFunc

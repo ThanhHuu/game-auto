@@ -16,23 +16,28 @@
 #include <GUIConstantsEx.au3>
 
 Func GoToHome($paramDic)
-   If PressKeyWithinTimeOut($MOVING_CHOICE_POPUP, "{0}", 3000) Then
-	  Local $lickPos = [160,325]
-	  Return ClickChangeMapWithinTimeOut($HOME_POS_FIRST, $HOME_POS_SECOND, $HOME_POS_THIRD, $lickPos, 10000)
+   Local $hwnd = GetWintitle($paramDic.Item($PARAM_CHAR))
+   If ActiveWindow($hwnd, 3000) Then
+	  If PressKey($MOVING_CHOICE_POPUP, "{0}", 3000) Then
+		 Local $coord = [160,325]
+		 If LeftClick($coord, $coord, 1000) Then
+			Return WaitChangeMap($hwnd, 30000, 5000)
+		 EndIf
+	  EndIf
    EndIf
    Return False
 EndFunc
 
 Func AssistantAward($paramDic)
-   If ClickNpcWithinTimeOut($HOME_ASSISTANT_POPUP, $HOME_ASSISTANT_POS, 3000) Then
+   If LeftClick($HOME_ASSISTANT_POPUP, $HOME_ASSISTANT_POS, 3000) Then
 	  Local $closeAwardPopUp = [1002, 210]
 	  Local $clickReceive = [469, 591]
-	  If ClickNpcWithinTimeOut($closeAwardPopUp, $clickReceive, 3000) Then
+	  If LeftClick($closeAwardPopUp, $clickReceive, 3000) Then
 		 Local $closeOffExp = [1002, 558]
-		 ClickNpcWithinTimeOut($closeOffExp, $closeOffExp, 300)
+		 LeftClick($closeOffExp, $closeOffExp, 300)
 		 Local $startReceive = [839, 540]
 		 Local $px = PixelGetColor($closeAwardPopUp[0], $closeAwardPopUp[1])
-		 ClickNpcWithinTimeOut($closeAwardPopUp, $startReceive, 300)
+		 LeftClick($closeAwardPopUp, $startReceive, 300)
 		 Local $count = 0
 		 While $count < 8
 			$count += 1
@@ -42,40 +47,40 @@ Func AssistantAward($paramDic)
 			Sleep(500)
 		 WEnd
 		 #cs
-		 ClickNpcWithinTimeOut($startReceive, $startReceive, 500)
-		 ClickNpcWithinTimeOut($startReceive, $startReceive, 500)
+		 LeftClick($startReceive, $startReceive, 500)
+		 LeftClick($startReceive, $startReceive, 500)
 		 Sleep(8000)
-		 ClickNpcWithinTimeOut($startReceive, $startReceive, 500)
+		 LeftClick($startReceive, $startReceive, 500)
 		 #ce
-		 ClickNpcWithinTimeOut($closeAwardPopUp, $closeAwardPopUp, 1000)
+		 LeftClick($closeAwardPopUp, $closeAwardPopUp, 1000)
 	  EndIf
    EndIf
-   PressKeyWithinTimeOut($HOME_ASSISTANT_POPUP, "{ESC}", 3000)
+   PressKey($HOME_ASSISTANT_POPUP, "{ESC}", 3000)
    Return True
 EndFunc
 
 Func AssistantFeature($paramDic)
    Local $featurePos = $paramDic.Item($PARAM_FEATURE_POS)
-   If ClickNpcWithinTimeOut($HOME_ASSISTANT_POPUP, $HOME_ASSISTANT_POS, 3000) Then
-	  If ClickNpcWithinTimeOut($featurePos, $featurePos, 1000) Then
+   If LeftClick($HOME_ASSISTANT_POPUP, $HOME_ASSISTANT_POS, 3000) Then
+	  If LeftClick($featurePos, $featurePos, 1000) Then
 		 If $paramDic.Exists($PARAM_FEATURE_LEVEL_POS) Then
 			Local $ChooseLevePopUp = [258, 140]
 			Local $clickPos = [468, 594]
-			If ClickNpcWithinTimeOut($ChooseLevePopUp, $clickPos, 1000) Then
+			If LeftClick($ChooseLevePopUp, $clickPos, 1000) Then
 			   Local $levelPos = $paramDic.Item($PARAM_FEATURE_LEVEL_POS)
-			   ClickNpcWithinTimeOut($levelPos, $levelPos, 200)
+			   LeftClick($levelPos, $levelPos, 200)
 			EndIf
 		 Else
 			Local $confirmPopUp = [577, 298]
 			Local $clickPos = [468, 594]
-			If ClickNpcWithinTimeOut($confirmPopUp, $clickPos, 1000) Then
+			If LeftClick($confirmPopUp, $clickPos, 1000) Then
 			   Local $acceptPos = [511, 467]
-			   ClickNpcWithinTimeOut($confirmPopUp, $acceptPos, 1000)
+			   LeftClick($confirmPopUp, $acceptPos, 1000)
 			EndIf
 		 EndIf
 	  EndIf
    EndIf
-   PressKeyWithinTimeOut($HOME_ASSISTANT_POPUP, "{ESC}", 3000)
+   PressKey($HOME_ASSISTANT_POPUP, "{ESC}", 3000)
    Return True
 EndFunc
 

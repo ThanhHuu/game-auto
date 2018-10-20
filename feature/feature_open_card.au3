@@ -20,24 +20,29 @@
 ;WinActivate($WINDOW_NKVS)
 ;OpenCard("")
 Func OpenCard($paramDic)
-   Local $luckyPos = [450,590]
-   MouseClick($MOUSE_CLICK_LEFT, $luckyPos[0], $luckyPos[1])
-   Sleep(1000)
-   Local $luckyPointerPos = [390,260]
-   For $i = 0 To 2
-	  ClickNpcWithinTimeOut($luckyPointerPos, $luckyPointerPos, 200)
-	  $luckyPointerPos[0] += 115
-   Next
-   $luckyPointerPos[0] -= 115
-   For $j = 0 To 2
-	  ClickNpcWithinTimeOut($luckyPointerPos, $luckyPointerPos, 200)
-	  $luckyPointerPos[1] += 130
-   Next
-   Local $closePos = [711, 103]
-   ClickNpcWithinTimeOut($luckyPointerPos, $closePos, 500)
-   Local $onlineExpPos = [484, 364]
-   Local $healPos = [498, 497]
-   ClickNpcWithinTimeOut($onlineExpPos, $healPos, 700)
+   Local $hwnd = GetWinTitle($paramDic.Item($PARAM_CHAR))
+   If ActiveWindow($hwnd, 3000) Then
+	  If GUICtrlRead($UI_FEATURE_OPEN_CARD) = $GUI_CHECKED Then
+		 Local $luckyPos = [450,590]
+		 MouseClick($MOUSE_CLICK_LEFT, $luckyPos[0], $luckyPos[1])
+		 Sleep(1000)
+		 Local $luckyPointerPos = [390,260]
+		 For $i = 0 To 2
+			LeftClick($luckyPointerPos, $luckyPointerPos, 200)
+			$luckyPointerPos[0] += 115
+		 Next
+		 $luckyPointerPos[0] -= 115
+		 For $j = 0 To 2
+			LeftClick($luckyPointerPos, $luckyPointerPos, 200)
+			$luckyPointerPos[1] += 130
+		 Next
+		 Local $closePos = [711, 103]
+		 LeftClick($luckyPointerPos, $closePos, 500)
+		 Local $onlineExpPos = [484, 364]
+		 Local $healPos = [498, 497]
+		 LeftClick($onlineExpPos, $healPos, 700)
+	  EndIf
+   EndIf
    Return True
 EndFunc
 

@@ -34,12 +34,13 @@ Func Login($paramDic)
    Local $pwd = $paramDic.Item($PARAM_PWD)
    Local $character = $paramDic.Item($PARAM_CHAR)
    Local $characterIndex = $RUNTIME_MAP_CHARACTER.Exists($character) ? $RUNTIME_MAP_CHARACTER.Item($character) : 0
+   Local $order = $paramDic.Item($PARAM_ORDER)
 
-   If ActiveWindowWithinTimeOut($WINDOW_NKVS, 3000) Then
+   If ActiveWindow(GetWinTitleWithinOrder($order), 3000) Then
 	  For $i = 1 To 5
-		 ChooseServer()
-		 EnterCharacter($usr, $pwd)
-		 LoggedIn($characterIndex)
+		 ChooseServer($order)
+		 EnterCharacter($usr, $pwd, $order)
+		 LoggedIn($characterIndex, $order)
 		 If WinExists(GetWintitle($character)) Then
 			If Not $RUNTIME_MAP_CHARACTER.Exists($character) Then
 			   FileWriteLine($CHARACTER_INDEX_FILE, $character & '=' & $characterIndex)
@@ -48,14 +49,14 @@ Func Login($paramDic)
 			Return True
 		 EndIf
 		 $characterIndex += 1
-		 If WinExists(GetWintitle(".*")) Then
+		 If GetWinTitleWithinOrder($order) <> WinGetTitle($RUNTIME_NKVS_HWND[$order]) Then
 			If Not Logout($paramDic) Then
 			   Exit
 			EndIf
 		 Else
 			Local $btReturn = [35, 702]
 			Local $btReturnPx = [$btReturn[0]-20, $btReturn[1]]
-			ClickNpcWithinTimeOut($btReturnPx, $btReturn, 1000)
+			LeftClick($btReturnPx, $btReturn, 1000)
 			Sleep(3000)
 		 EndIf
 	  Next
@@ -64,8 +65,8 @@ Func Login($paramDic)
    Return False
 EndFunc
 
-Func EnterCharacter($usr, $pwd)
-   Local $checksum = PixelChecksum(0, 0, 20, 20, WinGetHandle($WINDOW_NKVS))
+Func EnterCharacter($usr, $pwd, $order)
+   Local $checksum = PixelChecksum(0, 0, 20, 20, WinGetHandle(GetWinTitleWithinOrder($order)))
    While True
 	  MouseClick($MOUSE_CLICK_LEFT, 446, 305)
 	  Sleep(100)
@@ -84,7 +85,7 @@ Func EnterCharacter($usr, $pwd)
 	  Local $done = False
 	  For $i = 1 To 10
 		 Sleep(2000)
-		 If $checksum <> PixelChecksum(0, 0, 20, 20, WinGetHandle($WINDOW_NKVS)) Then
+		 If $checksum <> PixelChecksum(0, 0, 20, 20, WinGetHandle(GetWinTitleWithinOrder($order))) Then
 			$done = True
 			ExitLoop
 		 EndIf
@@ -93,17 +94,16 @@ Func EnterCharacter($usr, $pwd)
 		 ExitLoop
 	  EndIf
 	  If $btBackPx <> PixelGetColor($btBackBase[0], $btBackBase[1]) Then
-		 ClickNpcWithinTimeOut($btBackBase, $btBack, 1000)
+		 LeftClick($btBackBase, $btBack, 1000)
 	  EndIf
    WEnd
 EndFunc
 
-Func ChooseServer()
-   Local $checkSum = PixelChecksum(351, 296, 417, 310, WinGetHandle($WINDOW_NKVS))
+Func ChooseServer($order)
+   Local $checkSum = PixelChecksum(351, 296, 417, 310, WinGetHandle(GetWinTitleWithinOrder($order)))
    Local $changeServer = [625, 393]
-   ClickNpcWithinTimeOut($changeServer, $changeServer, 5000)
-   Local $kimKiem = [490, 241]
-   ClickNpcWithinTimeOut($kimKiem, $kimKiem, 1000)
+   LeftClick($changeServer, $changeServer, 5000)
+   LeftClick($NKVS_SERVER_KIMKIEM, $NKVS_SERVER_KIMKIEM, 1000)
    Local $btConfirm = [644, 575]
    Local $btConfirmPx = PixelGetColor($btConfirm[0] - 50, $btConfirm[1])
    Local $btRetry = [507, 470]
@@ -118,22 +118,22 @@ Func ChooseServer()
 	  EndIf
 	  If $btRetryPx <> PixelGetColor($btRetry[0], $btRetry[1]) Then
 		 WriteLogDebug("login", "Retry connect server")
-		 ClickNpcWithinTimeOut($btRetryPxPos, $btRetry, 1000)
+		 LeftClick($btRetryPxPos, $btRetry, 1000)
 	  EndIf
    Next
    For $i = 1 To 10
 	  Sleep(500)
-	  If $checksum = PixelChecksum(351, 296, 417, 310, WinGetHandle($WINDOW_NKVS)) Then
+	  If $checksum = PixelChecksum(351, 296, 417, 310, WinGetHandle(GetWinTitleWithinOrder($order))) Then
 		 ExitLoop
 	  EndIf
    Next
 EndFunc
 
-Func LoggedIn($characterIndex)
-   BackToFirstPage()
+Func LoggedIn($characterIndex, $order)
+   BackToFirstPage($order)
    Local $page = $characterIndex/$CHARACTER_PAGE_SIZE
    For $i = 1 To $page
-	  GoToNextPage()
+	  GoToNextPage($order)
    Next
    Local $indexOfPage = Mod($characterIndex, $CHARACTER_PAGE_SIZE)
    Local $charaterPos = [$FIRST_CHARACTER[0] + $indexOfPage*270, $FIRST_CHARACTER[1]]
@@ -143,25 +143,26 @@ Func LoggedIn($characterIndex)
 	  If $characterPx = PixelGetColor($charaterPos[0], $charaterPos[1]) Then
 		 ExitLoop
 	  Else
-		 ClickNpcWithinTimeOut($charaterPos, $charaterPos, 1000)
+		 LeftClick($charaterPos, $charaterPos, 1000)
 		 $characterPx = PixelGetColor($charaterPos[0], $charaterPos[1])
 	  EndIf
    WEnd
    MouseClick($MOUSE_CLICK_LEFT, $charaterPos[0], $charaterPos[1], 2)
    For $j = 1 To 3
-	  If WinExists(GetWintitle(".*")) Then
+	  Sleep(5000)
+	  If GetWinTitleWithinOrder($order) <> WinGetTitle($RUNTIME_NKVS_HWND[$order]) Then
 		 ExitLoop
 	  EndIf
-	  Sleep(5000)
    Next
+   WriteLogDebug("login", "Done login")
 EndFunc
 
-Func BackToFirstPage()
+Func BackToFirstPage($order)
    Local $i, $beforeCheckSum, $afterCheckSum
    For $i = 1 To 5
-	  $beforeCheckSum = PixelChecksum(187, 500, 338, 511, WinGetHandle($WINDOW_NKVS))
-	  ClickNpcWithinTimeOut($BUTTON_PRE_PAGE, $BUTTON_PRE_PAGE, 1000)
-	  $afterCheckSum = PixelChecksum(187, 500, 338, 511, WinGetHandle($WINDOW_NKVS))
+	  $beforeCheckSum = PixelChecksum(187, 500, 338, 511, WinGetHandle(GetWinTitleWithinOrder($order)))
+	  LeftClick($BUTTON_PRE_PAGE, $BUTTON_PRE_PAGE, 1000)
+	  $afterCheckSum = PixelChecksum(187, 500, 338, 511, WinGetHandle(GetWinTitleWithinOrder($order)))
 	  If $beforeCheckSum = $afterCheckSum Then
 		 ExitLoop
 	  EndIf
@@ -169,13 +170,13 @@ Func BackToFirstPage()
    Next
 EndFunc
 
-Func GoToNextPage()
-   Local $beforeCheckSum = PixelChecksum(187, 500, 338, 511, WinGetHandle($WINDOW_NKVS))
-   ClickNpcWithinTimeOut($BUTTON_NEXT_PAGE, $BUTTON_NEXT_PAGE, 1000)
+Func GoToNextPage($order)
+   Local $beforeCheckSum = PixelChecksum(187, 500, 338, 511, WinGetHandle(GetWinTitleWithinOrder($order)))
+   LeftClick($BUTTON_NEXT_PAGE, $BUTTON_NEXT_PAGE, 1000)
    For $i = 1 To 10
 	  Sleep(300)
-	  $afterCheckSum = PixelChecksum(187, 500, 338, 511, WinGetHandle($WINDOW_NKVS))
-	  If $beforeCheckSum <> PixelChecksum(187, 500, 338, 511, WinGetHandle($WINDOW_NKVS)) Then
+	  $afterCheckSum = PixelChecksum(187, 500, 338, 511, WinGetHandle(GetWinTitleWithinOrder($order)))
+	  If $beforeCheckSum <> PixelChecksum(187, 500, 338, 511, WinGetHandle(GetWinTitleWithinOrder($order))) Then
 		 ExitLoop
 	  EndIf
    Next

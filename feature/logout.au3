@@ -24,19 +24,23 @@ Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
 Func Logout($paramDic)
-   ResetSystemButton()
-   For $i = 0 To 5
-	  If ClickNpcWithinTimeOut($BUTTON_SYSTEM, $BUTTON_SYSTEM, 2000) Then
-		 If ClickNpcWithinTimeOut($SYSTEM_POPUP, $BUTTON_SYSTEM_RELOGIN, 2000) Then
-			ClickNpcWithinTimeOut($BUTTON_SYSTEM_EXIT_YES, $BUTTON_SYSTEM_EXIT_YES, 2000)
-			Sleep(5000)
-			Return WinExists(GetWintitle(".*")) ? False : True
+   Local $order = $paramDic.Item($PARAM_ORDER)
+   Local $hwnd = GetWinTitle($paramDic.Item($PARAM_CHAR))
+   If ActiveWindow($hwnd, 3000) Then
+	  ResetSystemButton()
+	  For $i = 0 To 5
+		 If LeftClick($BUTTON_SYSTEM, $BUTTON_SYSTEM, 2000) Then
+			If LeftClick($SYSTEM_POPUP, $BUTTON_SYSTEM_RELOGIN, 2000) Then
+			   LeftClick($BUTTON_SYSTEM_EXIT_YES, $BUTTON_SYSTEM_EXIT_YES, 2000)
+			   Sleep(5000)
+			   Return WinExists(GetWinTitleWithinOrder($order)) ? False : True
+			EndIf
 		 EndIf
-	  EndIf
-	  WriteLogDebug("logout", "Do logout one more time")
-   Next
-   WriteLog("logout", "We must stop because can not login")
-   Exit
+		 WriteLogDebug("logout", "Do logout one more time")
+	  Next
+	  WriteLog("logout", "We must stop because can not login")
+	  Exit
+   EndIf
 EndFunc
 
 Func ResetSystemButton()

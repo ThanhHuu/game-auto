@@ -7,7 +7,6 @@
 	Template AutoIt script.
 
 #ce ----------------------------------------------------------------------------
-
 #RequireAdmin
 #include-once
 #include "feature\features_bundle.au3"
@@ -25,13 +24,16 @@ DllCall("User32.dll","bool","SetProcessDPIAware")
 
 HotKeySet("^q", "Stop")
 
+Func Stop()
+   $isRunning = False
+EndFunc
+
 Local $UI, $BUTTON_RUN, $COUNT_DOWN, $CURRENT_CHARACTER, $VIRTUAL
 Local $isRunning = False
-Local $currentAccount, $currentFeature
+Local $currentAccount
 Local $accountIndex = 0
-Local $featureIndex = 0
 Local $LAST_RUN_DATE = @YDAY
-Local $LAST_FEATURE_BC_NO, $LAST_FEATURE_BC_STATE, $LAST_FEATURE_NTD_NO, $LAST_FEATURE_NTD_STATE
+Local $feature = "VanTieu"
 
 Func BuidAutoUI()
    BuidUIAddAccount(1, 1)
@@ -43,19 +45,16 @@ Func BuidAutoUI()
    BuildSrollCircleUI(3, 2)
 
    BuildBuyItemsUI(4, 1)
-   BuildUseItemsUI(4, 2)
+   BuidUITeam(4, 2)
 
-   BuildTvpUI(5, 1)
-   BuildNtdUI(5, 2)
-   BuildBcUI(6, 1)
+   BuildTransportUI(5, 1)
+   BuildCancelTransportUI(5, 2)
 
-   BuildActionUI(7, 1)
-   BuildCurrentCharacterInfo(7, 2)
+   BuildActionUI(6, 1)
 EndFunc
 
-$UI = GUICreate("Auto Configuration",460, 240)
+$UI = GUICreate("Van Tieu",460, 200)
 BuidAutoUI()
-
 GUISetState(@SW_SHOW)
 While True
    Start()
@@ -67,8 +66,8 @@ While True
 	  Local $dir = FileSelectFolder ("", @WindowsDir)
 	  GUICtrlSetData($UI_INPUT_ACCOUNTS, $dir)
    Case $BUTTON_RUN
-	  If Not WinExists($WINDOW_NKVS) Then
-		 MsgBox(0, "Warning", "Please open instance NKVS2")
+	  If WinList($WINDOW_NKVS)[0][0] < GUICtrlRead($UI_TEAM_MEMBER) Then
+		 MsgBox(0, "Warning", StringFormat("Please open %i instance NKVS2", GUICtrlRead($UI_TEAM_MEMBER)))
 		 ContinueLoop
 	  EndIf
 	  CoundDown(3)
@@ -76,141 +75,60 @@ While True
 	  BuildRuntimeAccounts()
 	  BuildRuntimeIgnore()
 	  LoadMapCharacter()
+	  BuildHwndRuntime()
+	  BuildRuntimeTransportColor()
 	  $isRunning = True
-	  $featureIndex = 0
 	  $accountIndex = 0
-	  $LAST_FEATURE_BC_NO = GUICtrlRead($UI_FEATURE_BC_NO)
-	  $LAST_FEATURE_NTD_NO = GUICtrlRead($UI_FEATURE_NTD_NO)
-	  $LAST_FEATURE_BC_STATE = GUICtrlRead($UI_FEATURE_BC)
-	  $LAST_FEATURE_NTD_STATE = GUICtrlRead($UI_FEATURE_NTD)
    EndSwitch
 WEnd
 
 Func Start()
-   While $isRunning And $featureIndex < UBound($RUNTIME_FEATURES) And UBound($RUNTIME_ACCOUNTS) > 0
+   While $isRunning And UBound($RUNTIME_ACCOUNTS) > 0
 	  ; Reset for new day
 	  If $LAST_RUN_DATE <> @YDAY Then
 		 $LAST_RUN_DATE = @YDAY
-		 $featureIndex = 0
 		 $accountIndex = 0
-		 ReverseToOrigin()
 		 BuildRuntimeIgnore()
 		 WriteLog("main", "Reset for new date")
 		 ContinueLoop
 	  EndIf
-	  Local $feature = $RUNTIME_FEATURES[$featureIndex]
-	  If Not IsCheckFeature($feature) Then
-		 $featureIndex += 1
-		 $accountIndex = 0
-		 ContinueLoop
-	  EndIf
 	  If FileExists(GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done') Then
-		 $featureIndex += 1
-		 $accountIndex = 0
-		 ContinueLoop
+		 ExitLoop
 	  EndIf
-	  Local $accountDic = $RUNTIME_ACCOUNTS[$accountIndex]
-	  RunForOne($feature, $accountDic)
-	  $accountIndex += 1
+	  Local $accountDics = ObjCreate("Scripting.Dictionary")
+	  While True
+		 Local $accountDic = $RUNTIME_ACCOUNTS[$accountIndex]
+		 $accountIndex += 1
+		 Local $character = $accountDic.Item($PARAM_CHAR)
+		 If $RUNTIME_IGNORE_DIC.Exists($feature) And $RUNTIME_IGNORE_DIC.Item($feature).Exists($character) Then
+			ContinueLoop
+		 EndIf
+		 $accountDics.Add($character, $accountDic)
+		 If UBound($accountDics.Keys) = GUICtrlRead($UI_TEAM_MEMBER) Then
+			ExitLoop
+		 EndIf
+	  WEnd
+	  RunForTeam($accountDics)
 	  If $accountIndex = UBound($RUNTIME_ACCOUNTS) Then
 		 Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
 		 Local $doneFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done'
 		 FileMove($ignoreFile, $doneFile)
-		 If $RUNTIME_IGNORE_DIC.Exists($feature) Then
-			$RUNTIME_IGNORE_DIC.Remove($feature)
-		 EndIf
-		 ReduceNoFeature($feature)
-		 $accountIndex = 0
-		 GUICtrlSetState($UI_FEATURE_USE_ITEM, $GUI_UNCHECKED)
 	  EndIf
    WEnd
 EndFunc
 
-Func ReverseToOrigin()
-   Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
-   Local $ignoreFiles = _FileListToArrayRec($directoryPath, "*.ignore", 1 + 4, 0, 1, 2);
-   If $ignoreFiles <> "" And $ignoreFiles[0] > 0 Then
-	  For $i = 1 To $ignoreFiles[0]
-		 FileDelete($ignoreFiles[$i])
-	  Next
-   EndIf
-   Local $doneFiles = _FileListToArrayRec($directoryPath, "*.done", 1 + 4, 0, 1, 2);
-   If $doneFiles <> "" And $doneFiles[0] > 0 Then
-	  For $j = 1 To $doneFiles[0]
-		 FileDelete($doneFiles[$j])
-	  Next
-   EndIf
-   GUICtrlSetData($UI_FEATURE_BC_NO, $LAST_FEATURE_BC_NO)
-   GUICtrlSetData($UI_FEATURE_NTD_NO, $LAST_FEATURE_NTD_NO)
-   GUICtrlSetState($UI_FEATURE_BC, $LAST_FEATURE_BC_STATE)
-   GUICtrlSetState($UI_FEATURE_NTD, $LAST_FEATURE_NTD_STATE)
-EndFunc
-
-Func ReduceNoFeature($feature)
-   If $feature = $RUNTIME_FEATURE_BC Then
-	  Local $value = GUICtrlRead($UI_FEATURE_BC_NO)
-	  Local $newValue = $value - 1
-	  If $newValue > 0 Then
-		 GUICtrlSetData($UI_FEATURE_BC_NO, $newValue)
-		 Local $doneFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done'
-		 Local $backupFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & $value
-		 FileMove($doneFile, $backupFile)
-		 WriteLog("main", StringFormat("Backup for %s", $feature))
-	  Else
-		 GUICtrlSetState($UI_FEATURE_BC, $GUI_UNCHECKED + $GUI_DISABLE)
-	  EndIf
-   ElseIf $feature = $RUNTIME_FEATURE_NTD Then
-	  Local $value = GUICtrlRead($UI_FEATURE_NTD_NO)
-	  Local $newValue = $value - 1
-	  If $newValue > 0 Then
-		 GUICtrlSetData($UI_FEATURE_NTD_NO, $newValue)
-		 Local $doneFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.done'
-		 Local $backupFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & $value
-		 FileMove($doneFile, $backupFile)
-		 WriteLog("main", StringFormat("Backup for %s", $feature))
-	  Else
-		 GUICtrlSetState($UI_FEATURE_NTD, $GUI_UNCHECKED + $GUI_DISABLE)
-	  EndIf
-   EndIf
-EndFunc
-
-Func IsCheckFeature($feature)
-   If $feature = $RUNTIME_FEATURE_TVP Then
-	  Return GUICtrlRead($UI_FEATURE_TVP) = $GUI_CHECKED ? True : False
-   EndIf
-   If $feature = $RUNTIME_FEATURE_NTD Then
-	  Return GUICtrlRead($UI_FEATURE_NTD) = $GUI_CHECKED ? True : False
-   EndIf
-   If $feature = $RUNTIME_FEATURE_BC Then
-	  Return GUICtrlRead($UI_FEATURE_BC) = $GUI_CHECKED ? True : False
-   EndIf
-   Return False
-EndFunc
-
-Func RunForOne($feature, $accountDic)
-   If $RUNTIME_IGNORE_DIC.Exists($feature) And $RUNTIME_IGNORE_DIC.Item($feature).Exists($accountDic.Item($PARAM_CHAR)) Then
-	  Return
-   EndIf
+Func RunForOne($accountDic)
    Local $paramDic = ObjCreate("Scripting.Dictionary")
    For $key In $accountDic.Keys
 	  $paramDic.Add($key, $accountDic.Item($key))
    Next
-   $paramDic.Add($PARAM_LEVEL, GUICtrlRead($UI_FEATURE_BC_LEVEL))
-   $paramDic.Add($PARAM_FEATURE_NAME, $feature)
-   GUICtrlSetData($CURRENT_CHARACTER, $paramDic.Item($PARAM_CHAR))
    Local $chainDic = ObjCreate("Scripting.Dictionary")
-   $chainDic.Add("Login", $paramDic)
    $chainDic.Add("OnlineExp", $paramDic)
+   $chainDic.Add("OfflineExp", $paramDic)
    $chainDic.Add("UseItems", $paramDic)
    $chainDic.Add("OpenCard", $paramDic)
    $chainDic.Add("TurnOffGraphic", $paramDic)
-   $chainDic.Add("SrollCircle", $paramDic)
    $chainDic.Add("BuyItemGoHome", $paramDic)
-   $chainDic.Add("RunTvp", $paramDic)
-   $chainDic.Add("RunNtd", $paramDic)
-   $chainDic.Add("RunBc", $paramDic)
-   $chainDic.Add("GetActiveAward", $paramDic)
-   $chainDic.Add("Logout", $paramDic)
    WriteLog("main", StringFormat("Run for %s - %s - %s", $paramDic.Item($PARAM_USR), $paramDic.Item($PARAM_CHAR), $feature))
    If ExecuteChain($chainDic) Then
 	  Local $ignoreFile = GUICtrlRead($UI_INPUT_ACCOUNTS) & '\' & $feature & '.ignore'
@@ -218,8 +136,26 @@ Func RunForOne($feature, $accountDic)
    EndIf
 EndFunc
 
-Func Stop()
-   $isRunning = False
+Func RunForTeam($accountDics)
+   Local $order = 0
+   For $accountDic In $accountDics.Items
+	  $accountDic.Add($PARAM_ORDER, $order)
+	  Login($accountDic)
+	  $order += 1
+   Next
+   WriteLog("main", "Logged in for alls")
+   For $accountDic In $accountDics.Items
+	  RunForOne($accountDic)
+   Next
+   GUICtrlSetState($UI_FEATURE_HIDE_GRAPHIC, $GUI_UNCHECKED)
+   WriteLog("main", "Ran single for alls")
+   Local $paramDic = ObjCreate("Scripting.Dictionary")
+   $paramDic.Add($PARAM_TEAM_MEMBER, $accountDics.Keys)
+   TransportTeam($paramDic)
+   WriteLog("main", "Done for team")
+   For $accountDic In $accountDics.Items
+	  Logout($accountDic)
+   Next
 EndFunc
 
 Func BuildActionUI($row, $column)
@@ -227,7 +163,13 @@ Func BuildActionUI($row, $column)
    Local $marginLeft = ($column - 1) * $UI_COLUMN_WIDTH + $UI_MARGIN_LEFT
    Local $width = 50
    $BUTTON_RUN = GUICtrlCreateButton("Bat Dau", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
-   $UI_DEBUG_MODE = GUICtrlCreateCheckbox("Debug", $marginLeft + $width + 20, $marginTop, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $width = 70
+   $UI_DEBUG_MODE = GUICtrlCreateCheckbox("Debug", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $width = 70
+   $VIRTUAL = GUICtrlCreateCheckbox("Virtual", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   GUICtrlSetState($VIRTUAL, $GUI_UNCHECKED)
 
    Local $uiSize = WinGetClientSize($UI)
    $marginLeft = $uiSize[0]/2 - $width/2
@@ -237,15 +179,6 @@ Func BuildActionUI($row, $column)
    GUICtrlSetFont($COUNT_DOWN, 50, $FW_MEDIUM)
    GUICtrlSetState($COUNT_DOWN, $GUI_ONTOP )
    GUICtrlSetBkColor($COUNT_DOWN, $GUI_BKCOLOR_TRANSPARENT)
-EndFunc
-
-Func BuildCurrentCharacterInfo($row, $column)
-   Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * ($row - 1) + $UI_MARGIN_TOP * 2
-   Local $marginLeft = ($column - 1) * $UI_COLUMN_WIDTH + $UI_MARGIN_LEFT
-   Local $width = $UI_LABEL_WIDTH
-   GUICtrlCreateLabel("Dang chay:", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
-   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
-   $CURRENT_CHARACTER = GUICtrlCreateLabel("", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
 EndFunc
 
 Func CoundDown($seconds)
@@ -260,7 +193,6 @@ Func CoundDown($seconds)
    GUICtrlSetState($COUNT_DOWN, $GUI_HIDE)
 EndFunc
 
-; Return array objects
 Func BuildRuntimeAccounts()
    Local $result = ObjCreate("Scripting.Dictionary")
    Local $directoryPath = GUICtrlRead($UI_INPUT_ACCOUNTS)
@@ -310,5 +242,33 @@ Func LoadMapCharacter()
 		 Local $infomation = StringSplit($line, "=")
 		 $RUNTIME_MAP_CHARACTER.Add($infomation[1], $infomation[2])
 	  Next
+   EndIf
+EndFunc
+
+Func BuildHwndRuntime()
+   Local $obj = ObjCreate("Scripting.Dictionary")
+   Local $listHwnd = WinList($WINDOW_NKVS)
+   For $i = 1 To $listHwnd[0][0]
+	  Local $title = $listHwnd[$i][0]
+	  Local $hwnd = $listHwnd[$i][1]
+	  $obj.Add($title, $hwnd)
+   Next
+   $RUNTIME_NKVS_HWND = $obj.Items
+   $RUNTIME_NKVS_TITLE = $obj.Keys
+EndFunc
+
+Func BuildRuntimeTransportColor()
+   If GUICtrlRead($VIRTUAL) = $GUI_CHECKED Then
+	  $TRANSPORT_DONE_COLOR = $TRANSPORT_DONE_COLOR_VIRTUAL
+	  $TRANSPORT_OPTION = $TRANSPORT_OPTION_VIRTUAL
+	  $TRANSPORT_TEXT_COLOR = $TRANSPORT_TEXT_COLOR_VIRTUAL
+	  $TRANSPORT_COORD_COLOR = $TRANSPORT_COORD_COLOR_VIRTUAL
+	  $TRANSPORT_START_COLOR = $TRANSPORT_START_COLOR_VIRTUAL
+   Else
+	  $TRANSPORT_DONE_COLOR = $TRANSPORT_DONE_COLOR_REAL
+	  $TRANSPORT_OPTION = $TRANSPORT_OPTION_REAL
+	  $TRANSPORT_TEXT_COLOR = $TRANSPORT_TEXT_COLOR_REAL
+	  $TRANSPORT_COORD_COLOR = $TRANSPORT_COORD_COLOR_REAL
+	  $TRANSPORT_START_COLOR = $TRANSPORT_START_COLOR_REAL
    EndIf
 EndFunc

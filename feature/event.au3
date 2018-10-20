@@ -20,22 +20,26 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-;receiveEvent("BoTreMeGame©")
 Func receiveEvent($character, $basicObj)
-   Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
-   If ActiveWindowWithinTimeOut($winTitle, 3000) Then
-	  OpenDuongChauMap(1000)
-	  MouseClickDrag($MOUSE_CLICK_LEFT, 996, 256, 996, 293)
-	  Sleep(100)
-	  Local $npcPos = [920, 270]
-	  MovingToNpcWithinTimeOut($character, $npcPos, 60000)
-	  MouseClick("left", 514, 406)
-	  Sleep(300)
-	  MouseClick("left", 171, 298)
-	  Sleep(300)
-	  MouseClick("left", 171, 240)
-	  Sleep(1000)
-	  MouseClick("left", 171, 240)
+   Local $hwnd = GetWinTitle($character)
+   If ActiveWindow($hwnd, 3000) Then
+	  If OpenDuongChauMap(3000) Then
+		 MouseClickDrag($MOUSE_CLICK_LEFT, 996, 256, 996, 293)
+		 Sleep(100)
+		 Local $npcPos = [870, 270]
+		 If LeftClick($npcPos, $npcPos, 3000, 2) Then
+			If LeftClick($NKVS_BUTTON_CLOSE_MAP, $NKVS_BUTTON_CLOSE_MAP, 3000) Then
+			   WaitChangeMap($hwnd, 60000, 3000)
+			   MouseClick("left", 514, 406)
+			   Sleep(300)
+			   MouseClick("left", 171, 298)
+			   Sleep(300)
+			   MouseClick("left", 171, 240)
+			   Sleep(1000)
+			   MouseClick("left", 171, 240)
+			EndIf
+		 EndIf
+	  EndIf
    EndIf
    Return True
 EndFunc

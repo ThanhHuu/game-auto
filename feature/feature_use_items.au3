@@ -46,33 +46,28 @@ Func UseItems($paramDic)
 			   MouseClick($MOUSE_CLICK_RIGHT, $currentCellX, $currentCellY, 5)
 			   Sleep(1000)
 			   If $px1 <> PixelGetColor(852, 682) Then
-				  ClickNpcWithinTimeOut($pointClose1, $pointClose1, 300)
+				  LeftClick($pointClose1, $pointClose1, 300)
 			   ElseIf $px2 <> PixelGetColor(743, 689) Then
-				  ClickNpcWithinTimeOut($pointClose2, $pointClose2, 300)
+				  LeftClick($pointClose2, $pointClose2, 300)
 			   ElseIf $px3 <> PixelGetColor(724, 659) Then
-				  ClickNpcWithinTimeOut($pointClose3, $pointClose3, 300)
+				  LeftClick($pointClose3, $pointClose3, 300)
 			   EndIf
 			Next
 		 Next
 		 Local $firstCell = [$cellPointer[0], $cellPointer[1]]
-		 PressKeyWithinTimeOut($BAG_POS, "{ESC}", 3000)
+		 PressKey($BAG_POS, "{ESC}", 3000)
 		 Local $cancelOpenStockPos = [617, 459]
 		 Local $cancelOpenStockPxPos = [$cancelOpenStockPos[0] - 50, $cancelOpenStockPos[1]]
-		 ClickNpcWithinTimeOut($cancelOpenStockPxPos, $cancelOpenStockPos, 1000)
+		 LeftClick($cancelOpenStockPxPos, $cancelOpenStockPos, 1000)
 	  EndIf
    EndIf
    Return True
 EndFunc
 
 Func OpenUseBag($paramDic)
-   Local $offExpPos = [909, 706]
-   Local $offExpPopUpPos = [260, 201]
-   If ClickNpcWithinTimeOut($offExpPopUpPos, $offExpPos, 1000) Then
-	  PressKeyWithinTimeOut($offExpPopUpPos, "{ESC}", 3000)
-   EndIf
    Local $assistantDonePos = [887, 688]
-   ClickNpcWithinTimeOut($assistantDonePos, $assistantDonePos, 100)
-   If PressKeyWithinTimeOut($BAG_POS, "b", 1000) Then
+   LeftClick($assistantDonePos, $assistantDonePos, 100)
+   If PressKey($BAG_POS, "b", 1000) Then
 	  Local $y = WinGetClientSize($WINDOW_NKVS)[1]
 	  Local $x = WinGetClientSize($WINDOW_NKVS)[0]
 	  Local $midY = $y/2
@@ -93,7 +88,7 @@ Func OpenUseBag($paramDic)
 			MouseClick($MOUSE_CLICK_LEFT, $endX, $currentY)
 		 EndIf
 	  WEnd
-	  If Not PressKeyWithinTimeOut($BAG_POS, "b", 1000) Then
+	  If Not PressKey($BAG_POS, "b", 1000) Then
 		 Return False
 	  EndIf
 	  MouseClick($MOUSE_CLICK_LEFT, $endX - $ITEM_CELL_WIDTH * 3, $currentY)

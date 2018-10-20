@@ -26,21 +26,27 @@
 #include <File.au3>
 #include <Date.au3>
 #include "utils.au3"
+#include <GUIConstantsEx.au3>
+
 Opt("WinTitleMatchMode", 4)
 Opt("MouseCoordMode", 2)
+Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
-;GetActiveAward()
-Func GetActiveAward($paramDic)
-   Local $eventWinPos = [868, 91]
-   If PressKey($eventWinPos, "{F11}", 1000) Then
-	  MouseClick($MOUSE_CLICK_LEFT, 560, 125)
-	  Sleep(100)
-	  For $i = 0 To 4
-		 MouseClick($MOUSE_CLICK_LEFT, 260, 565)
-		 Sleep(100)
-	  Next
-	  LeftClick($eventWinPos, $eventWinPos, 1000)
+Func OfflineExp($paramDic)
+   Local $bt = [909, 705]
+   Local $btBase = [$bt[0] - 20, $bt[1]]
+   If LeftClick($btBase, $bt, 3000) Then
+	  If GUICtrlRead($UI_FEATURE_ONLINE_EX) = $GUI_CHECKED Then
+		 Local $btReceive = [360, 467]
+		 If LeftClick($btReceive, $btReceive, 3000) Then
+			Local $btConfirm = [507, 468]
+			LeftClick($btConfirm, $btConfirm, 3000)
+		 EndIf
+	  Else
+		 Local $btClose = [828, 233]
+		 LeftClick($btReceive, $btReceive, 3000)
+	  EndIf
    EndIf
    Return True
 EndFunc
