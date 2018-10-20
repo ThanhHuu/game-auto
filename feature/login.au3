@@ -28,6 +28,8 @@ Local $RUNTIME_MAP_CHARACTER = ObjCreate("Scripting.Dictionary")
 Local $BUTTON_PRE_PAGE = [409, 629]
 Local $BUTTON_NEXT_PAGE = [601, 631]
 Local $CHARACTER_PAGE_SIZE = 3
+Local $UI_SERVER_NUMBER
+Local $FIRST_SERVER_COORD = [472, 207]
 
 Func Login($paramDic)
    Local $usr = $paramDic.Item($PARAM_USR)
@@ -102,8 +104,9 @@ Func ChooseServer()
    Local $checkSum = PixelChecksum(351, 296, 417, 310, WinGetHandle($WINDOW_NKVS))
    Local $changeServer = [625, 393]
    ClickNpcWithinTimeOut($changeServer, $changeServer, 5000)
-   Local $kimKiem = [490, 241]
-   ClickNpcWithinTimeOut($kimKiem, $kimKiem, 1000)
+   Local $serverNumber = GUICtrlRead($UI_SERVER_NUMBER) - 1
+   Local $serverCoord = [$FIRST_SERVER_COORD[0], $FIRST_SERVER_COORD[1] + ($serverNumber * 30)]
+   ClickNpcWithinTimeOut($serverCoord, $serverCoord, 1000)
    Local $btConfirm = [644, 575]
    Local $btConfirmPx = PixelGetColor($btConfirm[0] - 50, $btConfirm[1])
    Local $btRetry = [507, 470]
@@ -179,4 +182,15 @@ Func GoToNextPage()
 		 ExitLoop
 	  EndIf
    Next
+EndFunc
+
+Func BuildLoginUI($row, $column)
+   Local $marginTop = ($UI_ROW_HEIGHT + $UI_MARGIN_TOP) * ($row - 1) + $UI_MARGIN_TOP
+   Local $marginLeft = ($column - 1) * $UI_COLUMN_WIDTH + $UI_MARGIN_LEFT
+   Local $width = $UI_LABEL_WIDTH
+   GUICtrlCreateLabel("Chon may chu", $marginLeft, $marginTop + 3, $width, $UI_ROW_HEIGHT)
+   $marginLeft = $marginLeft + $width + $UI_MARGIN_LEFT
+   $width = 40
+   $UI_SERVER_NUMBER = GUICtrlCreateCombo("", $marginLeft, $marginTop, $width, $UI_ROW_HEIGHT)
+   GUICtrlSetData($UI_SERVER_NUMBER, "1|2|3|4|5|6|7", "2")
 EndFunc

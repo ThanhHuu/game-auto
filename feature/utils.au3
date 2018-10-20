@@ -23,6 +23,11 @@ Opt("MouseCoordMode", 2)
 Opt("PixelCoordMode", 2)
 DllCall("User32.dll","bool","SetProcessDPIAware")
 
+HotKeySet("^e", "ForceExit")
+Func ForceExit()
+   Exit
+EndFunc
+
 Func PressMap($character)
    Local $winTitle = "[REGEXPTITLE:Ngạo Kiếm Vô Song II\(" & $character & ".*]"
    If ActiveWindowWithinTimeOut($winTitle, 3000) Then

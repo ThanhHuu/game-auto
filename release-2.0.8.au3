@@ -36,24 +36,26 @@ Local $LAST_FEATURE_BC_NO, $LAST_FEATURE_BC_STATE, $LAST_FEATURE_NTD_NO, $LAST_F
 Func BuidAutoUI()
    BuidUIAddAccount(1, 1)
 
-   BuildOpenCardUI(2, 1)
-   BuildOnlineExpUI(2, 2)
+   BuildLoginUI(2, 1)
 
-   BuildTurnOffGraphicUI(3, 1)
-   BuildSrollCircleUI(3, 2)
+   BuildOpenCardUI(3, 1)
+   BuildOnlineExpUI(3, 2)
 
-   BuildBuyItemsUI(4, 1)
-   BuildUseItemsUI(4, 2)
+   BuildTurnOffGraphicUI(4, 1)
+   BuildSrollCircleUI(4, 2)
 
-   BuildTvpUI(5, 1)
-   BuildNtdUI(5, 2)
-   BuildBcUI(6, 1)
+   BuildBuyItemsUI(5, 1)
+   BuildUseItemsUI(5, 2)
 
-   BuildActionUI(7, 1)
-   BuildCurrentCharacterInfo(7, 2)
+   BuildTvpUI(6, 1)
+   BuildNtdUI(6, 2)
+   BuildBcUI(7, 1)
+
+   BuildActionUI(8, 1)
+   BuildCurrentCharacterInfo(8, 2)
 EndFunc
 
-$UI = GUICreate("Auto Configuration",460, 240)
+$UI = GUICreate("Auto Configuration",460, 260)
 BuidAutoUI()
 
 GUISetState(@SW_SHOW)
