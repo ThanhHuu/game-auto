@@ -1,2 +1,2 @@
 # game-auto
-This is release using for guest host (virtual machine)
+This is version 3 that using an third party auto nkvs

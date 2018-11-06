@@ -1,9 +1,0 @@
-action=click;x=305;y=73;pause=300
-action=press;key={F11};pause=300
-action=click;x=676;y=177;pause=200
-action=click;x=471;y=469;pause=150
-action=click;x=471;y=469;pause=150
-action=click;x=471;y=469;pause=150
-action=click;x=471;y=469;pause=150
-action=click;x=471;y=469;pause=150
-action=press;key={ESC};pause=300

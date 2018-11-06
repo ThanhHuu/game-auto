@@ -1,7 +1,0 @@
-feature=ThuVePhai;enable=1;time=2
-feature=NguTrucDam1;enable=1;time=2
-feature=NguTrucDam2;enable=1;time=2
-feature=BiCanh1;enable=1;time=2
-feature=BiCanh2;enable=0;time=2
-feature=Action;enable=1;time=0;scenarios=BackHome|SellItems|UseItems|LatThe|CauPhuc|NhanSoiNoi|BuyItems
-feature=NhanMonQuan;enable=0;time=15;scheduler=Sun|Mon|Wed|Fri
