@@ -16,6 +16,7 @@
 #include "character.au3"
 #include "basic.au3"
 #include "util.au3"
+#include "code.au3"
 
 Local $ui = CreateUi()
 GUISetState(@SW_SHOW, $ui)
@@ -41,9 +42,6 @@ While True
 	  CloneCharacter($numberWindow)
 	  For $i = 0 To UBound($characters.Keys) Step $numberWindow
 		 For $j = 0 To $numberWindow - 1
-			If IsHideGame() Then
-			   DoClickCharacterEx($j, 3)
-			EndIf
 			Local $character = $characters.Keys[$i + $j]
 			Local $usr = $characters.Item($character)
 			ConfigureForCharacter($usr, $character, $j)
@@ -51,15 +49,15 @@ While True
 			GameWait($character)
 			DoIgnoreChatacter($character)
 			_FileWriteLogEx(StringFormat("Logged in for %s", $character))
+			Sleep(3000)
+			WinActivateEx($character)
+			DoMoveToNpcLeQuan($character)
 		 Next
-		 Sleep(GetTime()*60*1000)
 		 For $j = 0 To $numberWindow - 1
-			If IsHideGame() Then
-			   DoClickCharacterEx($j, 3)
-			EndIf
 			Local $character = $characters.Keys[$i + $j]
-			DoClickCharacter($character)
-			Sleep(5000)
+			WinActivateEx($character)
+			DoWaitChangeMap($character, 180000)
+			DoEnterCode($character, "123")
 			If Not ReLogin($character) Then
 			   KillGame($character)
 			   _FileWriteLogEx(StringFormat("Killed game for %s", $character))

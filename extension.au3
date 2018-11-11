@@ -14,12 +14,14 @@
 #include <File.au3>
 #include <Date.au3>
 #include <GuiListView.au3>
+Opt("PixelCoordMode", 2)
+Opt("MouseCoordMode", 2)
 
 Global $AUTO_HWND = "Auto Ngạo Kiếm Vô Song 2 - v2.0.1.3"
 Local $MK_LBUTTON = 0x0001
 Local $MK_RBUTTON = 0x0002
 
-Func MouseClickEx($hwnd, $x, $y, $button = "left" , $clicks = 1)
+Func MouseClickAdvance($hwnd, $x, $y, $button = "left" , $clicks = 1)
    Local $bt, $btDown, $btUp
    Select
 	  Case $button = "left"
@@ -42,11 +44,9 @@ Func _MakeLong($LoWord, $HiWord)
    Return BitOR($HiWord * 0x10000, BitAND($LoWord, 0xFFFF))
 EndFunc
 
-Func GraphicClick($point, $checkingPoint = "")
-   Opt("PixelCoordMode", 2)
-   Opt("MouseCoordMode", 2)
+Func GraphicClick($point, $button = "left", $clicks = 1, $checkingPoint = "")
    Local $beforeClick = $checkingPoint = "" ? PixelGetColor($point[0], $point[1]) : PixelGetColor($point[0], $point[1])
-   MouseClick("left", $point[0], $point[1])
+   MouseClick($button, $point[0], $point[1], $clicks)
    For $i = 1 To 30
 	  Sleep(100)
 	  Local $afterClick = $checkingPoint = "" ? PixelGetColor($point[0], $point[1]) : PixelGetColor($point[0], $point[1])
@@ -118,4 +118,15 @@ Func _GUICtrlListView_ClickItemEx($hWnd, $iRow, $iCol = 0, $iClicks = 1, $sButto
 	  MouseClick($sButton, $iX, $iY, $iClicks, $iSpeed)
    EndIf
    Opt("MouseCoordMode", $iMode)
+EndFunc
+
+Func MouseClickDragEx($fromCoord, $toCoord, $button = "left")
+   Local $targetPx = PixelGetColor($toCoord[0], $toCoord[1])
+   MouseClickDrag($button, $fromCoord[0], $fromCoord[1], $toCoord[0], $toCoord[1])
+   For $i = 1 To 30
+	  Sleep(100)
+	  If $targetPx <> PixelGetColor($toCoord[0], $toCoord[1]) Then
+		 ExitLoop
+	  EndIf
+   Next
 EndFunc
