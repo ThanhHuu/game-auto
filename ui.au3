@@ -19,7 +19,7 @@ Local $COLUMN_WIDTH = [100, 200, 100]
 Local $SERVER_LIST = ["Thiên Vương", "Kim Kiếm", "Cái Bang"]
 
 Func CreateUi()
-   Local $ui = GUICreate("Ho tro", 460, 220);
+   Local $ui = GUICreate("Ho tro", 460, 260);
    Local $row = 1
    CreateElement("Label", "Tài khoản", $row, 1)
    CreateElement("Input", "", $row, 2)
@@ -41,9 +41,13 @@ Func CreateUi()
    GUICtrlSetData($cbNumGame, "1|2|3|4|5", 1)
 
    $row += 1
+   CreateElement("Label", "Ẩn cửa sổ", $row, 1, 80)
+   CreateElement("Checkbox", "", $row, 2, 80)
+
+   $row += 1
    CreateElement("Label", "Thời gian", $row, 1, 80)
    Local $cbTime = CreateElement("Combobox", "", $row, 2, 100)
-   GUICtrlSetData($cbTime, "5|10|15|20|25", 10)
+   GUICtrlSetData($cbTime, "5|10|15|20|25|30|35|40", 10)
 
    $row += 1
    CreateElement("Button", "Bắt đầu", $row, 1, 50)
@@ -67,5 +71,7 @@ Func CreateElement($type, $text, $row, $col, $width = -1, $height = $ROW_HEIGHT)
 	  Return GUICtrlCreateButton($text, $left, $top, $width = -1 ? $COLUMN_WIDTH[$col - 1] : $width, $height)
    Case "Combobox"
 	  Return GUICtrlCreateCombo($text, $left, $top, $width = -1 ? $COLUMN_WIDTH[$col - 1] : $width, $height)
+   Case "Checkbox"
+	  Return GUICtrlCreateCheckbox($text, $left, $top, $width = -1 ? $COLUMN_WIDTH[$col - 1] : $width, $height)
    EndSwitch
 EndFunc

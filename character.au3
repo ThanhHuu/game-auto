@@ -35,6 +35,13 @@ Func DoSelectItem($index)
 EndFunc
 
 
+Func DoClickCharacterEx($iRow, $iCol)
+   If WinActivateEx($AUTO_HWND) Then
+	  Local $listCtrl = ControlGetHandle($AUTO_HWND, "", $LIST_CHARACTER)
+	  _GUICtrlListView_ClickItemEx($listCtrl, $iRow, $iCol)
+   EndIf
+EndFunc
+
 Func DoClickCharacter($character)
    If WinActivateEx($AUTO_HWND) Then
 	  Local $listCtrl = ControlGetHandle($AUTO_HWND, "", $LIST_CHARACTER)

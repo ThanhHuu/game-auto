@@ -94,10 +94,15 @@ Func _FileWriteLogEx($msg)
    _FileWriteLog($logFile, $msg)
 EndFunc
 
-Func _GUICtrlListView_ClickItemEx($hWnd, $iIndex, $iClicks = 1, $sButton = "left", $fMove = False,  $iSpeed = 1)
-   Local $tRECT = _GUICtrlListView_GetItemRect($hWnd, $iIndex)
+Func _GUICtrlListView_ClickItemEx($hWnd, $iRow, $iCol = 0, $iClicks = 1, $sButton = "left", $fMove = False,  $iSpeed = 1)
+   Local $tRECT = _GUICtrlListView_GetItemRect($hWnd, $iRow)
+   Local $colWidth = 0
+   For $i = 0 To $iCol - 1
+	  $colWidth += _GUICtrlListView_GetColumnWidth($hWnd, $i)
+   Next
+   $colWidth += _GUICtrlListView_GetColumnWidth($hWnd, $iCol)/2
    Local $tPoint = DllStructCreate("int X;int Y")
-   DllStructSetData($tPoint, "X", ($tRECT[0] + $tRECT[2])/2)
+   DllStructSetData($tPoint, "X", $tRECT[0] + $colWidth)
    DllStructSetData($tPoint, "Y", ($tRECT[1] + $tRECT[3])/2)
    $tPoint = _WinAPI_ClientToScreen($hWnd, $tPoint)
    Local $iX, $iY

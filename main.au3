@@ -41,6 +41,9 @@ While True
 	  CloneCharacter($numberWindow)
 	  For $i = 0 To UBound($characters.Keys) Step $numberWindow
 		 For $j = 0 To $numberWindow - 1
+			If IsHideGame() Then
+			   DoClickCharacterEx($j, 3)
+			EndIf
 			Local $character = $characters.Keys[$i + $j]
 			Local $usr = $characters.Item($character)
 			ConfigureForCharacter($usr, $character, $j)
@@ -51,10 +54,16 @@ While True
 		 Next
 		 Sleep(GetTime()*60*1000)
 		 For $j = 0 To $numberWindow - 1
+			If IsHideGame() Then
+			   DoClickCharacterEx($j, 3)
+			EndIf
 			Local $character = $characters.Keys[$i + $j]
 			DoClickCharacter($character)
 			Sleep(5000)
-			ReLogin($character)
+			If Not ReLogin($character) Then
+			   KillGame($character)
+			   _FileWriteLogEx(StringFormat("Killed game for %s", $character))
+			EndIf
 			_FileWriteLogEx(StringFormat("Re-logged in for %s", $character))
 		 Next
 	  Next
@@ -80,9 +89,9 @@ Func ConfigureForCharacter($usr, $character, $index)
    DoSelectLoginTab()
    DoEnterAccount($usr, "Ngoc@nh91", $character)
    DoEdit()
-   Local $className = GetClassForCharacter($character)
-   DoSelectBasicTab()
-   DoSelectClass($className)
+   ;Local $className = GetClassForCharacter($character)
+   ;DoSelectBasicTab()
+   ;SelectClass($className)
 EndFunc
 
 Func DoIgnoreChatacter($character)
@@ -133,6 +142,12 @@ Func GameWait($character)
    WEnd
 EndFunc
 
+Func KillGame($character)
+   Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+   Local $pid = WinGetProcess($hwndCharacter)
+   ProcessClose($pid)
+EndFunc
+
 Func GetClassForCharacter($character)
    Switch StringRight($character, 4)
    Case "DoiA"
@@ -157,4 +172,9 @@ EndFunc
 Func GetTime()
    Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:3]"))
    Return GUICtrlRead($cbCtrl)
+EndFunc
+
+Func IsHideGame()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:2]"))
+   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
 EndFunc
