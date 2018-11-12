@@ -19,21 +19,11 @@ Local $COLUMN_WIDTH = [100, 200, 100]
 Local $SERVER_LIST = ["Thiên Vương", "Kim Kiếm", "Cái Bang"]
 
 Func CreateUi()
-   Local $ui = GUICreate("Ho tro", 460, 260);
+   Local $ui = GUICreate("Ho tro", 460, 240);
    Local $row = 1
    CreateElement("Label", "Tài khoản", $row, 1)
    CreateElement("Input", "", $row, 2)
    CreateElement("Button", "Chọn", $row, 3, 50)
-
-   $row += 1
-   CreateElement("Label", "Máy chủ", $row, 1, 50)
-   Local $cbServer = CreateElement("Combobox", "", $row, 2, 100)
-   Local $server = ""
-   For $i = 0 To UBound($SERVER_LIST) - 2
-	  $server &= $SERVER_LIST[$i] & "|"
-   Next
-   $server &= $SERVER_LIST[$i]
-   GUICtrlSetData($cbServer, $server, $SERVER_LIST[0])
 
    $row += 1
    CreateElement("Label", "Số cửa sổ", $row, 1, 50)

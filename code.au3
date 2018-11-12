@@ -26,3 +26,21 @@ Func DoEnterCode($character, $code)
    EndIf
    _FileWriteLogEx(StringFormat("%s not found LeQuan", $character))
 EndFunc
+
+Func EnterCode($characterInfos)
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  If WinActivateEx($character) Then
+		 DoMoveToNpcLeQuan($character)
+	  EndIf
+   Next
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  Local $code = $characterInfo[3]
+	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+	  If WinActivateEx($hwndCharacter) Then
+		 DoWaitChangeMap($hwndCharacter, 3*60*1000)
+		 DoEnterCode($character, $code)
+	  EndIf
+   Next
+EndFunc

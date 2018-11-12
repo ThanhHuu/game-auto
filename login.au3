@@ -86,9 +86,8 @@ Func DoRemove()
    EndIf
 EndFunc
 
-Func AddNewCharacter($serverName, $usr, $pwd, $character)
+Func AddNewCharacter($usr, $pwd, $character)
    DoSelectLoginTab()
-   DoChooseServer($serverName)
    DoEnterAccount($usr, $pwd, $character)
    DoAddNew()
 EndFunc

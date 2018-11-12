@@ -10,6 +10,7 @@
 
 #include <GUIConstantsEx.au3>
 #include <WinAPI.au3>
+#include <Array.au3>
 
 #include "ui.au3"
 #include "login.au3"
@@ -41,55 +42,80 @@ While True
 	  Local $numberWindow = GetNumberWindow()
 	  CloneCharacter($numberWindow)
 	  For $i = 0 To UBound($characters.Keys) Step $numberWindow
-		 For $j = 0 To $numberWindow - 1
+		 Local $remaining = UBound($characters.Keys) - $i
+		 Local $size = $remaining > $numberWindow ? $numberWindow : $remaining
+		 Local $characterInfos[$size]
+		 For $j = 0 To $size - 1
 			Local $character = $characters.Keys[$i + $j]
-			Local $usr = $characters.Item($character)
-			ConfigureForCharacter($usr, $character, $j)
-			DoClickCharacter($character)
-			GameWait($character)
-			DoIgnoreChatacter($character)
-			_FileWriteLogEx(StringFormat("Logged in for %s", $character))
-			Sleep(3000)
-			WinActivateEx($character)
-			DoMoveToNpcLeQuan($character)
+			Local $characterInfo = $characters.Item($character)
+			$characterInfos[$j] = $characterInfo
 		 Next
-		 For $j = 0 To $numberWindow - 1
-			Local $character = $characters.Keys[$i + $j]
-			WinActivateEx($character)
-			DoWaitChangeMap($character, 180000)
-			DoEnterCode($character, "123")
-			If Not ReLogin($character) Then
-			   KillGame($character)
-			   _FileWriteLogEx(StringFormat("Killed game for %s", $character))
-			EndIf
-			_FileWriteLogEx(StringFormat("Re-logged in for %s", $character))
-		 Next
+		 EnterGame($characterInfos)
+		 WaitThirdParty()
+		 ExitGame($characterInfos)
 	  Next
    EndSwitch
 WEnd
+
+Func EnterGame($characterInfos)
+   For $i = 0 To UBound($characterInfos) - 1
+	  Local $characterInfo = $characterInfos[$i]
+	  Local $server = $characterInfo[0]
+	  Local $usr = $characterInfo[1]
+	  Local $character = $characterInfo[2]
+	  ConfigureForCharacter($i, $server, $usr, $character)
+	  DoClickCharacter($character)
+	  GameWait($character)
+	  _FileWriteLogEx(StringFormat("Logged in for %s", $character))
+   Next
+EndFunc
+
+Func ExitGame($characterInfos)
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  WinActivateEx($character)
+	  If Not ReLogin($character) Then
+		 KillGame($character)
+		 _FileWriteLogEx(StringFormat("Killed game for %s", $character))
+		 Return
+	  EndIf
+	  _FileWriteLogEx(StringFormat("Re-logged in for %s", $character))
+   Next
+EndFunc
+
+Func WaitThirdParty()
+   Local $sleepingTime = GetTime()*60*1000
+   Sleep($sleepingTime)
+EndFunc
 
 Func GetListCharacters($accountFiles)
    Local $characters = ObjCreate("Scripting.Dictionary")
    For $file In $accountFiles
 	  Local $lines = FileReadToArray($file)
 	  For $line In $lines
-		 Local $infomation = StringSplit($line, "=")
-		 If Not IsIgnoredCharacter($infomation[2]) Then
-			$characters.Add($infomation[2], $infomation[1])
+		 If $line <> "" Then
+			Local $infomation = StringSplit($line, "=")
+			If $infomation[0] < 3 Then
+			   _FileWriteLogEx(StringFormat("File %s is wrong format", $file))
+			   ExitLoop
+			EndIf
+			If Not IsIgnoredCharacter($infomation[3]) Then
+			   Local $code = $infomation[0] > 3 ? $infomation[4] : ""
+			   Local $characterInfo[4] = [$infomation[1], $infomation[2], $infomation[3], $code]
+			   $characters.Add($infomation[3], $characterInfo)
+			EndIf
 		 EndIf
 	  Next
    Next
    Return $characters
 EndFunc
 
-Func ConfigureForCharacter($usr, $character, $index)
+Func ConfigureForCharacter($index, $server, $usr, $character)
    DoSelectItem($index)
    DoSelectLoginTab()
+   DoChooseServer($server)
    DoEnterAccount($usr, "Ngoc@nh91", $character)
    DoEdit()
-   ;Local $className = GetClassForCharacter($character)
-   ;DoSelectBasicTab()
-   ;SelectClass($className)
 EndFunc
 
 Func DoIgnoreChatacter($character)
@@ -120,9 +146,8 @@ Func IsIgnoredCharacter($character)
 EndFunc
 
 Func CloneCharacter($number)
-   Local $serverName = GetServer()
    For $i = 2 To $number
-	  AddNewCharacter($serverName, $i, $i, $i)
+	  AddNewCharacter($i, $i, $i)
    Next
    DoSelectItem(0)
    ApplyUtilForAll()
@@ -155,11 +180,6 @@ Func GetClassForCharacter($character)
    Case Default
 	  Return "Cái Bang"
    EndSwitch
-EndFunc
-
-Func GetServer()
-   Local $cbServer = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:1]"))
-   Return GUICtrlRead($cbServer)
 EndFunc
 
 Func GetNumberWindow()
