@@ -30,7 +30,8 @@ EndFunc
 Func EnterCode($characterInfos)
    For $characterInfo In $characterInfos
 	  Local $character = $characterInfo[2]
-	  If WinActivateEx($character) Then
+	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+	  If WinActivateEx($hwndCharacter) Then
 		 DoMoveToNpcLeQuan($character)
 	  EndIf
    Next

@@ -45,11 +45,24 @@ Func _MakeLong($LoWord, $HiWord)
 EndFunc
 
 Func GraphicClick($point, $button = "left", $clicks = 1, $checkingPoint = "")
-   Local $beforeClick = $checkingPoint = "" ? PixelGetColor($point[0], $point[1]) : PixelGetColor($point[0], $point[1])
+   Local $beforeClick = $checkingPoint = "" ? PixelGetColor($point[0], $point[1]) : PixelGetColor($checkingPoint[0], $checkingPoint[1])
    MouseClick($button, $point[0], $point[1], $clicks)
    For $i = 1 To 30
 	  Sleep(100)
-	  Local $afterClick = $checkingPoint = "" ? PixelGetColor($point[0], $point[1]) : PixelGetColor($point[0], $point[1])
+	  Local $afterClick = $checkingPoint = "" ? PixelGetColor($point[0], $point[1]) : PixelGetColor($checkingPoint[0], $checkingPoint[1])
+	  If $beforeClick <> $afterClick Then
+		 Return True
+	  EndIf
+   Next
+   Return False
+EndFunc
+
+Func GraphicSend($key, $checkingPoint)
+   Local $beforeClick = PixelGetColor($checkingPoint[0], $checkingPoint[1])
+   Send($key)
+   For $i = 1 To 30
+	  Sleep(100)
+	  Local $afterClick = PixelGetColor($checkingPoint[0], $checkingPoint[1])
 	  If $beforeClick <> $afterClick Then
 		 Return True
 	  EndIf

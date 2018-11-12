@@ -19,7 +19,7 @@ Local $COLUMN_WIDTH = [100, 200, 100]
 Local $SERVER_LIST = ["Thiên Vương", "Kim Kiếm", "Cái Bang"]
 
 Func CreateUi()
-   Local $ui = GUICreate("Ho tro", 460, 260);
+   Local $ui = GUICreate("Ho tro", 460, 380);
    Local $row = 1
    CreateElement("Label", "Tài khoản", $row, 1)
    CreateElement("Input", "", $row, 2)
@@ -42,6 +42,24 @@ Func CreateUi()
    $row += 1
    CreateElement("Label", "Code KimBai", $row, 1, 80)
    CreateElement("Checkbox", "", $row, 2, 100)
+
+   $row += 1
+   CreateElement("Label", "Ngũ trúc đàm", $row, 1, 80)
+   Local $cbNumber = CreateElement("Combobox", "Số lần", $row, 2, 100)
+   GUICtrlSetData($cbNumber, "0|1|2")
+   CreateElement("Checkbox", "Xong ngay", $row, 3, 100)
+
+   $row += 1
+   CreateElement("Label", "Bí cảnh", $row, 1, 80)
+   $cbNumber = CreateElement("Combobox", "Số lần", $row, 2, 100)
+   GUICtrlSetData($cbNumber, "0|1|2")
+   CreateElement("Checkbox", "Xong ngay", $row, 3, 100)
+
+   $row += 1
+   CreateElement("Label", "Thủ vệ phái", $row, 1, 80)
+   $cbNumber = CreateElement("Combobox", "Số lần", $row, 2, 100)
+   GUICtrlSetData($cbNumber, "0|1")
+   CreateElement("Checkbox", "Xong ngay", $row, 3, 100)
 
    $row += 1
    CreateElement("Button", "Bắt đầu", $row, 1, 50)

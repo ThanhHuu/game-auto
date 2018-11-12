@@ -204,3 +204,18 @@ Func IsEnableCodeKimBai()
    Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:3]"))
    Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
 EndFunc
+
+Func IsEnableNtd()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:3]"))
+   Return GUICtrlRead($cbCtrl) > 0
+EndFunc
+
+Func IsEnableBc()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:4]"))
+   Return GUICtrlRead($cbCtrl) > 0
+EndFunc
+
+Func IsEnableTvp()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:5]"))
+   Return GUICtrlRead($cbCtrl) > 0
+EndFunc
