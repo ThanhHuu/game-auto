@@ -52,6 +52,9 @@ While True
 		 Next
 		 EnterGame($characterInfos)
 		 WaitThirdParty()
+		 If IsEnableCodeKimBai() Then
+			EnterCode($characterInfos)
+		 EndIf
 		 ExitGame($characterInfos)
 	  Next
    EndSwitch
@@ -194,5 +197,10 @@ EndFunc
 
 Func IsHideGame()
    Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:2]"))
+   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+EndFunc
+
+Func IsEnableCodeKimBai()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:3]"))
    Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
 EndFunc
