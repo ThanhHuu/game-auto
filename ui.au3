@@ -37,7 +37,7 @@ Func CreateUi()
    $row += 1
    CreateElement("Label", "Thời gian", $row, 1, 80)
    Local $cbTime = CreateElement("Combobox", "", $row, 2, 100)
-   GUICtrlSetData($cbTime, "1|5|10|15|20|25|30|35|40", 10)
+   GUICtrlSetData($cbTime, "0|1|5|10|15|20|25|30|35|40", 10)
 
    $row += 1
    CreateElement("Label", "Code KimBai", $row, 1, 80)

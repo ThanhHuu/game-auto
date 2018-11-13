@@ -25,6 +25,8 @@ Local $btSelectId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Butt
 Local $inAccountId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Edit; INSTANCE:1]"))
 Local $btStartId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; TEXT:Bắt đầu]"))
 
+HotKeySet("^q", "ForceExit")
+
 While True
    Switch GUIGetMsg()
    Case $GUI_EVENT_CLOSE
@@ -76,18 +78,21 @@ EndFunc
 Func ExitGame($characterInfos)
    For $characterInfo In $characterInfos
 	  Local $character = $characterInfo[2]
-	  WinActivateEx($character)
+	  DoClickCharacter($character)
+	  Sleep(5000)
+	  DoIgnoreChatacter($character)
 	  If Not ReLogin($character) Then
 		 KillGame($character)
 		 _FileWriteLogEx(StringFormat("Killed game for %s", $character))
-		 Return
+		 ContinueLoop
 	  EndIf
 	  _FileWriteLogEx(StringFormat("Re-logged in for %s", $character))
    Next
 EndFunc
 
 Func WaitThirdParty()
-   Local $sleepingTime = GetTime()*60*1000
+   Local $time = GetTime()
+   Local $sleepingTime = $time > 0 ? $time * 60000 : 30000
    Sleep($sleepingTime)
 EndFunc
 
@@ -149,13 +154,16 @@ Func IsIgnoredCharacter($character)
 EndFunc
 
 Func CloneCharacter($number)
-   For $i = 2 To $number
-	  AddNewCharacter($i, $i, $i)
-   Next
-   DoSelectItem(0)
-   ApplyUtilForAll()
-   ApplyBasicForAll()
-   _FileWriteLogEx("Cloned character")
+   Local $count = DoCountCharacter()
+   If $count < $number Then
+	  For $i = $count + 1 To $number
+		 AddNewCharacter($i, $i, $i)
+	  Next
+	  DoSelectItem(0)
+	  ApplyUtilForAll()
+	  ApplyBasicForAll()
+	  _FileWriteLogEx("Cloned character")
+   EndIf
 EndFunc
 
 Func GameWait($character)
@@ -186,12 +194,12 @@ Func GetClassForCharacter($character)
 EndFunc
 
 Func GetNumberWindow()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:2]"))
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:1]"))
    Return GUICtrlRead($cbCtrl)
 EndFunc
 
 Func GetTime()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:3]"))
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:2]"))
    Return GUICtrlRead($cbCtrl)
 EndFunc
 
@@ -218,4 +226,8 @@ EndFunc
 Func IsEnableTvp()
    Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:5]"))
    Return GUICtrlRead($cbCtrl) > 0
+EndFunc
+
+Func ForceExit()
+   Exit
 EndFunc

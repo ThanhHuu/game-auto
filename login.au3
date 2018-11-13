@@ -15,6 +15,7 @@
 #include <GuiEdit.au3>
 #include <GuiButton.au3>
 #include "extension.au3"
+#include "nkvs.au3"
 
 Local $LOGIN_TAB_TEXT = "Đăng nhập"
 Local $SERVER_COMBOBOX = "[CLASS:ComboBox; INSTANCE:9]"
@@ -60,7 +61,9 @@ EndFunc
 Func ReLogin($character)
    Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
    If WinActivateEx($hwndCharacter) Then
-	  Local $systemPoint = [1000, 732]
+	  DoClosePopUp()
+	  Sleep(1000)
+	  Local $systemPoint = [1002, 735]
 	  If GraphicClick($systemPoint) Then
 		 Local $reloginPoint = [468, 380]
 		 If GraphicClick($reloginPoint) Then
@@ -73,7 +76,7 @@ Func ReLogin($character)
 		 EndIf
 	  EndIf
    EndIf
-   Sleep(5000)
+   Sleep(3000)
    Return Not WinExists($hwndCharacter)
 EndFunc
 

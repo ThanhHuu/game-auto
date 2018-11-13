@@ -32,7 +32,7 @@ Func DoMoveToNpcLeQuan($character)
    MouseClickDragEx($fromCoord, $toCoord)
    Local $npcCoord = [869, 366]
    GraphicClick($npcCoord, "left", 2)
-   Sleep(1000)
+   Sleep(2000)
    Local $closeMapCoord = [993, 45]
    GraphicClick($closeMapCoord)
 EndFunc
@@ -98,4 +98,20 @@ Func DoWaitChangeMap($hwnd, $watingTime, $delay = 3000, $offset = 50)
 	  EndIf
    Next
    Return False
+EndFunc
+
+Func DoClosePopUp()
+   Local $sysCoord = [1002, 735]
+   For $i = 1 To 10
+	  Send("{ESC}")
+	  Sleep(500)
+	  Local $sysPx = PixelGetColor($sysCoord[0], $sysCoord[1])
+	  MouseMove($sysCoord[0], $sysCoord[1])
+	  Sleep(500)
+	  If $sysPx = PixelGetColor($sysCoord[0], $sysCoord[1]) Then
+		 GraphicClick($sysCoord)
+		 ExitLoop
+	  EndIf
+	  MouseMove($sysCoord[0] - 100, $sysCoord[1])
+   Next
 EndFunc

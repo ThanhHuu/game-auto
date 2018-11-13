@@ -13,11 +13,6 @@
 #include "extension.au3"
 #include "nkvs.au3"
 
-Local $hwndGame = "[REGEXPTITLE:Ngạo Kiếm Vô Song II.*]"
-WinActivateEx($hwndGame)
-DoReceiveAssistantAward()
-DoAssignNtd()
-
 Func AssignFeature($characterInfos)
    For $characterInfo In $characterInfos
 	  Local $character = $characterInfo[2]

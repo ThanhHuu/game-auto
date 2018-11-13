@@ -20,8 +20,15 @@ Func DoEnterCode($character, $code)
 	  Local $optCode = [126, 267]
 	  Local $confirmCode = [561, 421]
 	  GraphicClick($optCode, "left", 1, $confirmCode)
+	  Local $mode = Opt("SendAttachMode", 1)
+	  Sleep(1000)
 	  Send($code)
+	  Opt("SendAttachMode", $mode)
 	  GraphicClick($confirmCode)
+	  Local $finalConfirmCoord = [127, 237]
+	  GraphicClick($finalConfirmCoord)
+	  Sleep(1000)
+	  GraphicClick($finalConfirmCoord)
 	  Return
    EndIf
    _FileWriteLogEx(StringFormat("%s not found LeQuan", $character))
@@ -33,6 +40,15 @@ Func EnterCode($characterInfos)
 	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
 	  If WinActivateEx($hwndCharacter) Then
 		 DoMoveToNpcLeQuan($character)
+		 Sleep(1000)
+	  EndIf
+   Next
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+	  If WinActivateEx($hwndCharacter) Then
+		 DoMoveToNpcLeQuan($character)
+		 Sleep(1000)
 	  EndIf
    Next
    For $characterInfo In $characterInfos
@@ -41,6 +57,7 @@ Func EnterCode($characterInfos)
 	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
 	  If WinActivateEx($hwndCharacter) Then
 		 DoWaitChangeMap($hwndCharacter, 3*60*1000)
+		 DoClosePopUp()
 		 DoEnterCode($character, $code)
 	  EndIf
    Next
