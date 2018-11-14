@@ -18,6 +18,8 @@
 #include "basic.au3"
 #include "util.au3"
 #include "code.au3"
+#include "assistant.au3"
+#include "lucky.au3"
 
 Local $ui = CreateUi()
 GUISetState(@SW_SHOW, $ui)
@@ -43,24 +45,77 @@ While True
 	  Local $characters = GetListCharacters($accountFiles)
 	  Local $numberWindow = GetNumberWindow()
 	  CloneCharacter($numberWindow)
-	  For $i = 0 To UBound($characters.Keys) Step $numberWindow
-		 Local $remaining = UBound($characters.Keys) - $i
-		 Local $size = $remaining > $numberWindow ? $numberWindow : $remaining
-		 Local $characterInfos[$size]
-		 For $j = 0 To $size - 1
-			Local $character = $characters.Keys[$i + $j]
-			Local $characterInfo = $characters.Item($character)
-			$characterInfos[$j] = $characterInfo
+	  Local $loopTimes = GetLoopTimes()
+	  For $loop = 1 To $loopTimes
+		 For $i = 0 To UBound($characters.Keys) Step $numberWindow
+			Local $remaining = UBound($characters.Keys) - $i
+			Local $size = $remaining > $numberWindow ? $numberWindow : $remaining
+			Local $characterInfos[$size]
+			For $j = 0 To $size - 1
+			   Local $character = $characters.Keys[$i + $j]
+			   Local $characterInfo = $characters.Item($character)
+			   $characterInfos[$j] = $characterInfo
+			Next
+			EnterGame($characterInfos)
+			WaitThirdParty($characterInfos)
+
+			; Cau phuc
+			LuckyRound($characterInfos)
+			; Nhap code KimBai
+			If IsEnableCodeKimBai() Then
+			   EnterCode($characterInfos)
+			EndIf
+			; Dieu doi
+			If IsEnableTvp() Or IsEnableNtd() Or IsEnableBc() Then
+			   GoToHome($characterInfos)
+			   RunAssign($characterInfos)
+			EndIf
+
+			ExitGame($characterInfos)
 		 Next
-		 EnterGame($characterInfos)
-		 WaitThirdParty()
-		 If IsEnableCodeKimBai() Then
-			EnterCode($characterInfos)
-		 EndIf
-		 ExitGame($characterInfos)
 	  Next
    EndSwitch
 WEnd
+
+Func RunAssign($characterInfos)
+   For $i = 0 To UBound($characterInfos) - 1
+	  If $i > 0 Then
+		 DoClickItem($i - 1)
+	  EndIf
+	  Local $characterInfo = $characterInfos[$i]
+	  Local $done = IsDoneTvp()
+	  Local $character = $characterInfo[2]
+	  If IsEnableTvp() Then
+		 AssignTvp($characterInfo, 1, $done)
+		 _FileWriteLogEx(StringFormat("%s - Ran Tvp", $character))
+		 If Not $done Then
+			ContinueLoop
+		 EndIf
+	  EndIf
+	  $done = IsDoneNtd()
+	  If IsEnableNtd() Then
+		 Local $times = GetNtdTimes()
+		 AssignNtd($characterInfo, $times, $done)
+		 _FileWriteLogEx(StringFormat("%s - Ran Ntd", $character))
+		 If Not $done Then
+			ContinueLoop
+		 EndIf
+	  EndIf
+	  $done = IsDoneBc()
+	  If IsEnableBc() Then
+		 Local $times = GetBcTimes()
+		 AssignBc($characterInfo, $times, $done)
+		 _FileWriteLogEx(StringFormat("%s - Ran Bc", $character))
+		 If Not $done Then
+			ContinueLoop
+		 EndIf
+	  EndIf
+   Next
+   DoClickItem($i - 1)
+   For $i = 0 To UBound($characterInfos) - 1
+	  DoClickItem($i)
+   Next
+EndFunc
 
 Func EnterGame($characterInfos)
    For $i = 0 To UBound($characterInfos) - 1
@@ -78,8 +133,6 @@ EndFunc
 Func ExitGame($characterInfos)
    For $characterInfo In $characterInfos
 	  Local $character = $characterInfo[2]
-	  DoClickCharacter($character)
-	  Sleep(5000)
 	  DoIgnoreChatacter($character)
 	  If Not ReLogin($character) Then
 		 KillGame($character)
@@ -90,10 +143,9 @@ Func ExitGame($characterInfos)
    Next
 EndFunc
 
-Func WaitThirdParty()
+Func WaitThirdParty($characterInfos)
    Local $time = GetTime()
-   Local $sleepingTime = $time > 0 ? $time * 60000 : 30000
-   Sleep($sleepingTime)
+   Sleep($time * 60000)
 EndFunc
 
 Func GetListCharacters($accountFiles)
@@ -214,18 +266,63 @@ Func IsEnableCodeKimBai()
 EndFunc
 
 Func IsEnableNtd()
+   Return GetNtdTimes() > 0
+EndFunc
+
+Func IsEnableBc()
+   Return GetBcTimes() > 0
+EndFunc
+
+Func IsEnableTvp()
    Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:3]"))
    Return GUICtrlRead($cbCtrl) > 0
 EndFunc
 
-Func IsEnableBc()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:4]"))
-   Return GUICtrlRead($cbCtrl) > 0
+Func IsDoneTvp()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:4]"))
+   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
 EndFunc
 
-Func IsEnableTvp()
+Func IsDoneNtd()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:5]"))
+   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+EndFunc
+
+Func IsDoneBc()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:6]"))
+   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+EndFunc
+
+Func GetNtdTimes()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:4]"))
+   Return GUICtrlRead($cbCtrl)
+EndFunc
+
+Func GetBcTimes()
    Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:5]"))
-   Return GUICtrlRead($cbCtrl) > 0
+   Return GUICtrlRead($cbCtrl)
+EndFunc
+
+Func ReduceTvp()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:3]"))
+   GUICtrlSetData($cbCtrl, 0)
+EndFunc
+
+Func ReduceNtd($times)
+   Local $newTimes = GetNtdTimes() - $times
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:4]"))
+   GUICtrlSetData($cbCtrl, $newTimes < 0 ? 0 : $newTimes)
+EndFunc
+
+Func ReduceBc($times)
+   Local $newTimes = GetNtdTimes() - $times
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:5]"))
+   GUICtrlSetData($cbCtrl, $newTimes < 0 ? 0 : $newTimes)
+EndFunc
+
+Func GetLoopTimes()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:6]"))
+   Return GUICtrlRead($cbCtrl)
 EndFunc
 
 Func ForceExit()

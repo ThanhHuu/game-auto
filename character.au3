@@ -50,6 +50,13 @@ Func DoClickCharacter($character)
    EndIf
 EndFunc
 
+Func DoClickItem($index)
+   If WinActivateEx($AUTO_HWND) Then
+	  Local $listCtrl = ControlGetHandle($AUTO_HWND, "", $LIST_CHARACTER)
+	  _GUICtrlListView_ClickItem($listCtrl, $index)
+   EndIf
+EndFunc
+
 Func DoCountCharacter()
    Local $listCtrl = ControlGetHandle($AUTO_HWND, "", $LIST_CHARACTER)
    Return _GUICtrlListView_GetItemCount($listCtrl)

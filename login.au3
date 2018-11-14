@@ -61,6 +61,7 @@ EndFunc
 Func ReLogin($character)
    Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
    If WinActivateEx($hwndCharacter) Then
+	  DoReceiveActivityAward()
 	  DoClosePopUp()
 	  Sleep(1000)
 	  Local $systemPoint = [1002, 735]

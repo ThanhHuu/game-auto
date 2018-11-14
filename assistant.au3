@@ -13,22 +13,65 @@
 #include "extension.au3"
 #include "nkvs.au3"
 
-Func AssignFeature($characterInfos)
+Func GoToHome($characterInfos)
    For $characterInfo In $characterInfos
 	  Local $character = $characterInfo[2]
 	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
 	  If WinActivateEx($hwndCharacter) Then
+		 DoHideAllNpc()
 		 DoGoToHome()
 	  EndIf
    Next
-   For $characterInfo In $characterInfos
-	  Local $character = $characterInfo[2]
-	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
-	  If WinActivateEx($hwndCharacter) Then
-		 DoWaitGoToHome()
+   DoWaitGoToHome($characterInfos)
+   _FileWriteLogEx("Moved to home")
+EndFunc
+
+Func AssignTvp($characterInfo, $times = 1, $done = True)
+   Local $character = $characterInfo[2]
+   Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+   If WinActivateEx($hwndCharacter) Then
+	  For $i = 1 To $times
 		 DoReceiveAssistantAward()
-	  EndIf
-   Next
+		 DoAssignTvp()
+		 If $done Then
+			DoQuickDone()
+		 Else
+			ExitLoop
+		 EndIf
+	  Next
+   EndIf
+EndFunc
+
+Func AssignNtd($characterInfo, $times = 1, $done = True)
+   Local $character = $characterInfo[2]
+   Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+   If WinActivateEx($hwndCharacter) Then
+	  For $i = 1 To $times
+		 DoReceiveAssistantAward()
+		 DoAssignNtd()
+		 If $done Then
+			DoQuickDone()
+		 Else
+			ExitLoop
+		 EndIf
+	  Next
+   EndIf
+EndFunc
+
+Func AssignBc($characterInfo, $times = 1, $done = True)
+   Local $character = $characterInfo[2]
+   Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+   If WinActivateEx($hwndCharacter) Then
+	  For $i = 1 To $times
+		 DoReceiveAssistantAward()
+		 DoAssignBc()
+		 If $done Then
+			DoQuickDone()
+		 Else
+			ExitLoop
+		 EndIf
+	  Next
+   EndIf
 EndFunc
 
 Func DoGoToHome()
@@ -39,8 +82,8 @@ Func DoGoToHome()
    EndIf
 EndFunc
 
-Func DoWaitGoToHome()
-   Sleep(10*1000)
+Func DoWaitGoToHome($characterInfos)
+   Sleep(15*1000)
 EndFunc
 
 Func DoAssignNtd()
@@ -50,6 +93,11 @@ EndFunc
 
 Func DoAssignBc()
    Local $featureCoord = [326, 350]
+   DoAssign($featureCoord)
+EndFunc
+
+Func DoAssignTvp()
+   Local $featureCoord = [326, 470]
    DoAssign($featureCoord)
 EndFunc
 

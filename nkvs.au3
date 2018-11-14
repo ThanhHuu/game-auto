@@ -115,3 +115,55 @@ Func DoClosePopUp()
 	  MouseMove($sysCoord[0] - 100, $sysCoord[1])
    Next
 EndFunc
+
+Func DoHideAllNpc()
+   Local $sysCoord = [1002, 735]
+   If GraphicClick($sysCoord) Then
+	  Local $setupCoord = [506, 318]
+	  If GraphicClick($setupCoord) Then
+		 MouseClickEx(381, 230)
+		 MouseClickEx(356, 524)
+		 Local $advanceConfigureCoord = [434, 528]
+		 If GraphicClick($advanceConfigureCoord) Then
+			If ChangeHover(294, 269) Then
+			   MouseClickEx(293, 266)
+			   MouseClickEx(464, 266)
+			   MouseClickEx(633, 266)
+
+			   MouseClickEx(296, 350)
+			   MouseClickEx(467, 350)
+			   MouseClickEx(639, 350)
+
+			   MouseClickEx(327, 424)
+			   MouseClickEx(513, 424)
+
+			   MouseClickEx(327, 456)
+			   MouseClickEx(513, 456)
+
+			   MouseClickEx(327, 486)
+			   MouseClickEx(513, 486)
+
+			   MouseClickEx(327, 519)
+			Else
+			   MouseClickEx(464, 266)
+			EndIf
+			Local $confirmCoord = [563, 571]
+			GraphicClick($confirmCoord)
+		 EndIf
+		 Local $exitCoord = [722, 567]
+		 GraphicClick($exitCoord)
+	  EndIf
+   EndIf
+EndFunc
+
+Func DoReceiveActivityAward()
+   Local $receiveCoord = [253, 569]
+   If GraphicSend("{F11}", $receiveCoord) Then
+	  Local $awardTabCoord = [531, 128]
+	  GraphicClick($awardTabCoord)
+	  For $i = 1 To 5
+		 MouseClickEx($receiveCoord[0], $receiveCoord[1], 400)
+	  Next
+	  GraphicSend("{ESC}", $receiveCoord)
+   EndIf
+EndFunc

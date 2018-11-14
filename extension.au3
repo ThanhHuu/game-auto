@@ -143,3 +143,16 @@ Func MouseClickDragEx($fromCoord, $toCoord, $button = "left")
 	  EndIf
    Next
 EndFunc
+
+Func MouseClickEx($x, $y, $time = 200, $button = "left", $clicks = 1)
+   MouseClick($button, $x, $y, $clicks)
+   Sleep($time)
+EndFunc
+
+Func ChangeHover($x, $y)
+   Local $beforePx = PixelGetColor($x, $y)
+   MouseMove($x, $y)
+   Sleep(1000)
+   Local $afterPx = PixelGetColor($x, $y)
+   Return $beforePx <> $afterPx
+EndFunc
