@@ -117,20 +117,24 @@ Func DoReceiveAssistantAward()
    EndIf
 EndFunc
 
-Func DoAssign($featureCoord)
+Func DoAssign($featureCoord, $lastOptY = 351)
    Local $assistantCoord = [742, 372]
    If GraphicClick($assistantCoord) Then
 	  If GraphicClick($featureCoord) Then
-		 Local $lastOpt = [127, 351]
+		 If $lastOptY < 261 Then
+			Return
+		 EndIf
+		 Local $lastOpt = [127, $lastOptY]
 		 Local $assignCoord = [449, 592]
 		 Local $confirmCoord = [543, 474]
 		 If GraphicClick($assignCoord, "left", 1, $lastOpt) Then
-			For $i = 0 To 2
-			   $lastOpt[1] -= $i * 30
-			   If GraphicClick($lastOpt) Then
-				  ExitLoop
-			   EndIf
-			Next
+			Local $assignSuccessCoord = [700, 548]
+			If GraphicClick($lastOpt, "left", 1, $assignSuccessCoord) Then
+			   Return
+			Else
+			   GraphicSend("{ESC}", $assistantCoord)
+			   DoAssign($featureCoord, $lastOptY - 30)
+			EndIf
 		 Else
 			GraphicClick($confirmCoord)
 		 EndIf

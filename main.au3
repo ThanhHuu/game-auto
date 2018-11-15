@@ -20,6 +20,7 @@
 #include "code.au3"
 #include "assistant.au3"
 #include "lucky.au3"
+#include "team.au3"
 
 Local $ui = CreateUi()
 GUISetState(@SW_SHOW, $ui)
@@ -57,6 +58,10 @@ While True
 			   $characterInfos[$j] = $characterInfo
 			Next
 			EnterGame($characterInfos)
+			; Organize team
+			If IsOrganizeTeam() Then
+			   OrganizeTeam($characterInfos)
+			EndIf
 			WaitThirdParty($characterInfos)
 
 			; Cau phuc
@@ -226,6 +231,10 @@ Func CloneCharacter($number)
 	  ApplyUtilForAll()
 	  ApplyBasicForAll()
 	  _FileWriteLogEx("Cloned character")
+	  If IsOrganizeTeam() Then
+		 PrepareTeamTemplate($number)
+		 _FileWriteLogEx("Configured team template")
+	  EndIf
    EndIf
 EndFunc
 
@@ -334,6 +343,11 @@ EndFunc
 Func GetLoopTimes()
    Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:6]"))
    Return GUICtrlRead($cbCtrl)
+EndFunc
+
+Func IsOrganizeTeam()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:7]"))
+   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
 EndFunc
 
 Func ForceExit()

@@ -65,6 +65,7 @@ Func CreateUi()
    CreateElement("Label", "Lặp lại", $row, 1, 80)
    $cbNumber = CreateElement("Combobox", "", $row, 2, 100)
    GUICtrlSetData($cbNumber, "1|2|3", 1)
+   CreateElement("Checkbox", "Tổ đội", $row, 3, 100)
 
    $row += 1
    CreateElement("Button", "Bắt đầu", $row, 1, 50)

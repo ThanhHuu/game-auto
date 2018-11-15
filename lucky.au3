@@ -17,6 +17,7 @@
 Func DoLuckyRound()
    Local $luckyCoord = [790,420]
    If GraphicSend("j", $luckyCoord) Then
+	  Sleep(2000)
 	  Local $receiveCoord = [715, 525]
 	  If GraphicClick($luckyCoord, "left", 1, $receiveCoord) Then
 		 Local $beforePx = PixelGetColor($receiveCoord[0], $receiveCoord[1])
