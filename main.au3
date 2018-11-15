@@ -73,9 +73,20 @@ While True
 
 			ExitGame($characterInfos)
 		 Next
+		 ResetLoop()
 	  Next
    EndSwitch
 WEnd
+
+Func ResetLoop()
+   _FileWriteLogEx("We have done one loop")
+   FileDelete("ignore")
+   ReduceTvp()
+   Local $done = IsDoneNtd()
+   ReduceNtd($done ? GetNtdTimes() : 1)
+   $done = IsDoneBc()
+   ReduceBc($done ? GetBcTimes() : 1)
+EndFunc
 
 Func RunAssign($characterInfos)
    For $i = 0 To UBound($characterInfos) - 1

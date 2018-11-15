@@ -117,6 +117,7 @@ Func DoClosePopUp()
 EndFunc
 
 Func DoHideAllNpc()
+   MouseClickEx(800, 231)
    Local $sysCoord = [1002, 735]
    If GraphicClick($sysCoord) Then
 	  Local $setupCoord = [506, 318]
