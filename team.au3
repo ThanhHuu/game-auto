@@ -23,8 +23,6 @@ DoSelectTeamTab()
 DoSelectOptCaption()
 DoOpenInvitationList()
 DoClearListMember()
-DoAddMember("htra")
-DoAddMember("htra")
 Func DoSelectTeamTab()
    Local $hContrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:SysTabControl32; INSTANCE:1]")
    Local $tabLoginIndex = _GUICtrlTab_FindTab($hContrl, "Tổ đội", False, 0)
@@ -43,21 +41,20 @@ EndFunc
 
 Func DoClearListMember()
    Local $listBoxCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:ListBox; INSTANCE:3]")
-   _GUICtrlListBox_ResetContent($listBoxCtrl)
-   #cs
    Local $removeCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:Button; INSTANCE:120]")
    Local $total = _GUICtrlListBox_GetCount($listBoxCtrl)
    For $i = 0 To $total - 1
 	  _GUICtrlListBox_SetCurSel($listBoxCtrl, $i)
 	  _GUICtrlButton_Click($removeCtrl)
    Next
-   #ce
 EndFunc
 
 Func DoAddMember($member)
    Local $listBoxCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:ListBox; INSTANCE:3]")
+   Local $refreshCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:Button; INSTANCE:118]")
+   _GUICtrlButton_Click($refreshCtrl)
    Local $editCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:ComboBox; INSTANCE:12]")
-   ControlSetText($AUTO_HWND, "", $editCtrl, $member)
+   _GUICtrlComboBox_SelectString($editCtrl, $member)
    Local $addCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:Button; INSTANCE:119]")
    _GUICtrlButton_Click($addCtrl)
 EndFunc
