@@ -66,6 +66,7 @@ While True
 
 			; Cau phuc
 			LuckyRound($characterInfos)
+
 			; Nhap code KimBai
 			If IsEnableCodeKimBai() Then
 			   EnterCode($characterInfos)
@@ -140,9 +141,19 @@ Func EnterGame($characterInfos)
 	  Local $usr = $characterInfo[1]
 	  Local $character = $characterInfo[2]
 	  ConfigureForCharacter($i, $server, $usr, $character)
-	  DoClickCharacter($character)
-	  GameWait($character)
-	  _FileWriteLogEx(StringFormat("Logged in for %s", $character))
+	  For $j = 1 To 3
+		 DoClickCharacter($character)
+		 If GameWait($character) Then
+			ExitLoop
+		 EndIf
+		 DoClickCharacter($character)
+	  Next
+	  If GameWait($character) Then
+		 _FileWriteLogEx(StringFormat("Logged in for %s", $character))
+	  Else
+		 _FileWriteLogEx(StringFormat("Stucked at log in for %s", $character))
+		 Exit
+	  EndIf
    Next
 EndFunc
 
@@ -240,12 +251,13 @@ EndFunc
 
 Func GameWait($character)
    Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
-   While True
-	  Sleep(500)
+   For $i = 1 To 60
 	  If WinExists($hwndCharacter) Then
-		 ExitLoop
+		 Return True
 	  EndIf
-   WEnd
+	  Sleep(500)
+   Next
+   Return False
 EndFunc
 
 Func KillGame($character)
