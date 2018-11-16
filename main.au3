@@ -141,7 +141,7 @@ Func EnterGame($characterInfos)
 	  Local $usr = $characterInfo[1]
 	  Local $character = $characterInfo[2]
 	  ConfigureForCharacter($i, $server, $usr, $character)
-	  For $j = 1 To 3
+	  For $j = 1 To 10
 		 DoClickCharacter($character)
 		 If GameWait($character) Then
 			ExitLoop
@@ -168,11 +168,13 @@ Func ExitGame($characterInfos)
 	  EndIf
 	  _FileWriteLogEx(StringFormat("Re-logged in for %s", $character))
    Next
+   ResetFeatures($characterInfos)
+   _FileWriteLogEx("Reseted feature state")
 EndFunc
 
 Func WaitThirdParty($characterInfos)
    Local $time = GetTime()
-   Sleep($time * 60000)
+   Sleep($time > 0 ? $time * 60000 : 30000)
 EndFunc
 
 Func GetListCharacters($accountFiles)
@@ -264,17 +266,6 @@ Func KillGame($character)
    Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
    Local $pid = WinGetProcess($hwndCharacter)
    ProcessClose($pid)
-EndFunc
-
-Func GetClassForCharacter($character)
-   Switch StringRight($character, 4)
-   Case "DoiA"
-	  Return "Thiên Vương"
-   Case "DoiB"
-	  Return "Nga My"
-   Case Default
-	  Return "Cái Bang"
-   EndSwitch
 EndFunc
 
 Func GetNumberWindow()
