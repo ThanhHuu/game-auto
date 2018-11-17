@@ -135,6 +135,7 @@ Func RunAssign($characterInfos)
 EndFunc
 
 Func EnterGame($characterInfos)
+   Local $existsWindowGame =  WinList("[REGEXPTITLE:Ngạo Kiếm Vô Song II.*]")[0][0]
    For $i = 0 To UBound($characterInfos) - 1
 	  Local $characterInfo = $characterInfos[$i]
 	  Local $server = $characterInfo[0]
@@ -142,8 +143,9 @@ Func EnterGame($characterInfos)
 	  Local $character = $characterInfo[2]
 	  ConfigureForCharacter($i, $server, $usr, $character)
 	  For $j = 1 To 10
+		 DoSelectCharacter($character)
 		 DoClickCharacter($character)
-		 If GameWait($character) Then
+		 If GameWait($character, $existsWindowGame >= UBound($characterInfos) ? 6 : 60) Then
 			ExitLoop
 		 EndIf
 		 DoClickCharacter($character)
@@ -251,9 +253,9 @@ Func CloneCharacter($number)
    EndIf
 EndFunc
 
-Func GameWait($character)
+Func GameWait($character, $times = 60)
    Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
-   For $i = 1 To 60
+   For $i = 1 To $times
 	  If WinExists($hwndCharacter) Then
 		 Return True
 	  EndIf
