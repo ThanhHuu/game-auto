@@ -41,11 +41,10 @@ Func LuckyRound($characterInfos, $hideNpc = True, $goHome = False)
 	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
 	  DoClickCharacter($character)
 	  If WinActivateEx($hwndCharacter) Then
+		 DoLuckyRound()
 		 If $hideNpc Then
 			DoHideAllNpc()
 		 EndIf
-
-		 DoLuckyRound()
 		 If $goHome Then
 			DoGoToHome()
 		 EndIf

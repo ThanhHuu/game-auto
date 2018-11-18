@@ -44,6 +44,9 @@ While True
 	  EndIf
 	  Local $accountFiles = ListFileOfFolder(GUICtrlRead($inAccountId))
 	  Local $characters = GetListCharacters($accountFiles)
+	  If UBound($characters.Keys) = 0 Then
+		 ContinueLoop
+	  EndIf
 	  Local $numberWindow = GetNumberWindow()
 	  CloneCharacter($numberWindow)
 	  Local $loopTimes = GetLoopTimes()
@@ -57,12 +60,11 @@ While True
 			   Local $characterInfo = $characters.Item($character)
 			   $characterInfos[$j] = $characterInfo
 			Next
+			EnterGame($characterInfos)
 			; Organize team
 			If IsOrganizeTeam() Then
 			   OrganizeTeam($characterInfos)
 			EndIf
-
-			EnterGame($characterInfos)
 
 			WaitThirdParty($characterInfos)
 
@@ -73,7 +75,7 @@ While True
 
 			Local $runAssign = IsEnableTvp() Or IsEnableNtd() Or IsEnableBc()
 			; Cau phuc
-			LuckyRound($characterInfos, True, $runAssign)
+			LuckyRound($characterInfos, IsHideAllNpc(), $runAssign)
 
 			; Dieu doi
 			If $runAssign Then
@@ -167,6 +169,11 @@ Func ExitGame($characterInfos)
    For $characterInfo In $characterInfos
 	  Local $character = $characterInfo[2]
 	  DoIgnoreChatacter($character)
+	  If IsExitWhenDone() Then
+		 KillGame($character)
+		 _FileWriteLogEx(StringFormat("Exited game for %s", $character))
+		 ContinueLoop
+	  EndIf
 	  If Not ReLogin($character) Then
 		 KillGame($character)
 		 _FileWriteLogEx(StringFormat("Killed game for %s", $character))
@@ -356,6 +363,16 @@ EndFunc
 
 Func IsOrganizeTeam()
    Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:7]"))
+   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+EndFunc
+
+Func IsHideAllNpc()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:8]"))
+   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+EndFunc
+
+Func IsExitWhenDone()
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:9]"))
    Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
 EndFunc
 
