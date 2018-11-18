@@ -83,7 +83,8 @@ Func DoGoToHome()
 EndFunc
 
 Func DoWaitGoToHome($characterInfos)
-   Sleep(15*1000)
+   Local $sleeping = 20 - UBound($characterInfos) * 4
+   Sleep($sleeping > 0 ? $sleeping * 1000 : 1000)
 EndFunc
 
 Func DoAssignNtd()

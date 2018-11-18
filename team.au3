@@ -62,8 +62,8 @@ EndFunc
 
 Func DoAddMember($member)
    Local $listBoxCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:ListBox; INSTANCE:3]")
-   Local $refreshCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:Button; INSTANCE:118]")
-   _GUICtrlButton_Click($refreshCtrl)
+   ;Local $refreshCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:Button; INSTANCE:118]")
+   ;_GUICtrlButton_Click($refreshCtrl)
    Local $editCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:ComboBox; INSTANCE:12]")
    _GUICtrlComboBox_SelectString($editCtrl, $member)
    Local $addCtrl = ControlGetHandle($AUTO_HWND, "", "[CLASS:Button; INSTANCE:119]")

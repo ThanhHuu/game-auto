@@ -13,6 +13,7 @@
 #include "extension.au3"
 #include "nkvs.au3"
 #include "character.au3"
+#include "assistant.au3"
 
 Func DoLuckyRound()
    Local $luckyCoord = [790,420]
@@ -34,13 +35,20 @@ Func DoLuckyRound()
    EndIf
 EndFunc
 
-Func LuckyRound($characterInfos)
+Func LuckyRound($characterInfos, $hideNpc = True, $goHome = False)
    For $characterInfo In $characterInfos
 	  Local $character = $characterInfo[2]
 	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
 	  DoClickCharacter($character)
 	  If WinActivateEx($hwndCharacter) Then
+		 If $hideNpc Then
+			DoHideAllNpc()
+		 EndIf
+
 		 DoLuckyRound()
+		 If $goHome Then
+			DoGoToHome()
+		 EndIf
 	  EndIf
    Next
 EndFunc

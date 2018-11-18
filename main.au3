@@ -57,23 +57,27 @@ While True
 			   Local $characterInfo = $characters.Item($character)
 			   $characterInfos[$j] = $characterInfo
 			Next
-			EnterGame($characterInfos)
 			; Organize team
 			If IsOrganizeTeam() Then
 			   OrganizeTeam($characterInfos)
 			EndIf
-			WaitThirdParty($characterInfos)
 
-			; Cau phuc
-			LuckyRound($characterInfos)
+			EnterGame($characterInfos)
+
+			WaitThirdParty($characterInfos)
 
 			; Nhap code KimBai
 			If IsEnableCodeKimBai() Then
 			   EnterCode($characterInfos)
 			EndIf
+
+			Local $runAssign = IsEnableTvp() Or IsEnableNtd() Or IsEnableBc()
+			; Cau phuc
+			LuckyRound($characterInfos, True, $runAssign)
+
 			; Dieu doi
-			If IsEnableTvp() Or IsEnableNtd() Or IsEnableBc() Then
-			   GoToHome($characterInfos)
+			If $runAssign Then
+			   DoWaitGoToHome($characterInfos)
 			   RunAssign($characterInfos)
 			EndIf
 
