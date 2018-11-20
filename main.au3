@@ -27,6 +27,7 @@ GUISetState(@SW_SHOW, $ui)
 Local $btSelectId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; TEXT:Chọn]"))
 Local $inAccountId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Edit; INSTANCE:1]"))
 Local $btStartId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; TEXT:Bắt đầu]"))
+Local $btNextId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; TEXT:Tiếp theo]"))
 
 HotKeySet("^q", "ForceExit")
 
@@ -44,14 +45,11 @@ While True
 	  EndIf
 	  Local $accountFiles = ListFileOfFolder(GUICtrlRead($inAccountId))
 	  Local $characters = GetListCharacters($accountFiles)
-	  If UBound($characters.Keys) = 0 Then
-		 ContinueLoop
-	  EndIf
 	  Local $numberWindow = GetNumberWindow()
 	  CloneCharacter($numberWindow)
 	  Local $loopTimes = GetLoopTimes()
 	  For $loop = 1 To $loopTimes
-		 For $i = 0 To UBound($characters.Keys) Step $numberWindow
+		 For $i = 0 To UBound($characters.Keys) - 1 Step $numberWindow
 			Local $remaining = UBound($characters.Keys) - $i
 			Local $size = $remaining > $numberWindow ? $numberWindow : $remaining
 			Local $characterInfos[$size]
@@ -60,42 +58,68 @@ While True
 			   Local $characterInfo = $characters.Item($character)
 			   $characterInfos[$j] = $characterInfo
 			Next
-			EnterGame($characterInfos)
-			; Organize team
-			If IsOrganizeTeam() Then
-			   OrganizeTeam($characterInfos)
-			EndIf
-
-			WaitThirdParty($characterInfos)
-
-			; Nhap code KimBai
-			If IsEnableCodeKimBai() Then
-			   EnterCode($characterInfos)
-			EndIf
-
-			Local $runAssign = IsEnableTvp() Or IsEnableNtd() Or IsEnableBc()
-			; Cau phuc
-			LuckyRound($characterInfos, IsHideAllNpc(), $runAssign)
-
-			; Dieu doi
-			If $runAssign Then
-			   DoWaitGoToHome($characterInfos)
-			   RunAssign($characterInfos)
-			EndIf
-
-			ExitGame($characterInfos)
+			ExecuteSession($characterInfos)
 		 Next
 		 ResetLoop()
 	  Next
+   Case $btNextId
+	  If GUICtrlRead($inAccountId) = "" Then
+		 MsgBox(16, "Warning", "Chọn thư mục tài khoản trước")
+		 ContinueLoop
+	  EndIf
+	  Local $accountFiles = ListFileOfFolder(GUICtrlRead($inAccountId))
+	  Local $numberWindow = GetNumberWindow()
+	  Local $characterInfos = GetListCharacters($accountFiles, $numberWindow).Items
+	  CloneCharacter($numberWindow)
+	  ExecuteSession($characterInfos, False)
    EndSwitch
 WEnd
+
+Func ExecuteSession($characterInfos, $execute = True)
+   ; Configure account info
+   ConfigureLoginInfo($characterInfos)
+   If $execute Then
+	  EnterGame($characterInfos)
+
+	  WaitThirdParty($characterInfos)
+
+	  ; Nhap code KimBai
+	  If IsEnableCodeKimBai() Then
+		 EnterCode($characterInfos)
+	  EndIf
+
+	  Local $runAssign = IsEnableTvp() Or IsEnableNtd() Or IsEnableBc()
+	  ; Cau phuc
+	  LuckyRound($characterInfos, IsHideAllNpc(), $runAssign)
+
+	  ; Dieu doi
+	  If $runAssign Then
+		 DoWaitGoToHome($characterInfos)
+		 RunAssign($characterInfos)
+	  EndIf
+
+	  ExitGame($characterInfos)
+   EndIf
+   ; Mark characters is ignored
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  DoIgnoreChatacter($character)
+   Next
+EndFunc
 
 Func ResetLoop()
    _FileWriteLogEx("We have done one loop")
    FileDelete("ignore")
    ReduceTvp()
-   Local $done = IsDoneNtd()
+   Local $done = IsDoneTvp()
+   If Not $done Then
+	  Return
+   EndIf
+   $done = IsDoneNtd()
    ReduceNtd($done ? GetNtdTimes() : 1)
+   If Not $done Then
+	  Return
+   EndIf
    $done = IsDoneBc()
    ReduceBc($done ? GetBcTimes() : 1)
 EndFunc
@@ -138,6 +162,19 @@ Func RunAssign($characterInfos)
    For $i = 0 To UBound($characterInfos) - 1
 	  DoClickItem($i)
    Next
+EndFunc
+
+Func ConfigureLoginInfo($characterInfos)
+   For $i = 0 To UBound($characterInfos) - 1
+	  Local $characterInfo = $characterInfos[$i]
+	  Local $server = $characterInfo[0]
+	  Local $usr = $characterInfo[1]
+	  Local $character = $characterInfo[2]
+	  ConfigureForCharacter($i, $server, $usr, $character)
+   Next
+   If IsOrganizeTeam() Then
+	  OrganizeTeam($characterInfos)
+   EndIf
 EndFunc
 
 Func EnterGame($characterInfos)
@@ -190,7 +227,7 @@ Func WaitThirdParty($characterInfos)
    Sleep($time > 0 ? $time * 60000 : 30000)
 EndFunc
 
-Func GetListCharacters($accountFiles)
+Func GetListCharacters($accountFiles, $limit = 1000)
    Local $characters = ObjCreate("Scripting.Dictionary")
    For $file In $accountFiles
 	  Local $lines = FileReadToArray($file)
@@ -205,6 +242,10 @@ Func GetListCharacters($accountFiles)
 			   Local $code = $infomation[0] > 3 ? $infomation[4] : ""
 			   Local $characterInfo[4] = [$infomation[1], $infomation[2], $infomation[3], $code]
 			   $characters.Add($infomation[3], $characterInfo)
+			   If UBound($characters.Keys) = $limit Then
+				  ; Stop when reach limit size
+				  Return $characters
+			   EndIf
 			EndIf
 		 EndIf
 	  Next

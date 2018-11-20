@@ -74,6 +74,7 @@ Func CreateUi()
 
    $row += 1
    CreateElement("Button", "Bắt đầu", $row, 1, 50)
+   CreateElement("Button", "Tiếp theo", $row, 2, 50)
 
    Return $ui
 EndFunc
