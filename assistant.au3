@@ -102,7 +102,7 @@ Func DoAssignTvp()
    DoAssign($featureCoord)
 EndFunc
 
-Func DoReceiveAssistantAward()
+Func DoReceiveAssistantAward($receiveAward = True)
    Local $assistantCoord = [742, 372]
    If GraphicClick($assistantCoord) Then
 	  Local $receiveCoord = [451, 597]
@@ -111,6 +111,11 @@ Func DoReceiveAssistantAward()
 		 Local $closePopupCoord = [1002, 209]
 		 If GraphicClick($startReceiveCoord) Then
 			Sleep(2000)
+			If $receiveAward Then
+			   MouseClickEx($startReceiveCoord[0], $startReceiveCoord[1])
+			   Sleep(8000)
+			   MouseClickEx($startReceiveCoord[0], $startReceiveCoord[1])
+			EndIf
 			GraphicClick($closePopupCoord)
 		 EndIf
 	  EndIf
