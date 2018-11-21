@@ -109,7 +109,7 @@ EndFunc
 
 Func ResetLoop()
    _FileWriteLogEx("We have done one loop")
-   FileDelete("ignore")
+   DoResetIgnore()
    ReduceTvp()
    Local $done = IsDoneTvp()
    If Not $done Then
@@ -271,6 +271,13 @@ Func DoIgnoreChatacter($character)
 	  Assign("IgnoreVar", $temp, 2)
 	  FileWriteLine("ignore", $character)
    EndIf
+EndFunc
+
+Func DoResetIgnore()
+   If IsDeclared("IgnoreVar") Then
+	  Assign("IgnoreVar", ObjCreate("Scripting.Dictionary"), 2)
+   EndIf
+   FileDelete("ignore")
 EndFunc
 
 Func IsIgnoredCharacter($character)
