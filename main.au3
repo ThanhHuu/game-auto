@@ -360,23 +360,19 @@ Func KillGame($character)
 EndFunc
 
 Func GetNumberWindow()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", ""))
-   Return GUICtrlRead($cbCtrl)
+   Return GUICtrlRead($cbbWindow)
 EndFunc
 
 Func GetTime()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:2]"))
-   Return GUICtrlRead($cbCtrl)
+   Return GUICtrlRead($cbbTime)
 EndFunc
 
 Func IsHideGame()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:2]"))
-   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+   Return GUICtrlRead($cbHideWindow) = $GUI_CHECKED
 EndFunc
 
 Func IsEnableCodeKimBai()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:3]"))
-   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+   Return GUICtrlRead($cbCode) = $GUI_CHECKED
 EndFunc
 
 Func IsEnableNtd()
