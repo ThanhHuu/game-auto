@@ -58,6 +58,22 @@ Func AssignNtd($characterInfo, $times = 1, $done = True)
    EndIf
 EndFunc
 
+Func AssignVt($characterInfo, $times = 1, $done = True)
+   Local $character = $characterInfo[2]
+   Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+   If WinActivateEx($hwndCharacter) Then
+	  For $i = 1 To $times
+		 DoReceiveAssistantAward()
+		 DoAssignVt()
+		 If $done Then
+			DoQuickDone()
+		 Else
+			ExitLoop
+		 EndIf
+	  Next
+   EndIf
+EndFunc
+
 Func AssignBc($characterInfo, $times = 1, $done = True)
    Local $character = $characterInfo[2]
    Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
@@ -99,6 +115,11 @@ EndFunc
 
 Func DoAssignTvp()
    Local $featureCoord = [326, 470]
+   DoAssign($featureCoord)
+EndFunc
+
+Func DoAssignVt()
+   Local $featureCoord = [626, 350]
    DoAssign($featureCoord)
 EndFunc
 

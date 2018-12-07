@@ -68,7 +68,7 @@ Func ReLogin($character)
 	  If GraphicClick($systemPoint) Then
 		 Local $reloginPoint = [468, 380]
 		 If GraphicClick($reloginPoint) Then
-			Local $rightNowPoint = [641, 578]
+			Local $rightNowPoint = [641, 585]
 			GraphicClick($rightNowPoint)
 			Sleep(1000)
 			If WinExists($hwndCharacter) Then

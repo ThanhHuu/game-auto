@@ -23,7 +23,7 @@ Func DoLuckyRound()
 	  If GraphicClick($luckyCoord, "left", 1, $receiveCoord) Then
 		 Local $beforePx = PixelGetColor($receiveCoord[0], $receiveCoord[1])
 		 For $i = 1 To 5
-			MouseClickEx(415, 370, 5000, "left", 2)
+			MouseClickEx(425, 370, 5000, "left", 2)
 			Local $afterPx = PixelGetColor($receiveCoord[0], $receiveCoord[1])
 			If $afterPx <> $beforePx Then
 			   GraphicClick($receiveCoord)

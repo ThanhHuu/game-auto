@@ -29,7 +29,25 @@ Local $inAccountId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Edi
 Local $btStartId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; TEXT:Bắt đầu]"))
 Local $btNextId = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; TEXT:Tiếp theo]"))
 
-HotKeySet("^q", "ForceExit")
+Local $cbbWindow = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:1]"))
+Local $cbbTime = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:2]"))
+Local $cbbTvp = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:3]"))
+Local $cbbNtd = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:4]"))
+Local $cbbBc = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:5]"))
+Local $cbbVt = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:6]"))
+Local $cbbLoop = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:7]"))
+
+Local $cbHideWindow = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:2]"))
+Local $cbCode = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:3]"))
+Local $cbDoneTvp = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:4]"))
+Local $cbDoneNtd = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:5]"))
+Local $cbDoneBc = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:6]"))
+Local $cbDoneVt = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:7]"))
+Local $cbTeam = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:8]"))
+Local $cbHideNpc = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:9]"))
+Local $cbExit = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:10]"))
+
+HotKeySet("^e", "ForceExit")
 
 While True
    Switch GUIGetMsg()
@@ -70,8 +88,11 @@ While True
 	  Local $accountFiles = ListFileOfFolder(GUICtrlRead($inAccountId))
 	  Local $numberWindow = GetNumberWindow()
 	  Local $characterInfos = GetListCharacters($accountFiles, $numberWindow).Items
-	  CloneCharacter($numberWindow)
-	  ExecuteSession($characterInfos, False)
+	  If UBound($characterInfos) > 0 Then
+		 CloneCharacter($numberWindow)
+		 ExecuteSession($characterInfos, False)
+		 ResetFeatures($characterInfos)
+	  EndIf
    EndSwitch
 WEnd
 
@@ -157,6 +178,15 @@ Func RunAssign($characterInfos)
 			ContinueLoop
 		 EndIf
 	  EndIf
+	  $done = IsDoneVt()
+	  If IsEnableVt() Then
+		 Local $times = GetVtTimes()
+		 AssignVt($characterInfo, $times, $done)
+		 _FileWriteLogEx(StringFormat("%s - Ran Vt", $character))
+		 If Not $done Then
+			ContinueLoop
+		 EndIf
+	  EndIf
    Next
    DoClickItem($i - 1)
    For $i = 0 To UBound($characterInfos) - 1
@@ -178,7 +208,6 @@ Func ConfigureLoginInfo($characterInfos)
 EndFunc
 
 Func EnterGame($characterInfos)
-   Local $existsWindowGame =  WinList("[REGEXPTITLE:Ngạo Kiếm Vô Song II.*]")[0][0]
    For $i = 0 To UBound($characterInfos) - 1
 	  Local $characterInfo = $characterInfos[$i]
 	  Local $server = $characterInfo[0]
@@ -186,6 +215,7 @@ Func EnterGame($characterInfos)
 	  Local $character = $characterInfo[2]
 	  ConfigureForCharacter($i, $server, $usr, $character)
 	  For $j = 1 To 10
+		 Local $existsWindowGame =  WinList("[REGEXPTITLE:Ngạo Kiếm Vô Song II.*]")[0][0]
 		 DoSelectCharacter($character)
 		 DoClickCharacter($character)
 		 If GameWait($character, $existsWindowGame >= UBound($characterInfos) ? 6 : 60) Then
@@ -330,7 +360,7 @@ Func KillGame($character)
 EndFunc
 
 Func GetNumberWindow()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:1]"))
+   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", ""))
    Return GUICtrlRead($cbCtrl)
 EndFunc
 
@@ -350,78 +380,82 @@ Func IsEnableCodeKimBai()
 EndFunc
 
 Func IsEnableNtd()
-   Return GetNtdTimes() > 0
+   Return GUICtrlRead($cbbNtd) > 0
 EndFunc
 
 Func IsEnableBc()
-   Return GetBcTimes() > 0
+   Return GUICtrlRead($cbbVt) > 0
 EndFunc
 
 Func IsEnableTvp()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:3]"))
-   Return GUICtrlRead($cbCtrl) > 0
+   Return GUICtrlRead($cbbTvp) > 0
+EndFunc
+
+Func IsEnableVt()
+   Return GUICtrlRead($cbbVt) > 0
 EndFunc
 
 Func IsDoneTvp()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:4]"))
-   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+   Return GUICtrlRead($cbDoneTvp) = $GUI_CHECKED
 EndFunc
 
 Func IsDoneNtd()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:5]"))
-   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+   Return GUICtrlRead($cbDoneNtd) = $GUI_CHECKED
 EndFunc
 
 Func IsDoneBc()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:6]"))
-   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+   Return GUICtrlRead($cbDoneBc) = $GUI_CHECKED
+EndFunc
+
+Func IsDoneVt()
+   Return GUICtrlRead($cbDoneVt) = $GUI_CHECKED
 EndFunc
 
 Func GetNtdTimes()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:4]"))
-   Return GUICtrlRead($cbCtrl)
+   Return GUICtrlRead($cbbNtd)
 EndFunc
 
 Func GetBcTimes()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:5]"))
-   Return GUICtrlRead($cbCtrl)
+   Return GUICtrlRead($cbbBc)
+EndFunc
+
+Func GetVtTimes()
+   Return GUICtrlRead($cbbVt)
 EndFunc
 
 Func ReduceTvp()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:3]"))
-   GUICtrlSetData($cbCtrl, 0)
+   GUICtrlSetData($cbbTvp, 0)
 EndFunc
 
 Func ReduceNtd($times)
    Local $newTimes = GetNtdTimes() - $times
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:4]"))
-   GUICtrlSetData($cbCtrl, $newTimes < 0 ? 0 : $newTimes)
+   GUICtrlSetData($cbbNtd, $newTimes < 0 ? 0 : $newTimes)
 EndFunc
 
 Func ReduceBc($times)
    Local $newTimes = GetNtdTimes() - $times
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:5]"))
-   GUICtrlSetData($cbCtrl, $newTimes < 0 ? 0 : $newTimes)
+   GUICtrlSetData($cbbBc, $newTimes < 0 ? 0 : $newTimes)
+EndFunc
+
+Func ReduceVt($times)
+   Local $newTimes = GetVtTimes() - $times
+   GUICtrlSetData($cbbVt, $newTimes < 0 ? 0 : $newTimes)
 EndFunc
 
 Func GetLoopTimes()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:ComboBox; INSTANCE:6]"))
-   Return GUICtrlRead($cbCtrl)
+ Return GUICtrlRead($cbbLoop)
 EndFunc
 
 Func IsOrganizeTeam()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:7]"))
-   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+   Return GUICtrlRead($cbTeam) = $GUI_CHECKED
 EndFunc
 
 Func IsHideAllNpc()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:8]"))
-   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+   Return GUICtrlRead($cbHideNpc) = $GUI_CHECKED
 EndFunc
 
 Func IsExitWhenDone()
-   Local $cbCtrl = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:9]"))
-   Return GUICtrlRead($cbCtrl) = $GUI_CHECKED
+   Return GUICtrlRead($cbExit) = $GUI_CHECKED
 EndFunc
 
 Func ForceExit()

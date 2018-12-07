@@ -38,7 +38,7 @@ Func ResetFeatures($characterInfos)
 		 Local $character = $characterInfo[2]
 		 DoSelectCharacter($character)
 		 Local $listCtrl = ControlGetHandle($AUTO_HWND, "", $LIST_FEATURE)
-		 For $i = 0 To 9
+		 For $i = 0 To 4
 			_GUICtrlListView_ClickItemEx($listCtrl, $i, 2, 2)
 		 Next
 	  Next
