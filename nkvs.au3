@@ -37,6 +37,15 @@ Func DoMoveToNpcLeQuan($character)
    GraphicClick($closeMapCoord)
 EndFunc
 
+Func DoMoveToPointCentralMap($x, $y)
+   Local $tabCoord = [1002, 167]
+   If GraphicClick($tabCoord) Then
+	  MouseClickEx($x, $y, 2000)
+	  Local $closeMapCoord = [993, 45]
+	  GraphicClick($closeMapCoord)
+   EndIf
+EndFunc
+
 Func DoScanAroundCoord($basicCursor, $coord, $stepX, $stepY)
    For $i = 0 To 5
 	  For $j = 0 To 4

@@ -62,3 +62,72 @@ Func EnterCode($characterInfos)
 	  EndIf
    Next
 EndFunc
+
+Func JoinEvent($characterInfos)
+   ; back Duong Chau
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+	  If WinActivateEx($hwndCharacter) Then
+		 DoGoCentral()
+		 Sleep(1000)
+	  EndIf
+   Next
+   DoWaitGoToCentral($characterInfos)
+   ; Click point map
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+	  If WinActivateEx($hwndCharacter) Then
+		 DoMoveToPointCentralMap(510, 380)
+		 Sleep(1000)
+	  EndIf
+   Next
+
+   ; Recevice
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+	  If WinActivateEx($hwndCharacter) Then
+		 DoWaitChangeMap($hwndCharacter, 20*1000)
+		 DoClosePopUp()
+		 DoReceiveEvent($character)
+	  EndIf
+   Next
+EndFunc
+
+Func GoCentral($characterInfos)
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+	  If WinActivateEx($hwndCharacter) Then
+		 DoGoCentral()
+		 Sleep(1000)
+	  EndIf
+   Next
+   DoWaitGoToCentral($characterInfos)
+EndFunc
+
+Func DoReceiveEvent($character)
+   If DoFindNpc($character) Then
+	  Local $exitPopup = [371, 619]
+	  GraphicClick(MouseGetPos(), "left", 1, $exitPopup)
+	  Local $optCode = [141, 286]
+	  GraphicClick($optCode)
+   EndIf
+EndFunc
+
+Func DoGoCentral()
+   Local $exitPopupCoord = [366, 621]
+   If GraphicSend("{0}", $exitPopupCoord) Then
+	  Local $goCentralCoord = [122, 262]
+	  MouseClickEx($goCentralCoord[0], $goCentralCoord[1], 3000)
+	  GraphicClick($goCentralCoord)
+   EndIf
+EndFunc
+
+Func DoWaitGoToCentral($characterInfos)
+   Local $sleeping = 20 - UBound($characterInfos) * 4
+   Sleep($sleeping > 0 ? $sleeping * 1000 : 1000)
+EndFunc
+

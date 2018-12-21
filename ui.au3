@@ -40,7 +40,7 @@ Func CreateUi()
    GUICtrlSetData($cbTime, "0|1|5|10|13|15|20|25|30|35|40", 10)
 
    $row += 1
-   CreateElement("Label", "Code KimBai", $row, 1, 80)
+   CreateElement("Label", "Event", $row, 1, 80)
    CreateElement("Checkbox", "", $row, 2, 100)
 
    $row += 1

@@ -104,9 +104,9 @@ Func ExecuteSession($characterInfos, $execute = True)
 
 	  WaitThirdParty($characterInfos)
 
-	  ; Nhap code KimBai
+	  ; Join event
 	  If IsEnableCodeKimBai() Then
-		 EnterCode($characterInfos)
+		 JoinEvent($characterInfos)
 	  EndIf
 
 	  Local $runAssign = IsEnableTvp() Or IsEnableNtd() Or IsEnableBc()
@@ -254,6 +254,16 @@ EndFunc
 
 Func WaitThirdParty($characterInfos)
    Local $time = GetTime()
+   While($time - 5 > 0)
+	  Sleep(5 * 60000)
+	  For $characterInfo In $characterInfos
+		 Local $character = $characterInfo[2]
+		 DoClickCharacter($character)
+		 Sleep(3000)
+		 DoClickCharacter($character)
+	  Next
+	  $time = $time - 5
+   WEnd
    Sleep($time > 0 ? $time * 60000 : 30000)
 EndFunc
 

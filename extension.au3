@@ -17,7 +17,7 @@
 Opt("PixelCoordMode", 2)
 Opt("MouseCoordMode", 2)
 
-Global $AUTO_HWND = "Auto Ngạo Kiếm Vô Song 2 - v2.0.1.3"
+Global $AUTO_HWND = "Auto Ngạo Kiếm Vô Song 2 - v2.0.1.4"
 Local $MK_LBUTTON = 0x0001
 Local $MK_RBUTTON = 0x0002
 
