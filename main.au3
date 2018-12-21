@@ -390,7 +390,7 @@ Func IsEnableNtd()
 EndFunc
 
 Func IsEnableBc()
-   Return GUICtrlRead($cbbVt) > 0
+   Return GUICtrlRead($cbbBc) > 0
 EndFunc
 
 Func IsEnableTvp()
