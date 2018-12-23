@@ -12,6 +12,7 @@
 
 #include "extension.au3"
 #include "nkvs.au3"
+#include "character.au3"
 
 Func DoEnterCode($character, $code)
    If DoFindNpc($character) Then
@@ -67,6 +68,7 @@ Func JoinEvent($characterInfos)
    ; back Duong Chau
    For $characterInfo In $characterInfos
 	  Local $character = $characterInfo[2]
+	  DoClickCharacter($character)
 	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
 	  If WinActivateEx($hwndCharacter) Then
 		 DoGoCentral()
@@ -93,6 +95,7 @@ Func JoinEvent($characterInfos)
 		 DoClosePopUp()
 		 DoReceiveEvent($character)
 	  EndIf
+	  DoClickCharacter($character)
    Next
 EndFunc
 

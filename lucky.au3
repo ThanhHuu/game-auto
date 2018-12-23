@@ -19,17 +19,19 @@ Func DoLuckyRound()
    Local $luckyCoord = [790,420]
    If GraphicSend("j", $luckyCoord) Then
 	  Sleep(2000)
-	  Local $receiveCoord = [715, 525]
-	  If GraphicClick($luckyCoord, "left", 1, $receiveCoord) Then
-		 Local $beforePx = PixelGetColor($receiveCoord[0], $receiveCoord[1])
-		 For $i = 1 To 5
-			MouseClickEx(425, 370, 5000, "left", 2)
-			Local $afterPx = PixelGetColor($receiveCoord[0], $receiveCoord[1])
-			If $afterPx <> $beforePx Then
-			   GraphicClick($receiveCoord)
-			   ExitLoop
-			EndIf
-		 Next
+	  If ChangeHover($luckyCoord[0], $luckyCoord[1]) Then
+		 Local $receiveCoord = [715, 525]
+		 If GraphicClick($luckyCoord, "left", 1, $receiveCoord) Then
+			Local $beforePx = PixelGetColor($receiveCoord[0], $receiveCoord[1])
+			For $i = 1 To 5
+			   MouseClickEx(425, 370, 5000, "left", 2)
+			   Local $afterPx = PixelGetColor($receiveCoord[0], $receiveCoord[1])
+			   If $afterPx <> $beforePx Then
+				  GraphicClick($receiveCoord)
+				  ExitLoop
+			   EndIf
+			Next
+		 EndIf
 	  EndIf
 	  GraphicSend("{ESC}", $luckyCoord)
    EndIf
