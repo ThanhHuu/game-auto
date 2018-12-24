@@ -18,6 +18,7 @@
 Func DoLuckyRound()
    Local $luckyCoord = [790,420]
    If GraphicSend("j", $luckyCoord) Then
+	  MouseMove($luckyCoord[0] - 100, $luckyCoord[1])
 	  Sleep(2000)
 	  If ChangeHover($luckyCoord[0], $luckyCoord[1]) Then
 		 Local $receiveCoord = [715, 525]
