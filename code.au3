@@ -123,6 +123,7 @@ EndFunc
 Func DoGoCentral()
    Local $exitPopupCoord = [366, 621]
    If GraphicSend("{0}", $exitPopupCoord) Then
+	  Sleep(1000)
 	  Local $goCentralCoord = [122, 262]
 	  MouseClickEx($goCentralCoord[0], $goCentralCoord[1], 3000)
 	  GraphicClick($goCentralCoord)
