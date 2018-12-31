@@ -21,6 +21,7 @@
 #include "assistant.au3"
 #include "lucky.au3"
 #include "team.au3"
+#include "online_event.au3"
 
 Local $ui = CreateUi()
 GUISetState(@SW_SHOW, $ui)
@@ -106,7 +107,7 @@ Func ExecuteSession($characterInfos, $execute = True)
 
 	  ; Join event
 	  If IsEnableCodeKimBai() Then
-		 JoinEvent($characterInfos)
+		 OnlineEvent($characterInfos)
 	  EndIf
 
 	  Local $runAssign = IsEnableTvp() Or IsEnableNtd() Or IsEnableBc()
