@@ -14,10 +14,6 @@
 #include "nkvs.au3"
 #include "character.au3"
 
-Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", "ĐịchThiênDoiA")
-WinActivateEx($hwndCharacter)
-DoReceiveOnlineEvent("ĐịchThiênDoiA", 3)
-
 Func DoReceiveOnlineEvent($character, $awardOrder)
    If DoFindNpc($character) Then
 	  Local $exitPopup = [371, 619]
