@@ -95,6 +95,22 @@ Func JoinEvent($characterInfos)
 		 DoClosePopUp()
 		 DoReceiveEvent($character)
 	  EndIf
+   Next
+
+   ; Recevice
+   For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
+	  Local $hwndCharacter = StringFormat("[REGEXPTITLE:Ngạo Kiếm Vô Song II\(%s .*]", $character)
+	  If WinActivateEx($hwndCharacter) Then
+		 For $i = 1 To 5
+			DoReceiveEventAward($character)
+		 Next
+		 ExitLoop
+	  EndIf
+   Next
+
+   ; Recevice
+   For $characterInfo In $characterInfos
 	  DoClickCharacter($character)
    Next
 EndFunc
@@ -117,6 +133,15 @@ Func DoReceiveEvent($character)
 	  GraphicClick(MouseGetPos(), "left", 1, $exitPopup)
 	  Local $optCode = [141, 286]
 	  GraphicClick($optCode)
+   EndIf
+EndFunc
+
+Func DoReceiveEventAward($character)
+   If DoFindNpc($character) Then
+	  Local $exitPopup = [371, 619]
+	  GraphicClick(MouseGetPos(), "left", 1, $exitPopup)
+	  MouseClickEx(141, 313, 1500)
+	  MouseClickEx(130, 265, 500)
    EndIf
 EndFunc
 
