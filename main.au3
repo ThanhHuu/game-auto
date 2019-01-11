@@ -46,6 +46,7 @@ Local $cbDoneVt = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button
 Local $cbTeam = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:8]"))
 Local $cbHideNpc = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:9]"))
 Local $cbExit = _WinAPI_GetDlgCtrlID (ControlGetHandle($ui, "", "[CLASS:Button; INSTANCE:10]"))
+Local $CountExit = 0
 
 HotKeySet("^e", "ForceExit")
 
@@ -233,10 +234,12 @@ Func EnterGame($characterInfos)
 EndFunc
 
 Func ExitGame($characterInfos)
+   $CountExit = $CountExit + 1
+   Local $exitGame = IsExitWhenDone() And $CountExit > 2 ? True : False
    For $characterInfo In $characterInfos
 	  Local $character = $characterInfo[2]
 	  DoIgnoreChatacter($character)
-	  If IsExitWhenDone() Then
+	  If $exitGame Then
 		 KillGame($character)
 		 _FileWriteLogEx(StringFormat("Exited game for %s", $character))
 		 ContinueLoop
@@ -250,6 +253,9 @@ Func ExitGame($characterInfos)
    Next
    ResetFeatures($characterInfos)
    _FileWriteLogEx("Reseted feature state")
+   If $exitGame Then
+	  $CountExit = 0
+   EndIf
 EndFunc
 
 Func WaitThirdParty($characterInfos)
