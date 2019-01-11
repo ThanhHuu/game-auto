@@ -111,6 +111,7 @@ Func JoinEvent($characterInfos)
 
    ; Recevice
    For $characterInfo In $characterInfos
+	  Local $character = $characterInfo[2]
 	  DoClickCharacter($character)
    Next
 EndFunc

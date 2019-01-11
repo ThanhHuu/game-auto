@@ -62,11 +62,11 @@ While True
 		 ContinueLoop
 	  EndIf
 	  Local $accountFiles = ListFileOfFolder(GUICtrlRead($inAccountId))
-	  Local $characters = GetListCharacters($accountFiles)
 	  Local $numberWindow = GetNumberWindow()
 	  CloneCharacter($numberWindow)
 	  Local $loopTimes = GetLoopTimes()
 	  For $loop = 1 To $loopTimes
+		 Local $characters = GetListCharacters($accountFiles)
 		 For $i = 0 To UBound($characters.Keys) - 1 Step $numberWindow
 			Local $remaining = UBound($characters.Keys) - $i
 			Local $size = $remaining > $numberWindow ? $numberWindow : $remaining
